@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · আমার ড্যাশবোর্ড</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="dash" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" style="padding: 40px 0 0; border-bottom: 1px solid var(--rh-border)">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px">
+          <span class="avatar avatar-xl avatar--gold avatar--ring">আম</span>
+          <div style="flex: 1 1 320px">
+            <p class="t-muted">আসসালামু আলাইকুম,</p>
+            <h1 class="t-h2">আব্দুল্লাহ আল মামুন</h1>
+            <p class="t-small t-muted">খুলনা · সদস্য রবিউল আউয়াল ১৪৪৮ থেকে · আগ্রহ: লেখা, টেক</p>
+          </div>
+          <a href="#" class="btn btn-secondary btn-sm"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>প্রোফাইল সম্পাদনা</a>
+        </div>
+        <div class="tabs" role="tablist" aria-label="ড্যাশবোর্ড বিভাগ" style="margin-top: 32px; border-bottom: 0">
+          <sc-for list="{{tabs}}" as="t" hint-placeholder-count="6"><button type="button" role="tab" class="tab {{t.cls}}" aria-selected="{{t.sel}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container" style="display: flex; flex-direction: column; gap: 24px">
+        <!-- personal journey thread -->
+        <section class="card card-pad" aria-labelledby="my-journey">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 20px">
+            <div>
+              <span class="eyebrow">আমার যাত্রা</span>
+              <h2 id="my-journey" class="t-h3" style="margin-top: 6px">আপনি এখন পঞ্চম ধাপে: তাযকিয়াহ</h2>
+            </div>
+            <p class="t-small t-muted" style="max-width: 380px">এটি আত্মমূল্যায়ন, কোনো র‍্যাংকিং নয়। যেকোনো ধাপে ফিরে গিয়ে আবার পড়তে পারেন।</p>
+          </div>
+          <div style="overflow-x: auto; padding-bottom: 8px">
+            <div style="min-width: 760px">
+              <svg class="thread-h" viewBox="0 0 1000 120" aria-hidden="true">
+                <path d="M0 60L62.5 60C104.2 28 145.8 28 187.5 60C229.2 92 270.8 92 312.5 60C354.2 28 395.8 28 437.5 60C479.2 92 520.8 92 562.5 60C604.2 28 645.8 28 687.5 60C729.2 92 770.8 92 812.5 60C854.2 28 895.8 28 937.5 60L1000 60" style="fill: none; stroke: var(--rh-border-strong); stroke-width: 1.5; stroke-dasharray: 3 5"></path>
+                <path d="M0 60L62.5 60C104.2 28 145.8 28 187.5 60C229.2 92 270.8 92 312.5 60C354.2 28 395.8 28 437.5 60C479.2 92 520.8 92 562.5 60" style="fill: none; stroke: var(--rh-accent); stroke-width: 2.5; stroke-linecap: round"></path>
+                <circle class="dash-node is-done" cx="62.5" cy="60" r="17"></circle>
+                <circle class="dash-node is-done" cx="187.5" cy="60" r="17"></circle>
+                <circle class="dash-node is-done" cx="312.5" cy="60" r="17"></circle>
+                <circle class="dash-node is-done" cx="437.5" cy="60" r="17"></circle>
+                <circle cx="562.5" cy="60" r="27" style="fill: none; stroke: var(--rh-accent); stroke-opacity: 0.3; stroke-width: 6"></circle>
+                <circle class="dash-node is-now" cx="562.5" cy="60" r="17"></circle>
+                <circle class="dash-node" cx="687.5" cy="60" r="17"></circle>
+                <circle class="dash-node" cx="812.5" cy="60" r="17"></circle>
+                <circle class="dash-node" cx="937.5" cy="60" r="17"></circle>
+                <g style="fill: none; stroke: var(--rh-accent-ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round"><path d="M55.5 60l5 5 9-10"></path><path d="M180.5 60l5 5 9-10"></path><path d="M305.5 60l5 5 9-10"></path><path d="M430.5 60l5 5 9-10"></path></g>
+              </svg>
+              <ol class="list-reset" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); text-align: center; margin-top: 4px">
+                <li><strong style="display: block; font-family: var(--rh-font-heading); font-size: 16px">কালেমা</strong><span class="t-caption t-muted">সম্পন্ন</span></li>
+                <li><strong style="display: block; font-family: var(--rh-font-heading); font-size: 16px">ঈমান</strong><span class="t-caption t-muted">সম্পন্ন</span></li>
+                <li><strong style="display: block; font-family: var(--rh-font-heading); font-size: 16px">সঠিক ইলম</strong><span class="t-caption t-muted">সম্পন্ন</span></li>
+                <li><strong style="display: block; font-family: var(--rh-font-heading); font-size: 16px">আমল</strong><span class="t-caption t-muted">সম্পন্ন</span></li>
+                <li><strong style="display: block; font-family: var(--rh-font-heading); font-size: 16px; color: var(--rh-accent-ink)">তাযকিয়াহ</strong><span class="t-caption" style="color: var(--rh-accent-ink); font-weight: 600">চলছে</span></li>
+                <li><strong style="display: block; font-family: var(--rh-font-heading); font-size: 16px; color: var(--rh-muted)">আখলাক</strong><span class="t-caption t-muted">সামনে</span></li>
+                <li><strong style="display: block; font-family: var(--rh-font-heading); font-size: 16px; color: var(--rh-muted)">ভ্রাতৃত্ব</strong><span class="t-caption t-muted">সামনে</span></li>
+                <li><strong style="display: block; font-family: var(--rh-font-heading); font-size: 16px; color: var(--rh-muted)">উম্মাহর ঐক্য</strong><span class="t-caption t-muted">সামনে</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="adab-strip" style="margin-top: 20px; align-items: center; flex-wrap: wrap">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-primary)"><path d="M7 20h10"></path><path d="M10 20c5.5-2.5.8-6.4 3-10"></path><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path></svg>
+            <p class="t-small" style="flex: 1 1 260px">এই ধাপের জন্য প্রস্তাবিত: “অন্তরের পরিশুদ্ধি: তাযকিয়াহর প্রথম পাঠ” কোর্স এবং ১৬ অক্টোবরের তাযকিয়াহ মজলিস।</p>
+            <a href="Courses.dc.html" class="btn btn-primary btn-sm">শুরু করুন</a>
+          </div>
+        </section>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(460px, 100%), 1fr)); gap: 24px; align-items: start">
+          <!-- courses -->
+          <section class="card card-pad" aria-labelledby="d-courses">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px"><h2 id="d-courses" class="t-h4">আমার কোর্স</h2><a href="Courses.dc.html" class="link-arrow">সব <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div>
+            <div style="display: flex; flex-direction: column; gap: 18px">
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <div style="display: flex; justify-content: space-between; gap: 12px"><a href="Lesson.dc.html" style="font-weight: 600; color: var(--rh-ink); text-decoration: none">ঈমানের ছয় স্তম্ভ</a><span class="t-small t-muted">৫৮%</span></div>
+                <div class="progress" role="progressbar" aria-label="ঈমানের ছয় স্তম্ভ অগ্রগতি" aria-valuenow="58" aria-valuemin="0" aria-valuemax="100"><span style="width: 58%"></span></div>
+                <span class="t-caption t-muted">পরবর্তী: পাঠ ৮ · তাকদিরের প্রতি ঈমান</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <div style="display: flex; justify-content: space-between; gap: 12px"><a href="Lesson.dc.html" style="font-weight: 600; color: var(--rh-ink); text-decoration: none">সালাত: ধাপে ধাপে সুন্নাহ অনুযায়ী</a><span class="t-small t-muted">২৫%</span></div>
+                <div class="progress" role="progressbar" aria-label="সালাত কোর্স অগ্রগতি" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><span style="width: 25%"></span></div>
+                <span class="t-caption t-muted">পরবর্তী: পাঠ ৫ · রুকু ও সিজদার সুন্নাহ</span>
+              </div>
+              <a href="Lesson.dc.html" class="btn btn-primary btn-sm" style="align-self: flex-start">পাঠ চালিয়ে যান</a>
+            </div>
+          </section>
+
+          <!-- upcoming events -->
+          <section class="card card-pad" aria-labelledby="d-events">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px"><h2 id="d-events" class="t-h4">রেজিস্টার করা মজলিস</h2><a href="Events.dc.html" class="link-arrow">সব <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div>
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <a href="EventDetail.dc.html" class="row-link" style="padding: 10px 0"><div class="date-tile" aria-hidden="true" style="width: 60px; height: 64px; flex: none"><span class="date-tile__day" style="font-size: 22px">১০</span><span class="date-tile__mon" style="font-size: 12px">অক্টো</span></div><span style="flex: 1"><span class="row-link__title" style="display: block">মতপার্থক্যের আদব: সাহাবিদের জীবন থেকে</span><span class="t-small t-muted">শনিবার, রাত ৯:০০ · অনলাইন</span></span><span class="badge badge-online">অনলাইন</span></a>
+              <a href="EventDetail.dc.html" class="row-link" style="padding: 10px 0"><div class="date-tile" aria-hidden="true" style="width: 60px; height: 64px; flex: none"><span class="date-tile__day" style="font-size: 22px">১৬</span><span class="date-tile__mon" style="font-size: 12px">অক্টো</span></div><span style="flex: 1"><span class="row-link__title" style="display: block">তাযকিয়াহ মজলিস: অন্তরের রোগ ও তার প্রতিকার</span><span class="t-small t-muted">শুক্রবার, বাদ আসর · খুলনা · RH-১৬১০-০৮৮</span></span><span class="badge badge-live">সরাসরি</span></a>
+            </div>
+          </section>
+
+          <!-- saved -->
+          <section class="card card-pad" aria-labelledby="d-saved">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px"><h2 id="d-saved" class="t-h4">সংরক্ষিত প্রবন্ধ</h2><span class="t-small t-muted">৪টি</span></div>
+            <ul class="list-reset">
+              <li><a href="Article.dc.html" class="row-link"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-accent); fill: var(--rh-accent-soft)"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg><span style="flex: 1"><span class="row-link__title" style="display: block">ভিন্নমতের ভাইয়ের সাথে কথা বলার সুন্নাহ</span><span class="t-small t-muted">আখলাক · ৬ মিনিট</span></span></a></li>
+              <li><a href="Article.dc.html" class="row-link"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-accent); fill: var(--rh-accent-soft)"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg><span style="flex: 1"><span class="row-link__title" style="display: block">রিয়া: নীরব শিরক থেকে অন্তরের সুরক্ষা</span><span class="t-small t-muted">তাযকিয়াহ · ৭ মিনিট</span></span></a></li>
+              <li><a href="Ikhtilaf.dc.html" class="row-link"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-accent); fill: var(--rh-accent-soft)"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg><span style="flex: 1"><span class="row-link__title" style="display: block">রাফউল ইয়াদাইন: দুই মত, এক কাতার</span><span class="t-small t-muted">মতপার্থক্যের বিষয় · ৯ মিনিট</span></span></a></li>
+            </ul>
+          </section>
+
+          <!-- my questions -->
+          <section class="card card-pad" aria-labelledby="d-qs">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px"><h2 id="d-qs" class="t-h4">আমার প্রশ্ন</h2><a href="QA.dc.html" class="link-arrow">নতুন প্রশ্ন <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div>
+            <ul class="list-reset">
+              <li><a href="QAAnswer.dc.html" class="row-link"><span style="flex: 1"><span class="row-link__title" style="display: block">ভিন্ন মাযহাবের ইমামের পেছনে জামাতে সালাত আদায় করা যাবে কি?</span><span class="t-small t-muted">জমা: ২১ সেপ্টেম্বর</span></span><span class="badge badge-reviewed">উত্তর এসেছে</span></a></li>
+              <li><a href="QA.dc.html" class="row-link"><span style="flex: 1"><span class="row-link__title" style="display: block">অনলাইন ফ্রিল্যান্সিং আয়ের যাকাত কীভাবে হিসাব করব?</span><span class="t-small t-muted">জমা: ২ অক্টোবর</span></span><span class="badge badge-warning">রিভিউ চলছে</span></a></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const tab = this.state.tab ?? 'সারসংক্ষেপ';
+    const tabs = ['সারসংক্ষেপ', 'কোর্স', 'সংরক্ষিত', 'প্রশ্ন', 'মজলিস', 'সেটিংস'].map((label) => ({ label, cls: label === tab ? 'is-active' : '', sel: label === tab ? 'true' : 'false', pick: () => this.setState({ tab: label }) }));
+    return { theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }), tabs };
+  }
+}
+</script>
+</body>
+</html>

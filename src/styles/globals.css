@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+@import './ruhama.css' layer(components);
+@import './app.css' layer(components);
+
+/* Scan source files only (never the design folder or node_modules) */
+@source not '../../design';
+
+/*
+ * Tailwind v4 theme. Every value points at a Ruhama design token defined on
+ * `.rh` in ruhama.css, so utilities follow light/dark mode automatically.
+ */
+@theme inline {
+  --color-primary: var(--rh-primary);
+  --color-primary-dark: var(--rh-primary-dark);
+  --color-primary-light: var(--rh-primary-light);
+  --color-primary-hover: var(--rh-primary-hover);
+  --color-primary-soft: var(--rh-primary-soft);
+  --color-on-primary: var(--rh-on-primary);
+  --color-accent: var(--rh-accent);
+  --color-accent-soft: var(--rh-accent-soft);
+  --color-accent-ink: var(--rh-accent-ink);
+  --color-on-accent: var(--rh-on-accent);
+  --color-bg: var(--rh-bg);
+  --color-surface: var(--rh-surface);
+  --color-surface-raised: var(--rh-surface-raised);
+  --color-sage: var(--rh-sage);
+  --color-footer: var(--rh-footer-bg);
+  --color-ink: var(--rh-ink);
+  --color-muted: var(--rh-muted);
+  --color-border: var(--rh-border);
+  --color-border-strong: var(--rh-border-strong);
+  --color-success: var(--rh-success);
+  --color-success-soft: var(--rh-success-soft);
+  --color-warning: var(--rh-warning);
+  --color-warning-ink: var(--rh-warning-ink);
+  --color-warning-soft: var(--rh-warning-soft);
+  --color-error: var(--rh-error);
+  --color-error-soft: var(--rh-error-soft);
+  --color-band: var(--rh-band-bg);
+  --color-band-ink: var(--rh-band-ink);
+  --color-band-muted: var(--rh-band-muted);
+  --color-scrim: var(--rh-scrim);
+
+  --font-heading: var(--rh-font-heading);
+  --font-body: var(--rh-font-body);
+  --font-arabic: var(--rh-font-arabic);
+  --font-brand: var(--rh-font-brand);
+  --font-latin: var(--rh-font-latin);
+  --font-sans: var(--rh-font-body);
+  --font-serif: var(--rh-font-heading);
+
+  --text-display: var(--rh-fs-display);
+  --text-h1: var(--rh-fs-h1);
+  --text-h2: var(--rh-fs-h2);
+  --text-h3: var(--rh-fs-h3);
+  --text-h4: var(--rh-fs-h4);
+  --text-body-lg: var(--rh-fs-body-lg);
+  --text-body: var(--rh-fs-body);
+  --text-small: var(--rh-fs-small);
+  --text-caption: var(--rh-fs-caption);
+  --text-arabic: var(--rh-fs-arabic);
+
+  --radius-sm: var(--rh-radius-sm);
+  --radius-md: var(--rh-radius-md);
+  --radius-lg: var(--rh-radius-lg);
+  --radius-xl: var(--rh-radius-xl);
+  --radius-pill: var(--rh-radius-pill);
+
+  --shadow-sm: var(--rh-shadow-sm);
+  --shadow-md: var(--rh-shadow-md);
+  --shadow-lg: var(--rh-shadow-lg);
+
+  --ease-rh: var(--rh-ease);
+
+  /* breakpoints match the design's media queries (767 / 1023 / 1179) */
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1180px;
+}
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));

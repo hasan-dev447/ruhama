@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>সাময়িক সমস্যা · Ruhama</title>
+<meta name="robots" content="noindex">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <dc-import name="SiteHeader" active="none" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main" class="error-wrap">
+    <div class="rh-pattern" aria-hidden="true" style="z-index: -1"></div>
+    <div style="max-width: 640px; display: flex; flex-direction: column; align-items: center; gap: 18px">
+      <span class="empty__icon" style="width: 84px; height: 84px; background: var(--rh-accent-soft); color: var(--rh-accent-ink)"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 42px; height: 42px; stroke-width: 2.2"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg></span>
+      <h1 class="t-h2">কিছু একটা ঠিকমতো কাজ করছে না</h1>
+      <p class="t-body-lg t-muted">আমাদের দিক থেকে একটি সাময়িক সমস্যা হয়েছে। আপনার তথ্য নিরাপদ আছে। কিছুক্ষণ পর আবার চেষ্টা করুন।</p>
+      <div class="card" style="padding: 22px 28px; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%">
+        <p class="ar" lang="ar" dir="rtl" style="font-size: 28px; color: var(--rh-primary)">فَإِنَّ مَعَ الْعُسْرِ يُسْرًا</p>
+        <p class="t-small t-muted">“নিশ্চয়ই কষ্টের সাথেই রয়েছে স্বস্তি।”</p>
+        <span class="ref-badge">সূরা আশ-শারহ : ৫</span>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center">
+        <button type="button" class="btn btn-primary" onClick="{{retry}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>{{retryText}}</button>
+        <a href="Main.dc.html" class="btn btn-secondary">হোমে ফিরুন</a>
+      </div>
+      <p class="t-caption t-muted">সমস্যা থেকে গেলে জানান · ত্রুটি কোড: RH-৫০০</p>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  componentWillUnmount() { clearTimeout(this.tt); }
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      retryText: this.state.trying ? 'চেষ্টা চলছে…' : 'আবার চেষ্টা করুন',
+      retry: () => { this.setState({ trying: true }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ trying: false }), 1600); }
+    };
+  }
+}
+</script>
+</body>
+</html>

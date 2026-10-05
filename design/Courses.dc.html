@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · শেখার পথ</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="learn" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" aria-labelledby="learn-title">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">শেখার পথ</li></ol></nav>
+        <h1 id="learn-title" class="t-h1">শেখার পথ</h1>
+        <p class="lead">ধাপে ধাপে সাজানো কোর্স, প্রতিটি পাঠ শেষে ছোট্ট মূল্যায়ন। নিজের গতিতে শিখুন, অগ্রগতি সংরক্ষিত থাকবে।</p>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container" style="display: flex; flex-direction: column; gap: 40px">
+        <!-- continue learning -->
+        <div class="card card-raised" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); overflow: hidden">
+          <div class="pattern-host" style="background: var(--rh-band-bg); color: var(--rh-band-ink); padding: 36px; display: flex; flex-direction: column; gap: 14px; justify-content: center">
+            <div class="rh-pattern" aria-hidden="true" style="background-color: #F3E9D6; opacity: 0.08"></div>
+            <span style="font-size: 14px; font-weight: 600; color: #D4A95C">যেখানে থেমেছিলেন</span>
+            <h2 class="t-h3" style="color: var(--rh-band-ink)">ঈমানের ছয় স্তম্ভ</h2>
+            <p style="color: var(--rh-band-muted)">পরবর্তী পাঠ ৮: তাকদিরের প্রতি ঈমান</p>
+            <div style="display: flex; flex-direction: column; gap: 6px; max-width: 360px">
+              <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--rh-band-muted)"><span>১২ পাঠের ৭টি সম্পন্ন</span><span>৫৮%</span></div>
+              <div class="progress progress--gold" style="background: rgba(255,255,255,0.14)" role="progressbar" aria-valuenow="58" aria-valuemin="0" aria-valuemax="100" aria-label="কোর্স অগ্রগতি"><span style="width: 58%"></span></div>
+            </div>
+            <div><a href="Lesson.dc.html" class="btn btn-gold" style="margin-top: 8px">পাঠ চালিয়ে যান <svg class="ic ic-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div>
+          </div>
+          <div style="padding: 32px 36px; display: flex; flex-direction: column; gap: 6px">
+            <h3 class="t-h4" style="margin-bottom: 8px">কোর্সের বিষয়সূচি</h3>
+            <div class="course-outline">
+              <a href="Lesson.dc.html" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>মডিউল ১: ঈমানের পরিচয় ও আল্লাহর প্রতি ঈমান<span class="t-caption t-muted" style="margin-left: auto">৩ পাঠ</span></a>
+              <a href="Lesson.dc.html" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>মডিউল ২: ফেরেশতা, কিতাব ও রাসূলগণ<span class="t-caption t-muted" style="margin-left: auto">৩ পাঠ</span></a>
+              <a href="Lesson.dc.html" class="lesson-item is-current"><span class="lesson-state is-current">৩</span>মডিউল ৩: আখিরাত ও তাকদির<span class="t-caption" style="margin-left: auto">চলছে</span></a>
+              <a href="Lesson.dc.html" class="lesson-item"><span class="lesson-state">৪</span>মডিউল ৪: ঈমানের বৃদ্ধি, হ্রাস ও সুরক্ষা<span class="t-caption t-muted" style="margin-left: auto">৪ পাঠ</span></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- filters + grid -->
+        <div>
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px">
+            <h2 class="t-h3">সব কোর্স</h2>
+            <div class="chip-row" role="group" aria-label="স্তর অনুযায়ী ফিল্টার">
+              <sc-for list="{{levels}}" as="l" hint-placeholder-count="4"><button type="button" class="chip {{l.cls}}" aria-pressed="{{l.pressed}}" onClick="{{l.pick}}">{{l.label}}</button></sc-for>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 20px">
+            <sc-for list="{{shown}}" as="c" hint-placeholder-count="6">
+              <article class="card card-hover" style="display: flex; flex-direction: column; overflow: hidden">
+                <div class="pattern-host" style="height: 104px; background: {{c.bg}}; padding: 18px 22px; display: flex; align-items: flex-start; justify-content: space-between">
+                  <div class="rh-pattern" aria-hidden="true" style="opacity: 0.09"></div>
+                  <span class="badge" style="background: var(--rh-surface); color: var(--rh-ink)">যাত্রার ধাপ: {{c.step}}</span>
+                  <span class="badge badge-level">{{c.level}}</span>
+                </div>
+                <div style="padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1">
+                  <h3 class="t-h4"><a href="Lesson.dc.html" style="color: var(--rh-ink); text-decoration: none">{{c.title}}</a></h3>
+                  <p class="t-small t-muted">{{c.desc}}</p>
+                  <div class="stat-line"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>{{c.lessons}}</span><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>{{c.hours}}</span></div>
+                  <div style="margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rh-border); display: flex; flex-direction: column; gap: 10px">
+                    <sc-if value="{{c.enrolled}}" hint-placeholder-val="{{false}}">
+                      <div style="display: flex; justify-content: space-between; font-size: 14px"><span class="t-muted">অগ্রগতি</span><span>{{c.pctText}}</span></div>
+                      <div class="progress" role="progressbar" aria-label="অগ্রগতি" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{c.pct}}"><span style="width: {{c.pctCss}}"></span></div>
+                      <a href="Lesson.dc.html" class="btn btn-primary btn-sm btn-block">চালিয়ে যান</a>
+                    </sc-if>
+                    <sc-if value="{{c.notEnrolled}}" hint-placeholder-val="{{true}}">
+                      <a href="Lesson.dc.html" class="btn btn-secondary btn-sm btn-block">বিনামূল্যে শুরু করুন</a>
+                    </sc-if>
+                  </div>
+                </div>
+              </article>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const level = this.state.level ?? 'সব';
+    const all = [
+      { title: 'ঈমানের ছয় স্তম্ভ', desc: 'আল্লাহ, ফেরেশতা, কিতাব, রাসূল, আখিরাত ও তাকদিরের প্রতি বিশ্বাসের সহজ ও দলিলভিত্তিক পাঠ।', step: 'ঈমান', level: 'প্রাথমিক', lessons: '১২ পাঠ', hours: '৩ ঘণ্টা', pct: 58, bg: 'var(--rh-sage)' },
+      { title: 'সালাত: ধাপে ধাপে সুন্নাহ অনুযায়ী', desc: 'তাহারাত থেকে সালাম ফেরানো পর্যন্ত, ভিন্ন মতগুলোর পরিচয়সহ।', step: 'আমল', level: 'প্রাথমিক', lessons: '১৬ পাঠ', hours: '৪ ঘণ্টা', pct: 25, bg: 'var(--rh-accent-soft)' },
+      { title: 'অন্তরের পরিশুদ্ধি: তাযকিয়াহর প্রথম পাঠ', desc: 'অহংকার, হিংসা ও রিয়া চেনা এবং প্রতিকারের নববি পদ্ধতি।', step: 'তাযকিয়াহ', level: 'মধ্যম', lessons: '১০ পাঠ', hours: '২.৫ ঘণ্টা', pct: 0, bg: 'var(--rh-primary-soft)' },
+      { title: 'মতপার্থক্যের আদব: সাহাবিদের দৃষ্টান্ত', desc: 'ইখতিলাফের কারণ, সীমা এবং ভিন্নমত সত্ত্বেও ভ্রাতৃত্ব রক্ষার শিক্ষা।', step: 'ভ্রাতৃত্ব', level: 'মধ্যম', lessons: '৮ পাঠ', hours: '২ ঘণ্টা', pct: 0, bg: 'var(--rh-sage)' },
+      { title: 'হালাল উপার্জন ও লেনদেনের মূলনীতি', desc: 'সুদ, প্রতারণা ও অস্পষ্টতা থেকে মুক্ত থাকার ব্যবহারিক নির্দেশনা।', step: 'আমল', level: 'মধ্যম', lessons: '১৪ পাঠ', hours: '৩.৫ ঘণ্টা', pct: 0, bg: 'var(--rh-accent-soft)' },
+      { title: 'উসূলুল ফিকহ পরিচিতি', desc: 'আলিমরা কীভাবে দলিল থেকে বিধান বের করেন: মতপার্থক্য বোঝার ভিত্তি।', step: 'সঠিক ইলম', level: 'উচ্চ', lessons: '২০ পাঠ', hours: '৬ ঘণ্টা', pct: 0, bg: 'var(--rh-primary-soft)' }
+    ];
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const levels = ['সব', 'প্রাথমিক', 'মধ্যম', 'উচ্চ'].map((label) => ({ label, cls: label === level ? 'is-active' : '', pressed: label === level ? 'true' : 'false', pick: () => this.setState({ level: label }) }));
+    const shown = all.filter((c) => level === 'সব' || c.level === level).map((c) => ({ ...c, enrolled: c.pct > 0, notEnrolled: c.pct === 0, pctText: bn(c.pct) + '%', pctCss: c.pct + '%' }));
+    return { theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }), levels, shown };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>খুলনা সদর সার্কেল · স্থানীয় সার্কেল · Ruhama</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="majlis" logged-in="{{true}}" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="pattern-host" style="background: var(--rh-band-bg); color: var(--rh-band-ink); padding: 48px 0 56px">
+      <div class="rh-pattern" aria-hidden="true" style="background-color: #F3E9D6; opacity: 0.08"></div>
+      <div class="container">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs" style="color: var(--rh-band-muted)"><li><a href="Circles.dc.html" style="color: var(--rh-band-muted)">স্থানীয় সার্কেল</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li><a href="Circles.dc.html" style="color: var(--rh-band-muted)">খুলনা</a></li></ol></nav>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px"><span class="badge" style="background: rgba(255,255,255,0.12); color: var(--rh-band-ink)">ভাইদের সার্কেল</span><span class="badge" style="background: rgba(212,169,92,0.22); color: #F3E2BE">সাপ্তাহিক</span></div>
+        <h1 class="t-h1" style="color: var(--rh-band-ink); margin-top: 14px">খুলনা সদর সার্কেল</h1>
+        <p style="color: var(--rh-band-muted); max-width: 640px; margin-top: 10px">প্রতি শুক্রবার বাদ মাগরিব এক ঘণ্টা: কুরআনের অর্থসহ পাঠ, আকীদাহর একটি পাঠ এবং একে অপরের খোঁজখবর। রবিউল আউয়াল ১৪৪৮ থেকে চলছে।</p>
+        <div class="stat-line" style="color: var(--rh-band-muted); margin-top: 18px"><span>২৪ জন সদস্য</span><span>শুক্রবার বাদ মাগরিব</span><span>[মসজিদ বা ভেন্যুর নাম], খুলনা</span></div>
+      </div>
+    </section>
+
+    <section class="section-sm" style="padding-bottom: 96px">
+      <div class="container">
+        <div class="layout-side">
+          <div class="layout-side__main" style="display: flex; flex-direction: column; gap: 40px">
+            <section aria-labelledby="cd-meet">
+              <h2 id="cd-meet" class="t-h3">আসন্ন বৈঠক</h2>
+              <div class="card" style="padding: 4px 22px; margin-top: 16px">
+                <sc-for list="{{meetups}}" as="m" hint-placeholder-count="4">
+                  <div class="meetup-row">
+                    <div class="date-tile" aria-hidden="true" style="width: 68px; height: 72px"><span class="date-tile__day" style="font-size: 24px">{{m.day}}</span><span class="date-tile__mon">অক্টোবর</span></div>
+                    <div><strong style="display: block; line-height: 1.5">{{m.topic}}</strong><span class="t-small t-muted">{{m.meta}}</span></div>
+                    <button type="button" class="btn {{m.btn}} btn-sm" aria-pressed="{{m.pressed}}" onClick="{{m.toggle}}">{{m.label}}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+
+            <section aria-labelledby="cd-about">
+              <h2 id="cd-about" class="t-h3">একটি বৈঠকে যা হয়</h2>
+              <ol class="list-reset" style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 14px">
+                <li class="card card-pad" style="padding: 20px; display: flex; flex-direction: column; gap: 6px"><span class="icon-tile" style="width: 36px; height: 36px; font-weight: 700">১</span><strong>কুরআন পাঠ</strong><span class="t-small t-muted">এক পৃষ্ঠা অর্থসহ, পালাক্রমে সবাই পড়েন। ২০ মিনিট।</span></li>
+                <li class="card card-pad" style="padding: 20px; display: flex; flex-direction: column; gap: 6px"><span class="icon-tile" style="width: 36px; height: 36px; font-weight: 700">২</span><strong>ইলমের পাঠ</strong><span class="t-small t-muted">শেখার পথের কোর্স থেকে একটি পাঠ নিয়ে আলোচনা। ২৫ মিনিট।</span></li>
+                <li class="card card-pad" style="padding: 20px; display: flex; flex-direction: column; gap: 6px"><span class="icon-tile" style="width: 36px; height: 36px; font-weight: 700">৩</span><strong>খোঁজখবর ও দোয়া</strong><span class="t-small t-muted">কে কেমন আছেন, কারো সহায়তা লাগবে কি না। ১৫ মিনিট।</span></li>
+              </ol>
+            </section>
+
+            <section aria-labelledby="cd-rules">
+              <h2 id="cd-rules" class="t-h3">সার্কেলের আদব</h2>
+              <ul class="list-reset" style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px">
+                <li style="display: flex; gap: 12px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-accent); margin-top: 4px"><path d="M20 6 9 17l-5-5"></path></svg><span>যেকোনো মাযহাব বা ধারার ভাই স্বাগত; বৈঠকে দলীয় আলোচনা বা প্রচারণা নয়।</span></li>
+                <li style="display: flex; gap: 12px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-accent); margin-top: 4px"><path d="M20 6 9 17l-5-5"></path></svg><span>ফিকহি প্রশ্ন উঠলে সমন্বয়ক তা প্রশ্নোত্তর বিভাগে পাঠান; বৈঠকে ফতোয়া দেওয়া হয় না।</span></li>
+                <li style="display: flex; gap: 12px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-accent); margin-top: 4px"><path d="M20 6 9 17l-5-5"></path></svg><span>সময়মতো শুরু ও শেষ; কারো ব্যক্তিগত কথা বৈঠকের বাইরে যাবে না।</span></li>
+              </ul>
+            </section>
+          </div>
+
+          <aside class="layout-side__aside layout-side__aside--right sticky-col" aria-label="যুক্ত হোন">
+            <div class="card card-raised card-pad">
+              <sc-if value="{{notRequested}}" hint-placeholder-val="{{true}}">
+                <h2 class="t-h4">সার্কেলে যুক্ত হোন</h2>
+                <p class="t-small t-muted" style="margin-top: 6px">অনুরোধ পাঠালে সমন্বয়ক ফোনে যোগাযোগ করে প্রথম বৈঠকে আমন্ত্রণ জানাবেন।</p>
+                <div class="field" style="margin-top: 16px"><label class="label" for="cd-note">সমন্বয়ককে কিছু জানাতে চান? <span class="t-muted" style="font-weight: 400">(ঐচ্ছিক)</span></label><textarea id="cd-note" class="textarea" style="min-height: 88px" placeholder="যেমন: আমি সোনাডাঙ্গায় থাকি, শুক্রবার সন্ধ্যায় আসতে পারব।"></textarea></div>
+                <button type="button" class="btn btn-primary btn-block" style="margin-top: 14px" onClick="{{request}}">যুক্ত হওয়ার অনুরোধ পাঠান</button>
+              </sc-if>
+              <sc-if value="{{requested}}" hint-placeholder-val="{{false}}">
+                <div class="empty" role="status" style="padding: 12px 0">
+                  <span class="empty__icon" style="background: var(--rh-success-soft); color: var(--rh-success)"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                  <h2 class="t-h4">অনুরোধ পাঠানো হয়েছে</h2>
+                  <p class="t-small t-muted">সমন্বয়ক শিগগিরই যোগাযোগ করবেন, ইনশাআল্লাহ।</p>
+                  <button type="button" class="btn btn-ghost btn-sm" onClick="{{cancel}}">অনুরোধ বাতিল করুন</button>
+                </div>
+              </sc-if>
+              <div style="border-top: 1px solid var(--rh-border); margin-top: 20px; padding-top: 18px; display: flex; flex-direction: column; gap: 14px">
+                <strong class="t-small" style="color: var(--rh-muted)">সমন্বয়ক</strong>
+                <div class="person-row"><span class="avatar">তই</span><div><strong>তানভীর ইসলাম</strong><span>সমন্বয়ক</span></div></div>
+                <div class="person-row"><span class="avatar avatar--gold">রহ</span><div><strong>রাকিব হাসান</strong><span>সহ-সমন্বয়ক</span></div></div>
+                <div class="person-row"><span class="avatar">আর</span><div><strong>উস্তায আব্দুর রহমান</strong><span>ইলমি তত্ত্বাবধান (অনলাইন)</span></div></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const going = this.state.going ?? ['m1'];
+    const defs = [
+      ['m1', '৯', 'সূরা আল-হুজুরাত, আয়াত ৯ থেকে ১০ · পাঠ: তাকদিরের প্রতি ঈমান', 'শুক্রবার বাদ মাগরিব · ১৪ জন আসছেন'],
+      ['m2', '১৬', 'এ সপ্তাহে তাযকিয়াহ মজলিসে একসাথে অংশগ্রহণ', 'শুক্রবার বাদ আসর · মজলিসের ভেন্যুতে'],
+      ['m3', '২৩', 'সূরা আল-হুজুরাত, আয়াত ১১ থেকে ১২ · পাঠ: ঈমানের বৃদ্ধি ও হ্রাস', 'শুক্রবার বাদ মাগরিব'],
+      ['m4', '৩০', 'সূরা আল-হুজুরাত, আয়াত ১৩ · পাঠ: ঈমানের সুরক্ষা', 'শুক্রবার বাদ মাগরিব']
+    ];
+    const meetups = defs.map(([id, day, topic, meta]) => {
+      const on = going.includes(id);
+      return { day, topic, meta, label: on ? 'আসছি' : 'আসব', btn: on ? 'btn-primary' : 'btn-secondary', pressed: on ? 'true' : 'false', toggle: () => this.setState({ going: on ? going.filter((x) => x !== id) : going.concat(id) }) };
+    });
+    const requested = !!this.state.requested;
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      meetups, requested, notRequested: !requested,
+      request: () => this.setState({ requested: true }), cancel: () => this.setState({ requested: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

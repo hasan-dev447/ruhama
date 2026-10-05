@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · ভিডিও লাইব্রেরি</title>
+<meta name="description" content="আলিম ও বক্তাদের লেকচার: আকীদাহ, তাযকিয়াহ, সীরাত ও মতপার্থক্যের আদব। সব ভিডিও রিভিউকৃত।">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="learn" logged-in="{{true}}" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" aria-labelledby="v-title">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">ভিডিও লাইব্রেরি</li></ol></nav>
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
+          <div><h1 id="v-title" class="t-h1">ভিডিও লাইব্রেরি</h1><p class="lead">মজলিস ও ধারাবাহিক লেকচার, প্রতিটি রিভিউকৃত এবং অধ্যায়ে ভাগ করা।</p></div>
+          <div class="input-icon" style="flex: 0 1 420px; width: 100%">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+            <label for="v-search" class="sr-only">ভিডিও খুঁজুন</label>
+            <input id="v-search" class="input" type="search" placeholder="বিষয় বা বক্তার নাম" onInput="{{onSearch}}" style="min-height: 54px">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-sm" style="padding-bottom: 24px">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px"><h2 class="t-h3">প্লেলিস্ট</h2><span class="t-small t-muted">ধারাবাহিকভাবে দেখুন</span></div>
+        <div class="h-scroll" role="list">
+          <a href="VideoDetail.dc.html" class="card card-hover vcard" role="listitem"><div class="vthumb"><div class="rh-pattern" aria-hidden="true"></div><svg class="vthumb__mark mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg><span class="vthumb__title">ঈমানের ছয় স্তম্ভ</span><span class="vthumb__dur">১২টি ভিডিও</span></div><div class="vcard__body"><span class="t-small t-muted">উস্তায আব্দুর রহমান · প্রাথমিক</span></div></a>
+          <a href="VideoDetail.dc.html" class="card card-hover vcard" role="listitem"><div class="vthumb vthumb--umber"><div class="rh-pattern" aria-hidden="true"></div><svg class="vthumb__mark mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg><span class="vthumb__title">মতপার্থক্যের আদব</span><span class="vthumb__dur">৮টি ভিডিও</span></div><div class="vcard__body"><span class="t-small t-muted">একাধিক বক্তা · মধ্যম</span></div></a>
+          <a href="VideoDetail.dc.html" class="card card-hover vcard" role="listitem"><div class="vthumb vthumb--deep"><div class="rh-pattern" aria-hidden="true"></div><svg class="vthumb__mark mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg><span class="vthumb__title">সীরাত ধারাবাহিক</span><span class="vthumb__dur">২৪টি ভিডিও</span></div><div class="vcard__body"><span class="t-small t-muted">মাওলানা জুবায়ের আহমাদ</span></div></a>
+          <a href="VideoDetail.dc.html" class="card card-hover vcard" role="listitem"><div class="vthumb vthumb--slate"><div class="rh-pattern" aria-hidden="true"></div><svg class="vthumb__mark mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg><span class="vthumb__title">অন্তরের পরিশুদ্ধি</span><span class="vthumb__dur">১০টি ভিডিও</span></div><div class="vcard__body"><span class="t-small t-muted">উস্তাযা সুমাইয়া কবির</span></div></a>
+          <a href="VideoDetail.dc.html" class="card card-hover vcard" role="listitem"><div class="vthumb"><div class="rh-pattern" aria-hidden="true"></div><svg class="vthumb__mark mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg><span class="vthumb__title">সূরা আল-হুজুরাতের তাফসির</span><span class="vthumb__dur">৯টি ভিডিও</span></div><div class="vcard__body"><span class="t-small t-muted">শায়খ ইউসুফ নূর</span></div></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-sm" style="padding-top: 24px">
+      <div class="container">
+        <div class="card" style="padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px">
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+            <span class="t-small t-muted" style="min-width: 72px">ক্যাটাগরি</span>
+            <div class="chip-row" role="group" aria-label="ক্যাটাগরি"><sc-for list="{{cats}}" as="c" hint-placeholder-count="6"><button type="button" class="chip {{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}">{{c.label}}</button></sc-for></div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+            <span class="t-small t-muted" style="min-width: 72px">সময়কাল</span>
+            <div class="chip-row" role="group" aria-label="সময়কাল"><sc-for list="{{durs}}" as="d" hint-placeholder-count="4"><button type="button" class="chip {{d.cls}}" aria-pressed="{{d.pressed}}" onClick="{{d.pick}}">{{d.label}}</button></sc-for></div>
+            <div class="select-wrap" style="flex: 0 1 240px; margin-left: auto">
+              <label for="v-speaker" class="sr-only">বক্তা</label>
+              <select id="v-speaker" class="select" onChange="{{onSpeaker}}"><option value="সব">সব বক্তা</option><option>উস্তায আব্দুর রহমান</option><option>ড. মাহমুদুল হাসান</option><option>উস্তাযা সুমাইয়া কবির</option><option>শায়খ ইউসুফ নূর</option><option>নাঈম আহমাদ</option><option>মাওলানা জুবায়ের আহমাদ</option></select>
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </div>
+          </div>
+        </div>
+        <p class="t-small t-muted" role="status" style="margin-bottom: 16px">{{countText}}</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 20px">
+          <sc-for list="{{shown}}" as="v" hint-placeholder-count="9">
+            <a href="VideoDetail.dc.html" class="card card-hover vcard">
+              <div class="vthumb {{v.tint}}"><div class="rh-pattern" aria-hidden="true"></div><svg class="vthumb__mark mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg><span class="vthumb__title">{{v.short}}</span><span class="vthumb__play" aria-hidden="true"><svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; margin-left: 3px"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z"></path></svg></span><span class="vthumb__dur">{{v.dur}}</span></div>
+              <div class="vcard__body">
+                <span class="badge badge-cat" style="align-self: flex-start">{{v.cat}}</span>
+                <h3 class="vcard__title">{{v.title}}</h3>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: auto"><span class="avatar avatar-sm {{v.av}}">{{v.ini}}</span><span class="t-small">{{v.speaker}}</span><span class="t-caption t-muted" style="margin-left: auto">{{v.views}}</span></div>
+              </div>
+            </a>
+          </sc-for>
+        </div>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+          <div class="card"><div class="empty"><span class="empty__icon"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect></svg></span><h2 class="t-h4">এই ফিল্টারে কোনো ভিডিও নেই</h2><p class="t-small t-muted">ফিল্টার কমিয়ে আবার দেখুন।</p><button type="button" class="btn btn-secondary btn-sm" onClick="{{reset}}">ফিল্টার মুছুন</button></div></div>
+        </sc-if>
+        <nav aria-label="পৃষ্ঠা" style="margin-top: 40px"><div class="pager"><span class="is-current" aria-current="page">১</span><a href="#">২</a><a href="#">৩</a><span class="is-gap">…</span><a href="#">১৮</a><a href="#" aria-label="পরের পৃষ্ঠা"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a></div></nav>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const cat = this.state.cat ?? 'সব';
+    const dur = this.state.dur ?? 'সব';
+    const sp = this.state.sp ?? 'সব';
+    const q = (this.state.q ?? '').trim();
+    const all = [
+      { title: 'তাকদিরের প্রতি ঈমান: চেষ্টা ও ভরসার ভারসাম্য', short: 'তাকদিরের প্রতি ঈমান', cat: 'আকীদাহ', speaker: 'উস্তায আব্দুর রহমান', ini: 'আর', av: '', dur: '৪৬:১০', min: 46, views: '১১ হাজার বার দেখা', tint: '' },
+      { title: 'ইখতিলাফ: ইনসাফের সাথে ভিন্নমত', short: 'ইখতিলাফ ও ইনসাফ', cat: 'আদব', speaker: 'ড. মাহমুদুল হাসান', ini: 'মহ', av: '', dur: '৫২:৪০', min: 52, views: '১৪ হাজার বার দেখা', tint: 'vthumb--umber' },
+      { title: 'রিয়া: নীরব শিরক চেনার উপায়', short: 'রিয়া চেনার উপায়', cat: 'তাযকিয়াহ', speaker: 'উস্তাযা সুমাইয়া কবির', ini: 'সক', av: 'avatar--gold', dur: '২২:৩৫', min: 22, views: '৯ হাজার বার দেখা', tint: 'vthumb--slate' },
+      { title: 'সূরা আল-হুজুরাত: আয়াত ১০ থেকে ১২', short: 'সূরা আল-হুজুরাত', cat: 'তাফসির', speaker: 'শায়খ ইউসুফ নূর', ini: 'ইন', av: '', dur: '৩৮:২০', min: 38, views: '১৭ হাজার বার দেখা', tint: 'vthumb--deep' },
+      { title: 'ক্যাম্পাসে ঈমান ধরে রাখা', short: 'ক্যাম্পাসে ঈমান', cat: 'দাওয়াহ', speaker: 'নাঈম আহমাদ', ini: 'নআ', av: 'avatar--gold', dur: '৩১:২০', min: 31, views: '২১ হাজার বার দেখা', tint: 'vthumb--umber' },
+      { title: 'হুদাইবিয়ার সন্ধি: ধৈর্যের বিজয়', short: 'হুদাইবিয়ার সন্ধি', cat: 'সীরাত', speaker: 'মাওলানা জুবায়ের আহমাদ', ini: 'জআ', av: '', dur: '৫৮:০৫', min: 58, views: '১২ হাজার বার দেখা', tint: '' },
+      { title: 'দুই মিনিটে: সালাম দেওয়ার সুন্নাহ', short: 'সালামের সুন্নাহ', cat: 'আদব', speaker: 'উস্তাযা সুমাইয়া কবির', ini: 'সক', av: 'avatar--gold', dur: '২:১৮', min: 2, views: '৩৪ হাজার বার দেখা', tint: 'vthumb--slate' },
+      { title: 'হাদিসের মান: সহিহ, হাসান ও যঈফ', short: 'হাদিসের মান', cat: 'আকীদাহ', speaker: 'ড. মাহমুদুল হাসান', ini: 'মহ', av: '', dur: '৮:৪৫', min: 8, views: '১৯ হাজার বার দেখা', tint: 'vthumb--deep' },
+      { title: 'রাগ নিয়ন্ত্রণের নববি পদ্ধতি', short: 'রাগ নিয়ন্ত্রণ', cat: 'তাযকিয়াহ', speaker: 'উস্তায আব্দুর রহমান', ini: 'আর', av: '', dur: '১৫:৩০', min: 15, views: '২৬ হাজার বার দেখা', tint: '' }
+    ];
+    const mk = (labels, cur, key) => labels.map((label) => ({ label, cls: label === cur ? 'is-active' : '', pressed: label === cur ? 'true' : 'false', pick: () => this.setState({ [key]: label }) }));
+    const durOk = (m) => dur === 'সব' || (dur === '১০ মিনিটের কম' && m < 10) || (dur === '১০ থেকে ৩০ মিনিট' && m >= 10 && m <= 30) || (dur === '৩০ মিনিটের বেশি' && m > 30);
+    const shown = all.filter((v) => (cat === 'সব' || v.cat === cat) && (sp === 'সব' || v.speaker === sp) && durOk(v.min) && (!q || v.title.includes(q) || v.speaker.includes(q)));
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      cats: mk(['সব', 'আকীদাহ', 'তাফসির', 'তাযকিয়াহ', 'সীরাত', 'আদব', 'দাওয়াহ'], cat, 'cat'),
+      durs: mk(['সব', '১০ মিনিটের কম', '১০ থেকে ৩০ মিনিট', '৩০ মিনিটের বেশি'], dur, 'dur'),
+      shown, empty: shown.length === 0,
+      countText: bn(shown.length) + 'টি ভিডিও',
+      onSearch: (e) => this.setState({ q: e.target.value }),
+      onSpeaker: (e) => this.setState({ sp: e.target.value }),
+      reset: () => this.setState({ cat: 'সব', dur: 'সব', sp: 'সব', q: '' })
+    };
+  }
+}
+</script>
+</body>
+</html>

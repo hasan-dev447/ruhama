@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · আলোচনা ফোরাম</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="forum" logged-in="{{true}}" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" aria-labelledby="f-title" style="padding-bottom: 40px">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">আলোচনা ফোরাম</li></ol></nav>
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
+          <div><h1 id="f-title" class="t-h1">আলোচনা ফোরাম</h1><p class="lead">প্রশ্ন, অভিজ্ঞতা ও পারস্পরিক পরামর্শ। দ্বিমত থাকতে পারে, অসম্মান নয়।</p></div>
+          <button type="button" class="btn btn-primary btn-lg" onClick="{{openNew}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>নতুন আলোচনা</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container" style="display: flex; flex-direction: column; gap: 28px">
+        <div class="adab-banner" role="note" aria-labelledby="adab-h">
+          <span class="icon-tile" style="width: 44px; height: 44px; background: var(--rh-surface)"><svg class="ic ic-lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg></span>
+          <div style="flex: 1">
+            <strong id="adab-h" style="font-family: var(--rh-font-heading); font-size: 17px">আলোচনার আদব</strong>
+            <ul>
+              <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>দলিলসহ কথা বলুন</li>
+              <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>ব্যক্তি নয়, বক্তব্য নিয়ে আলোচনা</li>
+              <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>কোনো দল বা আলিমকে কটাক্ষ নয়</li>
+              <li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>ফতোয়ার প্রশ্ন “প্রশ্নোত্তর” বিভাগে</li>
+            </ul>
+          </div>
+          <a href="About.dc.html#adab" class="link-arrow" style="align-self: center">পুরো নীতিমালা <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+        </div>
+
+        <div class="layout-side">
+          <aside class="layout-side__aside" aria-label="বিভাগ" style="max-width: 280px">
+            <nav class="card" style="padding: 10px" aria-labelledby="fcat-h">
+              <h2 id="fcat-h" class="t-small" style="font-family: var(--rh-font-body); font-weight: 600; color: var(--rh-muted); padding: 8px 12px">বিভাগ</h2>
+              <sc-for list="{{cats}}" as="c" hint-placeholder-count="7"><button type="button" class="cat-link {{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="width: 100%; border: 0; background: none; font: inherit; cursor: pointer; text-align: left"><span style="flex: 1">{{c.label}}</span><span class="t-caption t-muted">{{c.count}}</span></button></sc-for>
+            </nav>
+          </aside>
+
+          <div class="layout-side__main">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px">
+              <div class="tabs" role="tablist" aria-label="সাজানো" style="border-bottom: 0">
+                <sc-for list="{{sorts}}" as="s" hint-placeholder-count="3"><button type="button" role="tab" class="tab {{s.cls}}" aria-selected="{{s.sel}}" onClick="{{s.pick}}">{{s.label}}</button></sc-for>
+              </div>
+              <span class="t-small t-muted" role="status">{{countText}}</span>
+            </div>
+            <div class="card" style="overflow: hidden">
+              <div class="thread-row" aria-hidden="true" style="padding-block: 10px; background: var(--rh-sage); font-size: 13px; color: var(--rh-muted); font-weight: 600">
+                <span></span><span>আলোচনা</span><span class="thread-stat">উত্তর</span><span class="thread-stat">দেখা</span><span class="thread-last">সর্বশেষ</span>
+              </div>
+              <sc-for list="{{shown}}" as="t" hint-placeholder-count="7">
+                <a href="ForumThread.dc.html" class="thread-row">
+                  <span class="avatar {{t.av}}">{{t.ini}}</span>
+                  <span style="min-width: 0; display: flex; flex-direction: column; gap: 6px">
+                    <span class="thread-row__title">{{t.title}}</span>
+                    <span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: var(--rh-muted)">
+                      <sc-if value="{{t.pinned}}" hint-placeholder-val="{{false}}"><span class="badge badge-level" style="height: 24px">পিন করা</span></sc-if>
+                      <span class="badge badge-cat" style="height: 24px">{{t.cat}}</span>
+                      <sc-if value="{{t.solved}}" hint-placeholder-val="{{false}}"><span class="badge badge-reviewed" style="height: 24px">সহায়ক উত্তর আছে</span></sc-if>
+                      <sc-if value="{{t.unanswered}}" hint-placeholder-val="{{false}}"><span class="badge badge-warning" style="height: 24px">উত্তরহীন</span></sc-if>
+                      <span>{{t.by}}</span>
+                    </span>
+                  </span>
+                  <span class="thread-stat"><strong>{{t.replies}}</strong><span>উত্তর</span></span>
+                  <span class="thread-stat"><strong>{{t.views}}</strong><span>দেখা</span></span>
+                  <span class="thread-last t-small t-muted">{{t.last}}</span>
+                </a>
+              </sc-for>
+              <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+                <div class="empty"><span class="empty__icon"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg></span><h2 class="t-h4">এখানে এখনো কোনো আলোচনা নেই</h2><p class="t-small t-muted">প্রথম আলোচনাটি আপনিই শুরু করুন।</p><button type="button" class="btn btn-secondary btn-sm" onClick="{{openNew}}">নতুন আলোচনা</button></div>
+              </sc-if>
+            </div>
+            <nav aria-label="পৃষ্ঠা" style="margin-top: 28px"><div class="pager"><span class="is-current" aria-current="page">১</span><a href="#">২</a><a href="#">৩</a><span class="is-gap">…</span><a href="#">৩৮</a><a href="#" aria-label="পরের পৃষ্ঠা"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a></div></nav>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+
+  <sc-if value="{{newOpen}}" hint-placeholder-val="{{false}}">
+    <div class="modal-scrim">
+      <form class="modal" role="dialog" aria-modal="true" aria-labelledby="nd-title" onSubmit="{{submitNew}}" style="width: min(620px, 100%); display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px"><h2 id="nd-title" class="t-h4">নতুন আলোচনা</h2><button type="button" class="btn-icon" aria-label="বন্ধ করুন" onClick="{{closeNew}}" style="margin: -8px -8px 0 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+        <div class="field"><label class="label" for="nd-t">শিরোনাম<span class="req" aria-hidden="true">*</span></label><input id="nd-t" class="input" required="" placeholder="এক লাইনে মূল বিষয়"></div>
+        <div class="field"><label class="label" for="nd-c">বিভাগ</label><div class="select-wrap"><select id="nd-c" class="select"><option>আকীদাহ ও ঈমান</option><option>ইবাদত</option><option>পরিবার ও সমাজ</option><option>তাযকিয়াহ</option><option>ইলম ও পড়াশোনা</option><option>প্ল্যাটফর্ম ফিডব্যাক</option></select><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></div></div>
+        <div class="field"><label class="label" for="nd-b">বিস্তারিত<span class="req" aria-hidden="true">*</span></label><textarea id="nd-b" class="textarea" required="" placeholder="প্রেক্ষাপট লিখুন। কোনো দলিল উল্লেখ করলে উৎস দিন।"></textarea></div>
+        <label class="check" style="align-items: flex-start"><input type="checkbox" required="" style="margin-top: 4px"><span class="t-small">আমি আলোচনার আদব মেনে চলব। নতুন সদস্যদের প্রথম তিনটি পোস্ট মডারেটর দেখে প্রকাশ করেন।</span></label>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap"><button type="button" class="btn btn-ghost" onClick="{{closeNew}}">বাতিল</button><button type="submit" class="btn btn-primary">প্রকাশ করুন</button></div>
+      </form>
+    </div>
+  </sc-if>
+  <sc-if value="{{toast}}" hint-placeholder-val="{{false}}">
+    <div class="toast-dock"><div class="toast toast--info" role="status"><span class="toast__icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></span><div><strong>আলোচনাটি মডারেশনে আছে</strong><p>সাধারণত কয়েক ঘণ্টার মধ্যে প্রকাশিত হয়।</p></div></div></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  componentWillUnmount() { clearTimeout(this.tt); }
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const cat = this.state.cat ?? 'সব বিভাগ';
+    const sort = this.state.sort ?? 'সাম্প্রতিক';
+    const all = [
+      { title: 'ফোরামে স্বাগতম: পোস্ট করার আগে একবার পড়ুন', cat: 'প্ল্যাটফর্ম ফিডব্যাক', by: 'মডারেটর টিম', ini: 'মট', av: 'avatar--gold', replies: 12, views: 4100, order: 0, pinned: true, solved: false, last: 'গতকাল', pop: 100 },
+      { title: 'রাগ নিয়ন্ত্রণে নিজের অভিজ্ঞতা: কী কাজ করেছে, কী করেনি', cat: 'তাযকিয়াহ', by: 'আব্দুল্লাহ আল মামুন', ini: 'আম', av: 'avatar--gold', replies: 18, views: 920, order: 1, solved: true, last: '১২ মিনিট আগে', pop: 80 },
+      { title: 'অফিসে জোহরের জামাত চালু করতে চাই, কীভাবে শুরু করব?', cat: 'ইবাদত', by: 'তানভীর ইসলাম', ini: 'তই', av: '', replies: 9, views: 610, order: 2, solved: true, last: '১ ঘণ্টা আগে', pop: 60 },
+      { title: 'ভিন্ন মাযহাবের পরিবারে বিয়ে: পারস্পরিক বোঝাপড়া কীভাবে রাখব?', cat: 'পরিবার ও সমাজ', by: 'নাম প্রকাশে অনিচ্ছুক', ini: 'অ', av: '', replies: 24, views: 1800, order: 3, solved: false, last: '৩ ঘণ্টা আগে', pop: 95 },
+      { title: 'আরবি শেখা শুরু করব কোন বই দিয়ে?', cat: 'ইলম ও পড়াশোনা', by: 'ফাতিমা রহমান', ini: 'ফর', av: 'avatar--gold', replies: 0, views: 140, order: 4, solved: false, last: '৫ ঘণ্টা আগে', pop: 10, unanswered: true },
+      { title: 'ফজরে নিয়মিত ওঠার জন্য আপনাদের রুটিন কী?', cat: 'ইবাদত', by: 'রাকিব হাসান', ini: 'রহ', av: '', replies: 31, views: 2300, order: 5, solved: false, last: 'গতকাল', pop: 98 },
+      { title: 'সন্তানকে প্রশ্ন করতে উৎসাহ দেব কীভাবে, যাতে সংশয় না জাগে?', cat: 'পরিবার ও সমাজ', by: 'নুসরাত জাহান', ini: 'নজ', av: 'avatar--gold', replies: 0, views: 95, order: 6, solved: false, last: 'গতকাল', pop: 8, unanswered: true },
+      { title: 'ঈমানের ছয় স্তম্ভ কোর্সের পাঠ ৮ নিয়ে একটি প্রশ্ন', cat: 'আকীদাহ ও ঈমান', by: 'সাকিব আহমেদ', ini: 'সআ', av: '', replies: 4, views: 210, order: 7, solved: true, last: '২ দিন আগে', pop: 30 }
+    ];
+    const catDefs = ['সব বিভাগ', 'আকীদাহ ও ঈমান', 'ইবাদত', 'পরিবার ও সমাজ', 'তাযকিয়াহ', 'ইলম ও পড়াশোনা', 'প্ল্যাটফর্ম ফিডব্যাক'];
+    const catCounts = { 'সব বিভাগ': 1248, 'আকীদাহ ও ঈমান': 214, 'ইবাদত': 356, 'পরিবার ও সমাজ': 298, 'তাযকিয়াহ': 187, 'ইলম ও পড়াশোনা': 143, 'প্ল্যাটফর্ম ফিডব্যাক': 50 };
+    const cats = catDefs.map((label) => ({ label, count: bn(catCounts[label]), cls: label === cat ? 'is-active' : '', pressed: label === cat ? 'true' : 'false', pick: () => this.setState({ cat: label }) }));
+    const sorts = ['সাম্প্রতিক', 'জনপ্রিয়', 'উত্তরহীন'].map((label) => ({ label, cls: label === sort ? 'is-active' : '', sel: label === sort ? 'true' : 'false', pick: () => this.setState({ sort: label }) }));
+    let shown = all.filter((t) => cat === 'সব বিভাগ' || t.cat === cat);
+    if (sort === 'উত্তরহীন') shown = shown.filter((t) => t.unanswered);
+    if (sort === 'জনপ্রিয়') shown = shown.slice().sort((a, b) => b.pop - a.pop);
+    const fmt = (n) => n >= 1000 ? bn((n / 1000).toFixed(1).replace('.0', '')) + ' হাজার' : bn(n);
+    shown = shown.map((t) => ({ ...t, replies: bn(t.replies), views: fmt(t.views), pinned: !!t.pinned, unanswered: !!t.unanswered }));
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      cats, sorts, shown, empty: shown.length === 0,
+      countText: bn(shown.length) + 'টি আলোচনা দেখানো হচ্ছে',
+      newOpen: !!this.state.newOpen, openNew: () => this.setState({ newOpen: true }), closeNew: () => this.setState({ newOpen: false }),
+      submitNew: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ newOpen: false, toast: true }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: false }), 3200); },
+      toast: !!this.state.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

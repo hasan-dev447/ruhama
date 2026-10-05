@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · নোটিফিকেশন</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="dash" logged-in="{{true}}" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="section-sm" style="padding-top: 40px">
+      <div class="container" style="max-width: 840px">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Dashboard.dc.html">ড্যাশবোর্ড</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">নোটিফিকেশন</li></ol></nav>
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-top: 18px">
+          <div><h1 class="t-h1">নোটিফিকেশন</h1><p class="t-muted" role="status" style="margin-top: 4px">{{unreadText}}</p></div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+            <button type="button" class="btn btn-secondary btn-sm" onClick="{{markAll}}" disabled="{{noneUnread}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 7 17l-5-5"></path><path d="m22 10-7.5 7.5L13 16"></path></svg>সব পড়া হয়েছে</button>
+            <a href="ProfileSettings.dc.html#notify" class="btn btn-ghost btn-sm"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>পছন্দ ঠিক করুন</a>
+          </div>
+        </div>
+        <div class="tabs" role="tablist" aria-label="ফিল্টার" style="margin-top: 24px">
+          <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2"><button type="button" role="tab" class="tab {{t.cls}}" aria-selected="{{t.sel}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 28px; margin-top: 24px">
+          <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+            <section aria-label="{{g.label}}">
+              <h2 class="t-small" style="font-family: var(--rh-font-body); font-weight: 600; color: var(--rh-muted); margin-bottom: 10px">{{g.label}}</h2>
+              <div class="card" style="overflow: hidden">
+                <sc-for list="{{g.items}}" as="n" hint-placeholder-count="3">
+                  <button type="button" class="notif-item {{n.cls}}" onClick="{{n.read}}" style="padding: 18px 20px">
+                    <span class="notif-item__icon {{n.tone}}" style="width: 42px; height: 42px">
+                      <sc-if value="{{n.isAnswer}}" hint-placeholder-val="{{true}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="m9 12 2 2 4-4"></path></svg></sc-if>
+                      <sc-if value="{{n.isEvent}}" hint-placeholder-val="{{false}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg></sc-if>
+                      <sc-if value="{{n.isForum}}" hint-placeholder-val="{{false}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></sc-if>
+                      <sc-if value="{{n.isCourse}}" hint-placeholder-val="{{false}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></sc-if>
+                      <sc-if value="{{n.isSystem}}" hint-placeholder-val="{{false}}"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 3"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg></sc-if>
+                    </span>
+                    <span class="notif-item__text"><p style="font-weight: {{n.weight}}">{{n.text}}</p><time>{{n.time}}</time></span>
+                    <sc-if value="{{n.unread}}" hint-placeholder-val="{{false}}"><span class="unread-dot" aria-label="অপঠিত"></span></sc-if>
+                  </button>
+                </sc-for>
+              </div>
+            </section>
+          </sc-for>
+          <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+            <div class="card"><div class="empty"><span class="empty__icon" style="background: var(--rh-success-soft); color: var(--rh-success)"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><h2 class="t-h4">সব পড়া হয়ে গেছে</h2><p class="t-small t-muted">নতুন কিছু এলে এখানে দেখাবে। ততক্ষণে আজকের আয়াতটি পড়ে নিতে পারেন।</p><a href="Main.dc.html" class="btn btn-secondary btn-sm">হোমে যান</a></div></div>
+          </sc-if>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const read = this.state.read ?? [];
+    const allRead = !!this.state.allRead;
+    const tab = this.state.tab ?? 'all';
+    const base = [
+      { id: 1, g: 'আজ', kind: 'answer', text: 'আপনার প্রশ্ন “ভিন্ন মাযহাবের ইমামের পেছনে সালাত” এর উত্তর প্রকাশিত হয়েছে। রিভিউ করেছেন ড. মাহমুদুল হাসান।', time: '১০ মিনিট আগে', unread: true },
+      { id: 2, g: 'আজ', kind: 'event', text: 'আগামী শনিবার রাত ৯টায় “মতপার্থক্যের আদব” মজলিস। লিংক সেশনের ৩০ মিনিট আগে পাঠানো হবে।', time: '২ ঘণ্টা আগে', unread: true },
+      { id: 3, g: 'আজ', kind: 'forum', text: 'ফাতিমা রহমান আপনার আলোচনায় উত্তর দিয়েছেন: “রাগ নিয়ন্ত্রণে নিজের অভিজ্ঞতা”', time: '৫ ঘণ্টা আগে', unread: true },
+      { id: 4, g: 'এই সপ্তাহ', kind: 'course', text: '“ঈমানের ছয় স্তম্ভ” কোর্সে আপনার পরের পাঠ অপেক্ষা করছে: তাকদিরের প্রতি ঈমান।', time: 'গতকাল', unread: true },
+      { id: 5, g: 'এই সপ্তাহ', kind: 'forum', text: 'আপনার উত্তরটি ৩ জন “সহায়ক” হিসেবে চিহ্নিত করেছেন।', time: '২ দিন আগে', unread: false },
+      { id: 6, g: 'এই সপ্তাহ', kind: 'event', text: 'খুলনা সদর সার্কেলের সাপ্তাহিক বৈঠক শুক্রবার বাদ মাগরিব।', time: '৩ দিন আগে', unread: false },
+      { id: 7, g: 'আগে', kind: 'system', text: 'আপনার প্রোফাইল এখন পাবলিক। যেকোনো সময় সেটিংস থেকে বদলাতে পারবেন।', time: '২৮ সেপ্টেম্বর', unread: false },
+      { id: 8, g: 'আগে', kind: 'answer', text: 'আপনার প্রশ্নটি রিভিউয়ে পাঠানো হয়েছে: “ফ্রিল্যান্সিং আয়ের যাকাত”', time: '২ অক্টোবর', unread: false },
+      { id: 9, g: 'আগে', kind: 'system', text: 'আহলান ওয়া সাহলান! আপনার যাত্রা শুরু হলো। প্রথম ধাপ: কালেমা।', time: '১৫ সেপ্টেম্বর', unread: false }
+    ];
+    const items = base.map((n) => {
+      const unread = n.unread && !allRead && !read.includes(n.id);
+      return {
+        ...n, unread, cls: unread ? 'is-unread' : '', weight: unread ? '600' : '400',
+        tone: n.kind === 'event' ? 'notif-item__icon--gold' : (n.kind === 'answer' ? 'notif-item__icon--green' : ''),
+        isAnswer: n.kind === 'answer', isEvent: n.kind === 'event', isForum: n.kind === 'forum', isCourse: n.kind === 'course', isSystem: n.kind === 'system',
+        read: () => this.setState({ read: read.concat(n.id) })
+      };
+    });
+    const visible = items.filter((n) => tab === 'all' || n.unread);
+    const groups = ['আজ', 'এই সপ্তাহ', 'আগে'].map((label) => ({ label, items: visible.filter((n) => n.g === label) })).filter((g) => g.items.length);
+    const unreadCount = items.filter((n) => n.unread).length;
+    const tabs = [['all', 'সব'], ['unread', 'অপঠিত (' + bn(unreadCount) + ')']].map(([k, label]) => ({ label, cls: k === tab ? 'is-active' : '', sel: k === tab ? 'true' : 'false', pick: () => this.setState({ tab: k }) }));
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      tabs, groups, empty: groups.length === 0,
+      unreadText: unreadCount ? bn(unreadCount) + 'টি অপঠিত নোটিফিকেশন' : 'সব নোটিফিকেশন পড়া হয়েছে',
+      noneUnread: unreadCount === 0,
+      markAll: () => this.setState({ allRead: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

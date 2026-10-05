@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · স্থানীয় সার্কেল</title>
+<meta name="description" content="আপনার জেলায় Ruhama স্থানীয় সার্কেল খুঁজুন: সাপ্তাহিক কুরআন পাঠ, ইলম ও ভ্রাতৃত্বের বৈঠক।">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="majlis" logged-in="{{true}}" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" aria-labelledby="c-title">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li><a href="Events.dc.html">মজলিস</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">স্থানীয় সার্কেল</li></ol></nav>
+        <h1 id="c-title" class="t-h1">স্থানীয় সার্কেল</h1>
+        <p class="lead">নিজের এলাকায় কয়েকজন মিলে নিয়মিত বসা: কুরআন পাঠ, ইলম চর্চা আর একে অপরের খোঁজ রাখা। ভ্রাতৃত্ব শুরু হয় এখান থেকেই।</p>
+        <div class="card" style="margin-top: 28px; padding: 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; max-width: 880px">
+          <div class="select-wrap" style="flex: 1 1 260px">
+            <label for="c-district" class="sr-only">জেলা নির্বাচন করুন</label>
+            <select id="c-district" class="select" onChange="{{onDistrict}}" style="min-height: 52px">
+              <option value="সব">সব জেলা</option>
+              <optgroup label="ঢাকা বিভাগ"><option>ঢাকা</option><option>গাজীপুর</option><option>নারায়ণগঞ্জ</option><option>নরসিংদী</option><option>মানিকগঞ্জ</option><option>মুন্সীগঞ্জ</option><option>টাঙ্গাইল</option><option>কিশোরগঞ্জ</option><option>ফরিদপুর</option><option>গোপালগঞ্জ</option><option>মাদারীপুর</option><option>রাজবাড়ী</option><option>শরীয়তপুর</option></optgroup>
+              <optgroup label="চট্টগ্রাম বিভাগ"><option>চট্টগ্রাম</option><option>কক্সবাজার</option><option>কুমিল্লা</option><option>ফেনী</option><option>নোয়াখালী</option><option>লক্ষ্মীপুর</option><option>চাঁদপুর</option><option>ব্রাহ্মণবাড়িয়া</option><option>রাঙ্গামাটি</option><option>খাগড়াছড়ি</option><option>বান্দরবান</option></optgroup>
+              <optgroup label="রাজশাহী বিভাগ"><option>রাজশাহী</option><option>নাটোর</option><option>নওগাঁ</option><option>চাঁপাইনবাবগঞ্জ</option><option>পাবনা</option><option>সিরাজগঞ্জ</option><option>বগুড়া</option><option>জয়পুরহাট</option></optgroup>
+              <optgroup label="খুলনা বিভাগ"><option>খুলনা</option><option>বাগেরহাট</option><option>সাতক্ষীরা</option><option>যশোর</option><option>ঝিনাইদহ</option><option>মাগুরা</option><option>নড়াইল</option><option>কুষ্টিয়া</option><option>চুয়াডাঙ্গা</option><option>মেহেরপুর</option></optgroup>
+              <optgroup label="বরিশাল বিভাগ"><option>বরিশাল</option><option>পটুয়াখালী</option><option>ভোলা</option><option>পিরোজপুর</option><option>ঝালকাঠি</option><option>বরগুনা</option></optgroup>
+              <optgroup label="সিলেট বিভাগ"><option>সিলেট</option><option>মৌলভীবাজার</option><option>হবিগঞ্জ</option><option>সুনামগঞ্জ</option></optgroup>
+              <optgroup label="রংপুর বিভাগ"><option>রংপুর</option><option>দিনাজপুর</option><option>ঠাকুরগাঁও</option><option>পঞ্চগড়</option><option>নীলফামারী</option><option>লালমনিরহাট</option><option>কুড়িগ্রাম</option><option>গাইবান্ধা</option></optgroup>
+              <optgroup label="ময়মনসিংহ বিভাগ"><option>ময়মনসিংহ</option><option>জামালপুর</option><option>শেরপুর</option><option>নেত্রকোনা</option></optgroup>
+            </select>
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+          </div>
+          <div class="chip-row" role="group" aria-label="সার্কেলের ধরন"><sc-for list="{{types}}" as="t" hint-placeholder-count="4"><button type="button" class="chip {{t.cls}}" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}">{{t.label}}</button></sc-for></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container">
+        <p class="t-small t-muted" role="status" style="margin-bottom: 18px">{{countText}}</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 20px">
+          <sc-for list="{{shown}}" as="c" hint-placeholder-count="6">
+            <article class="card card-hover circle-card">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+                <span class="icon-tile icon-tile--teal"><svg class="ic ic-lg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="3" r="1.6"></circle><circle cx="20" cy="15" r="1.6"></circle><circle cx="5" cy="17" r="1.6"></circle></svg></span>
+                <span class="badge {{c.badge}}">{{c.type}}</span>
+              </div>
+              <div><h2 class="t-h4" style="font-size: 19px"><a href="CircleDetail.dc.html" style="color: var(--rh-ink); text-decoration: none">{{c.name}}</a></h2><p class="t-small t-muted">{{c.district}} · {{c.focus}}</p></div>
+              <div class="info-list" style="gap: 8px">
+                <div><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg><span>{{c.when}}</span></div>
+                <div><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span>{{c.members}}</span></div>
+              </div>
+              <div style="margin-top: auto; padding: 12px 14px; border-radius: 10px; background: var(--rh-accent-soft); font-size: 14px"><span style="color: var(--rh-accent-ink); font-weight: 600">পরের বৈঠক:</span> {{c.next}}</div>
+              <div style="display: flex; gap: 8px"><a href="CircleDetail.dc.html" class="btn btn-primary btn-sm" style="flex: 1">যুক্ত হতে চাই</a><a href="CircleDetail.dc.html" class="btn btn-ghost btn-sm">বিস্তারিত</a></div>
+            </article>
+          </sc-for>
+        </div>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+          <div class="card pattern-host" style="text-align: center">
+            <div class="rh-pattern" aria-hidden="true"></div>
+            <div class="empty" style="padding-block: 56px">
+              <span class="empty__icon"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg></span>
+              <h2 class="t-h4">{{emptyTitle}}</h2>
+              <p class="t-small t-muted" style="max-width: 420px">প্রথম সার্কেলটি আপনিই শুরু করতে পারেন। আমরা আলোচনার সিলেবাস, সমন্বয়কের গাইড ও আলিমের অনলাইন সহায়তা দেব।</p>
+              <a href="Join.dc.html" class="btn btn-primary btn-sm">নতুন সার্কেল শুরু করুন</a>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const district = this.state.district ?? 'সব';
+    const type = this.state.type ?? 'সব';
+    const all = [
+      { name: 'খুলনা সদর সার্কেল', district: 'খুলনা', type: 'ভাইদের', focus: 'কুরআন পাঠ ও আকীদাহ', when: 'সাপ্তাহিক · শুক্রবার বাদ মাগরিব', members: '২৪ জন সদস্য', next: '৯ অক্টোবর, শুক্রবার' },
+      { name: 'সোনাডাঙ্গা বোনদের সার্কেল', district: 'খুলনা', type: 'বোনদের', focus: 'তাযকিয়াহ ও আখলাক', when: 'সাপ্তাহিক · শনিবার সকাল ১০টা', members: '১৬ জন সদস্য', next: '১০ অক্টোবর, শনিবার' },
+      { name: 'ধানমন্ডি তরুণ সার্কেল', district: 'ঢাকা', type: 'ভাইদের', focus: 'ইলম ও দাওয়াহ', when: 'সাপ্তাহিক · বৃহস্পতিবার রাত ৮টা', members: '৪২ জন সদস্য', next: '৮ অক্টোবর, বৃহস্পতিবার' },
+      { name: 'মিরপুর পারিবারিক সার্কেল', district: 'ঢাকা', type: 'পারিবারিক', focus: 'সীরাত ও পারিবারিক আদব', when: 'মাসিক · প্রথম শুক্রবার বিকেল', members: '৩১টি পরিবার', next: '৬ নভেম্বর, শুক্রবার' },
+      { name: 'আগ্রাবাদ সার্কেল', district: 'চট্টগ্রাম', type: 'ভাইদের', focus: 'ফিকহুল ইবাদাত', when: 'পাক্ষিক · শুক্রবার বাদ আসর', members: '১৮ জন সদস্য', next: '১৬ অক্টোবর, শুক্রবার' },
+      { name: 'বাগেরহাট সদর পারিবারিক সার্কেল', district: 'বাগেরহাট', type: 'পারিবারিক', focus: 'কুরআন পাঠ', when: 'মাসিক · দ্বিতীয় রবিবার বাদ ইশা', members: '১২টি পরিবার', next: '১১ অক্টোবর, রবিবার' },
+      { name: 'জিন্দাবাজার বোনদের সার্কেল', district: 'সিলেট', type: 'বোনদের', focus: 'তাফসির', when: 'সাপ্তাহিক · মঙ্গলবার বিকেল ৪টা', members: '১৪ জন সদস্য', next: '৬ অক্টোবর, মঙ্গলবার' },
+      { name: 'সাহেববাজার সার্কেল', district: 'রাজশাহী', type: 'ভাইদের', focus: 'সীরাত', when: 'সাপ্তাহিক · শুক্রবার বাদ জুমা', members: '২০ জন সদস্য', next: '৯ অক্টোবর, শুক্রবার' }
+    ];
+    const badgeOf = { 'ভাইদের': 'badge-cat', 'বোনদের': 'badge-level', 'পারিবারিক': 'badge-reviewed' };
+    const types = ['সব', 'ভাইদের', 'বোনদের', 'পারিবারিক'].map((label) => ({ label, cls: label === type ? 'is-active' : '', pressed: label === type ? 'true' : 'false', pick: () => this.setState({ type: label }) }));
+    const shown = all.filter((c) => (district === 'সব' || c.district === district) && (type === 'সব' || c.type === type)).map((c) => ({ ...c, badge: badgeOf[c.type] }));
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      types, shown, empty: shown.length === 0,
+      emptyTitle: (district === 'সব' ? 'এই ধরনের' : district + ' জেলায়') + ' এখনো কোনো সার্কেল নেই',
+      countText: (district === 'সব' ? '৬৪ জেলার মধ্যে ' : district + ' জেলায় ') + bn(shown.length) + 'টি সার্কেল পাওয়া গেছে',
+      onDistrict: (e) => this.setState({ district: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>

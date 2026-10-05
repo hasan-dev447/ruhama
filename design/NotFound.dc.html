@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>পাতাটি পাওয়া যায়নি · Ruhama</title>
+<meta name="robots" content="noindex">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <dc-import name="SiteHeader" active="none" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main" class="error-wrap">
+    <div class="rh-pattern" aria-hidden="true" style="z-index: -1"></div>
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div style="max-width: 640px; display: flex; flex-direction: column; align-items: center; gap: 18px">
+      <svg viewBox="0 0 520 90" aria-hidden="true" style="width: min(520px, 100%); height: auto; overflow: visible">
+        <path d="M0 60C80 20 150 80 230 50S330 20 360 45" style="fill: none; stroke: var(--rh-accent); stroke-width: 1.75; stroke-linecap: round"></path>
+        <path d="M360 45C380 62 372 82 352 78C336 74 344 52 368 50C396 48 420 70 452 64" style="fill: none; stroke: var(--rh-accent); stroke-width: 1.75; stroke-linecap: round; stroke-dasharray: 4 6; opacity: 0.7"></path>
+        <circle cx="230" cy="50" r="5" style="fill: var(--rh-accent); stroke: var(--rh-bg); stroke-width: 3"></circle>
+        <circle cx="90" cy="41" r="4" style="fill: var(--rh-accent); stroke: var(--rh-bg); stroke-width: 3"></circle>
+      </svg>
+      <p class="error-code" aria-hidden="true">৪০৪</p>
+      <h1 class="t-h2">এই পাতাটি খুঁজে পাওয়া যায়নি</h1>
+      <p class="t-body-lg t-muted">লিংকটি হয়তো বদলে গেছে বা পাতাটি সরিয়ে নেওয়া হয়েছে। সুতো এখানে থেমেছে, কিন্তু পথ শেষ হয়নি।</p>
+      <form role="search" class="input-icon" style="width: 100%; max-width: 520px; margin-top: 6px" onSubmit="{{noop}}">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <label for="nf-search" class="sr-only">সাইটে খুঁজুন</label>
+        <input id="nf-search" class="input" type="search" placeholder="যা খুঁজছিলেন তা এখানে লিখুন" style="min-height: 56px">
+      </form>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 4px">
+        <a href="Main.dc.html" class="btn btn-primary">হোমে ফিরুন</a>
+        <a href="IlmCenter.dc.html" class="btn btn-secondary">ইলম কেন্দ্র</a>
+        <a href="QA.dc.html" class="btn btn-ghost">প্রশ্ন করুন</a>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    return { theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }), noop: (e) => { if (e && e.preventDefault) e.preventDefault(); } };
+  }
+}
+</script>
+</body>
+</html>

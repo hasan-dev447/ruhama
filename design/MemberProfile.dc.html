@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>আব্দুল্লাহ আল মামুন · সদস্য · Ruhama</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="dash" logged-in="{{true}}" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <div class="cover-band" aria-hidden="true" style="height: 160px">
+      <div class="rh-pattern"></div>
+    </div>
+    <div class="container" style="max-width: 1008px; padding-bottom: 96px">
+      <div class="profile-head">
+        <span class="avatar-hero" aria-hidden="true">আম</span>
+        <div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 6px; padding-bottom: 4px">
+          <h1 class="t-h2">আব্দুল্লাহ আল মামুন</h1>
+          <div class="stat-line"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>খুলনা</span><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>যোগদান: সেপ্টেম্বর ২০২৬</span><span class="badge badge-cat">সদস্য</span></div>
+        </div>
+        <sc-if value="{{isOwner}}" hint-placeholder-val="{{true}}">
+          <a href="ProfileSettings.dc.html" class="btn btn-secondary btn-sm" style="margin-bottom: 4px">প্রোফাইল সম্পাদনা</a>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{isPublic}}" hint-placeholder-val="{{true}}">
+        <section class="card card-pad" aria-labelledby="mp-journey" style="margin-top: 36px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 18px"><h2 id="mp-journey" class="t-h4">যাত্রার ধাপ</h2><span class="t-small" style="color: var(--rh-accent-ink); font-weight: 600">৮ ধাপের ৫ম: তাযকিয়াহ</span></div>
+          <div style="overflow-x: auto">
+            <div style="min-width: 620px">
+              <svg class="thread-h" viewBox="0 0 1000 80" aria-hidden="true">
+                <path d="M62.5 40C104 18 146 18 187.5 40C229 62 271 62 312.5 40C354 18 396 18 437.5 40C479 62 521 62 562.5 40C604 18 646 18 687.5 40C729 62 771 62 812.5 40C854 18 896 18 937.5 40" style="fill: none; stroke: var(--rh-border-strong); stroke-width: 1.5; stroke-dasharray: 3 5"></path>
+                <path d="M62.5 40C104 18 146 18 187.5 40C229 62 271 62 312.5 40C354 18 396 18 437.5 40C479 62 521 62 562.5 40" style="fill: none; stroke: var(--rh-accent); stroke-width: 2.5; stroke-linecap: round"></path>
+                <circle class="dash-node is-done" cx="62.5" cy="40" r="11"></circle><circle class="dash-node is-done" cx="187.5" cy="40" r="11"></circle><circle class="dash-node is-done" cx="312.5" cy="40" r="11"></circle><circle class="dash-node is-done" cx="437.5" cy="40" r="11"></circle><circle class="dash-node is-now" cx="562.5" cy="40" r="11"></circle><circle class="dash-node" cx="687.5" cy="40" r="11"></circle><circle class="dash-node" cx="812.5" cy="40" r="11"></circle><circle class="dash-node" cx="937.5" cy="40" r="11"></circle>
+              </svg>
+              <ol class="list-reset t-caption" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); text-align: center; color: var(--rh-muted)">
+                <li>কালেমা</li><li>ঈমান</li><li>সঠিক ইলম</li><li>আমল</li><li style="color: var(--rh-accent-ink); font-weight: 600">তাযকিয়াহ</li><li>আখলাক</li><li>ভ্রাতৃত্ব</li><li>উম্মাহর ঐক্য</li>
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 24px; margin-top: 24px; align-items: start">
+          <section class="card card-pad" aria-labelledby="mp-done">
+            <h2 id="mp-done" class="t-h4" style="margin-bottom: 12px">সম্পন্ন কোর্স</h2>
+            <ul class="list-reset">
+              <li class="row-link" style="padding: 12px 0"><span class="icon-tile" style="width: 40px; height: 40px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg></span><span style="flex: 1"><span class="row-link__title" style="display: block">কালেমার অর্থ ও দাবি</span><span class="t-small t-muted">সম্পন্ন: আগস্ট ২০২৬</span></span></li>
+              <li class="row-link" style="padding: 12px 0"><span class="icon-tile" style="width: 40px; height: 40px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg></span><span style="flex: 1"><span class="row-link__title" style="display: block">মতপার্থক্যের আদব: সাহাবিদের দৃষ্টান্ত</span><span class="t-small t-muted">সম্পন্ন: সেপ্টেম্বর ২০২৬</span></span></li>
+            </ul>
+          </section>
+          <section class="card card-pad" aria-labelledby="mp-act">
+            <h2 id="mp-act" class="t-h4" style="margin-bottom: 12px">সাম্প্রতিক পাবলিক কার্যক্রম</h2>
+            <ul class="list-reset">
+              <li><a href="ForumThread.dc.html" class="row-link" style="padding: 12px 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-primary)"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg><span style="flex: 1"><span class="row-link__title" style="display: block">ফোরামে আলোচনা শুরু করেছেন: “রাগ নিয়ন্ত্রণে নিজের অভিজ্ঞতা”</span><span class="t-small t-muted">৩ দিন আগে</span></span></a></li>
+              <li><a href="ForumThread.dc.html" class="row-link" style="padding: 12px 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-success)"><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path></svg><span style="flex: 1"><span class="row-link__title" style="display: block">একটি উত্তর ৩ জন “সহায়ক” হিসেবে চিহ্নিত করেছেন</span><span class="t-small t-muted">সপ্তাহখানেক আগে</span></span></a></li>
+              <li><a href="Events.dc.html" class="row-link" style="padding: 12px 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-accent-ink)"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg><span style="flex: 1"><span class="row-link__title" style="display: block">খুলনা সদর সার্কেলের নিয়মিত সদস্য</span><span class="t-small t-muted">সেপ্টেম্বর থেকে</span></span></a></li>
+            </ul>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isPrivate}}" hint-placeholder-val="{{false}}">
+        <div class="card" style="margin-top: 36px"><div class="empty"><span class="empty__icon"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span><h2 class="t-h4">এই প্রোফাইলটি প্রাইভেট</h2><p class="t-small t-muted" style="max-width: 380px">সদস্য তাঁর কার্যক্রম শুধু নিজের জন্য রেখেছেন। নাম ও জেলা ছাড়া আর কিছু দেখানো হচ্ছে না।</p></div></div>
+      </sc-if>
+
+      <div class="privacy-note" style="margin-top: 24px">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span><strong style="color: var(--rh-ink)">গোপনীয়তা:</strong> এই পাতায় শুধু সেটুকুই দেখা যায় যা সদস্য নিজে পাবলিক রেখেছেন। ফোন নম্বর, ইমেইল, জমা দেওয়া প্রশ্ন ও সংরক্ষিত লেখা কখনো অন্য কাউকে দেখানো হয় না। <a class="link" href="ProfileSettings.dc.html#privacy">প্রাইভেসি সেটিংস</a></span>
+      </div>
+    </div>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"privateProfile":{"editor":"boolean","default":false},"ownerView":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":2000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const priv = !!this.props.privateProfile;
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      isPublic: !priv, isPrivate: priv, isOwner: this.props.ownerView ?? true
+    };
+  }
+}
+</script>
+</body>
+</html>

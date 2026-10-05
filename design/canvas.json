@@ -1,0 +1,539 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "About.dc.html": {
+      "expand": "fill",
+      "h": 5600,
+      "is_interactive": true,
+      "title": "আমাদের পরিচয় · ঘোষণাপত্র",
+      "w": 1440,
+      "x": 0,
+      "y": 15740
+    },
+    "Article.dc.html": {
+      "expand": "fill",
+      "h": 5400,
+      "is_interactive": true,
+      "title": "প্রবন্ধ",
+      "w": 1440,
+      "x": 3040,
+      "y": 15740
+    },
+    "CircleDetail.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "সার্কেল বিস্তারিত",
+      "w": 1440,
+      "x": 6080,
+      "y": 41540
+    },
+    "Circles.dc.html": {
+      "expand": "fill",
+      "h": 2500,
+      "is_interactive": true,
+      "title": "স্থানীয় সার্কেল",
+      "w": 1440,
+      "x": 4560,
+      "y": 41540
+    },
+    "CirclesMobile.dc.html": {
+      "h": 5200,
+      "is_interactive": true,
+      "title": "স্থানীয় সার্কেল · মোবাইল",
+      "w": 390,
+      "x": 11580,
+      "y": 41540
+    },
+    "Courses.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "শেখার পথ · কোর্স",
+      "w": 1440,
+      "x": 0,
+      "y": 21760
+    },
+    "Dashboard.dc.html": {
+      "expand": "fill",
+      "h": 2500,
+      "is_interactive": true,
+      "title": "সদস্য ড্যাশবোর্ড",
+      "w": 1440,
+      "x": 4560,
+      "y": 25180
+    },
+    "DesignSystem.dc.html": {
+      "expand": "fill",
+      "h": 7000,
+      "is_interactive": true,
+      "title": "ডিজাইন সিস্টেম ও কম্পোনেন্ট",
+      "w": 1440,
+      "x": 0,
+      "y": 8320
+    },
+    "EventDetail.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "মজলিস · বিস্তারিত ও রেজিস্ট্রেশন",
+      "w": 1440,
+      "x": 1520,
+      "y": 25180
+    },
+    "Events.dc.html": {
+      "expand": "fill",
+      "h": 2600,
+      "is_interactive": true,
+      "title": "মজলিস",
+      "w": 1440,
+      "x": 0,
+      "y": 25180
+    },
+    "Forum.dc.html": {
+      "expand": "fill",
+      "h": 2500,
+      "is_interactive": true,
+      "title": "আলোচনা ফোরাম",
+      "w": 1440,
+      "x": 3040,
+      "y": 35120
+    },
+    "ForumMobile.dc.html": {
+      "h": 4400,
+      "is_interactive": true,
+      "title": "ফোরাম · মোবাইল",
+      "w": 390,
+      "x": 7020,
+      "y": 35120
+    },
+    "ForumThread.dc.html": {
+      "expand": "fill",
+      "h": 2900,
+      "is_interactive": true,
+      "title": "ফোরাম থ্রেড",
+      "w": 1440,
+      "x": 4560,
+      "y": 35120
+    },
+    "ForumThreadMobile.dc.html": {
+      "h": 5000,
+      "is_interactive": true,
+      "title": "ফোরাম থ্রেড · মোবাইল",
+      "w": 390,
+      "x": 7490,
+      "y": 35120
+    },
+    "HeaderNotif.dc.html": {
+      "h": 640,
+      "is_interactive": true,
+      "title": "হেডার · লগইন অবস্থা · নোটিফিকেশন প্যানেল",
+      "w": 1440,
+      "x": 3040,
+      "y": 41540
+    },
+    "HeaderUserMenu.dc.html": {
+      "h": 440,
+      "is_interactive": true,
+      "title": "হেডার · লগইন অবস্থা · অ্যাকাউন্ট মেনু",
+      "w": 1440,
+      "x": 3040,
+      "y": 42300
+    },
+    "HomeDark.dc.html": {
+      "expand": "fill",
+      "h": 7900,
+      "is_interactive": true,
+      "title": "হোম · ডার্ক",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "HomeMobile.dc.html": {
+      "h": 8000,
+      "is_interactive": true,
+      "title": "হোম · মোবাইল ৩৯০",
+      "w": 390,
+      "x": 3040,
+      "y": 0
+    },
+    "Ikhtilaf.dc.html": {
+      "expand": "fill",
+      "h": 3600,
+      "is_interactive": true,
+      "title": "মতপার্থক্যের বিষয়",
+      "w": 1440,
+      "x": 4560,
+      "y": 15740
+    },
+    "IlmCenter.dc.html": {
+      "expand": "fill",
+      "h": 3000,
+      "is_interactive": true,
+      "title": "ইলম কেন্দ্র",
+      "w": 1440,
+      "x": 1520,
+      "y": 15740
+    },
+    "Join.dc.html": {
+      "expand": "fill",
+      "h": 2200,
+      "is_interactive": true,
+      "title": "যুক্ত হোন",
+      "w": 1440,
+      "x": 3040,
+      "y": 25180
+    },
+    "Lesson.dc.html": {
+      "expand": "fill",
+      "h": 3000,
+      "is_interactive": true,
+      "title": "শেখার পথ · পাঠ",
+      "w": 1440,
+      "x": 1520,
+      "y": 21760
+    },
+    "Login.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "title": "লগইন",
+      "w": 1440,
+      "x": 6080,
+      "y": 25180
+    },
+    "Main.dc.html": {
+      "expand": "fill",
+      "h": 7900,
+      "is_interactive": true,
+      "title": "হোম · লাইট",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "MemberProfile.dc.html": {
+      "expand": "fill",
+      "h": 2000,
+      "is_interactive": true,
+      "title": "সদস্য প্রোফাইল (পাবলিক)",
+      "w": 1440,
+      "x": 4560,
+      "y": 28300
+    },
+    "NotFound.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "title": "৪০৪",
+      "w": 1440,
+      "x": 7600,
+      "y": 41540
+    },
+    "Notifications.dc.html": {
+      "expand": "fill",
+      "h": 2000,
+      "is_interactive": true,
+      "title": "নোটিফিকেশন",
+      "w": 1440,
+      "x": 1520,
+      "y": 41540
+    },
+    "NotificationsMobile.dc.html": {
+      "h": 3000,
+      "is_interactive": true,
+      "title": "নোটিফিকেশন · মোবাইল",
+      "w": 390,
+      "x": 11110,
+      "y": 41540
+    },
+    "ProfileSettings.dc.html": {
+      "expand": "fill",
+      "h": 3600,
+      "is_interactive": true,
+      "title": "প্রোফাইল সেটিংস",
+      "w": 1440,
+      "x": 6080,
+      "y": 28300
+    },
+    "ProfileSettingsMobile.dc.html": {
+      "h": 6400,
+      "is_interactive": true,
+      "title": "প্রোফাইল সেটিংস · মোবাইল",
+      "w": 390,
+      "x": 8540,
+      "y": 28300
+    },
+    "QA.dc.html": {
+      "expand": "fill",
+      "h": 2900,
+      "is_interactive": true,
+      "title": "প্রশ্নোত্তর",
+      "w": 1440,
+      "x": 3040,
+      "y": 21760
+    },
+    "QAAnswer.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "প্রশ্নোত্তর · উত্তর",
+      "w": 1440,
+      "x": 4560,
+      "y": 21760
+    },
+    "Register.dc.html": {
+      "expand": "fill",
+      "h": 1100,
+      "is_interactive": true,
+      "title": "রেজিস্টার",
+      "w": 1440,
+      "x": 7600,
+      "y": 25180
+    },
+    "ScholarProfile.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "স্কলার প্রোফাইল",
+      "w": 1440,
+      "x": 1520,
+      "y": 28300
+    },
+    "ScholarProfileMobile.dc.html": {
+      "h": 5000,
+      "is_interactive": true,
+      "title": "স্কলার প্রোফাইল · মোবাইল",
+      "w": 390,
+      "x": 8070,
+      "y": 28300
+    },
+    "Scholars.dc.html": {
+      "expand": "fill",
+      "h": 2400,
+      "is_interactive": true,
+      "title": "স্কলার তালিকা",
+      "w": 1440,
+      "x": 0,
+      "y": 28300
+    },
+    "ScholarsMobile.dc.html": {
+      "h": 5600,
+      "is_interactive": true,
+      "title": "স্কলার তালিকা · মোবাইল",
+      "w": 390,
+      "x": 7600,
+      "y": 28300
+    },
+    "Search.dc.html": {
+      "expand": "fill",
+      "h": 2600,
+      "is_interactive": true,
+      "title": "সার্চ রেজাল্ট",
+      "w": 1440,
+      "x": 0,
+      "y": 41540
+    },
+    "SearchMobile.dc.html": {
+      "h": 4800,
+      "is_interactive": true,
+      "title": "সার্চ · মোবাইল",
+      "w": 390,
+      "x": 10640,
+      "y": 41540
+    },
+    "ServerError.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "title": "এরর পেজ",
+      "w": 1440,
+      "x": 9120,
+      "y": 41540
+    },
+    "SiteFooter.dc.html": {
+      "h": 660,
+      "is_interactive": true,
+      "title": "কম্পোনেন্ট · ফুটার",
+      "w": 1440,
+      "x": 1520,
+      "y": 8520
+    },
+    "SiteHeader.dc.html": {
+      "h": 80,
+      "is_interactive": true,
+      "title": "কম্পোনেন্ট · হেডার",
+      "w": 1440,
+      "x": 1520,
+      "y": 8320
+    },
+    "SpeakerProfile.dc.html": {
+      "expand": "fill",
+      "h": 2900,
+      "is_interactive": true,
+      "title": "লেখক / বক্তা প্রোফাইল",
+      "w": 1440,
+      "x": 3040,
+      "y": 28300
+    },
+    "VideoDetail.dc.html": {
+      "expand": "fill",
+      "h": 2800,
+      "is_interactive": true,
+      "title": "ভিডিও ডিটেইল",
+      "w": 1440,
+      "x": 1520,
+      "y": 35120
+    },
+    "VideoDetailMobile.dc.html": {
+      "h": 5600,
+      "is_interactive": true,
+      "title": "ভিডিও ডিটেইল · মোবাইল",
+      "w": 390,
+      "x": 6550,
+      "y": 35120
+    },
+    "Videos.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "ভিডিও লাইব্রেরি",
+      "w": 1440,
+      "x": 0,
+      "y": 35120
+    },
+    "VideosMobile.dc.html": {
+      "h": 6000,
+      "is_interactive": true,
+      "title": "ভিডিও লাইব্রেরি · মোবাইল",
+      "w": 390,
+      "x": 6080,
+      "y": 35120
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-04T10:30:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "rowDs": {
+      "kind": "title1",
+      "maxW": 2960,
+      "text": "২ · ডিজাইন সিস্টেম ও কম্পোনেন্ট লাইব্রেরি",
+      "w": 240,
+      "x": 0,
+      "y": 8020
+    },
+    "rowHome": {
+      "kind": "title1",
+      "maxW": 3430,
+      "text": "১ · হোম পেজ: লাইট, ডার্ক ও মোবাইল",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "rowIlm": {
+      "kind": "title1",
+      "maxW": 6000,
+      "text": "৩ · পরিচয়, ইলম কেন্দ্র, প্রবন্ধ ও ইখতিলাফ",
+      "w": 240,
+      "x": 0,
+      "y": 15440
+    },
+    "rowJoin": {
+      "kind": "title1",
+      "maxW": 8000,
+      "text": "৫ · মজলিস, যুক্ত হোন, ড্যাশবোর্ড ও লগইন",
+      "w": 240,
+      "x": 0,
+      "y": 24880
+    },
+    "rowLearn": {
+      "kind": "title1",
+      "maxW": 6000,
+      "text": "৪ · শেখার পথ ও প্রশ্নোত্তর",
+      "w": 240,
+      "x": 0,
+      "y": 21460
+    },
+    "rowMedia": {
+      "kind": "title1",
+      "maxW": 7880,
+      "text": "৭ · ভিডিও লাইব্রেরি ও আলোচনা ফোরাম",
+      "w": 240,
+      "x": 0,
+      "y": 34820
+    },
+    "rowProfiles": {
+      "kind": "title1",
+      "maxW": 8000,
+      "text": "৬ · স্কলার, লেখক ও সদস্য প্রোফাইল, সেটিংস",
+      "w": 240,
+      "x": 0,
+      "y": 28000
+    },
+    "rowUtil": {
+      "kind": "title1",
+      "maxW": 8000,
+      "text": "৮ · সার্চ, নোটিফিকেশন, লগইন হেডার, সার্কেল ও এরর",
+      "w": 240,
+      "x": 0,
+      "y": 41240
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "HomeDark.dc.html",
+    "HomeMobile.dc.html",
+    "DesignSystem.dc.html",
+    "SiteHeader.dc.html",
+    "SiteFooter.dc.html",
+    "About.dc.html",
+    "IlmCenter.dc.html",
+    "Article.dc.html",
+    "Ikhtilaf.dc.html",
+    "Courses.dc.html",
+    "Lesson.dc.html",
+    "QA.dc.html",
+    "QAAnswer.dc.html",
+    "Events.dc.html",
+    "EventDetail.dc.html",
+    "Join.dc.html",
+    "Dashboard.dc.html",
+    "Login.dc.html",
+    "Register.dc.html",
+    "Scholars.dc.html",
+    "ScholarProfile.dc.html",
+    "SpeakerProfile.dc.html",
+    "MemberProfile.dc.html",
+    "ProfileSettings.dc.html",
+    "ScholarsMobile.dc.html",
+    "ScholarProfileMobile.dc.html",
+    "ProfileSettingsMobile.dc.html",
+    "Videos.dc.html",
+    "VideoDetail.dc.html",
+    "Forum.dc.html",
+    "ForumThread.dc.html",
+    "VideosMobile.dc.html",
+    "VideoDetailMobile.dc.html",
+    "ForumMobile.dc.html",
+    "ForumThreadMobile.dc.html",
+    "Search.dc.html",
+    "Notifications.dc.html",
+    "HeaderNotif.dc.html",
+    "HeaderUserMenu.dc.html",
+    "Circles.dc.html",
+    "CircleDetail.dc.html",
+    "NotFound.dc.html",
+    "ServerError.dc.html",
+    "SearchMobile.dc.html",
+    "NotificationsMobile.dc.html",
+    "CirclesMobile.dc.html"
+  ],
+  "pages": [],
+  "title": "Ruhama ওয়েবসাইট UI"
+}

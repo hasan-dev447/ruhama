@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · প্রশ্নোত্তর</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="qa" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" aria-labelledby="qa-title">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">প্রশ্নোত্তর</li></ol></nav>
+        <h1 id="qa-title" class="t-h1">প্রশ্নোত্তর</h1>
+        <p class="lead">দ্বীনি জিজ্ঞাসার উত্তর দেন আমাদের আলিম প্যানেল; প্রকাশের আগে প্রতিটি উত্তর দ্বিতীয় একজন আলিম রিভিউ করেন।</p>
+        <div class="input-icon" style="max-width: 640px; margin-top: 28px">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <label for="qa-search" class="sr-only">প্রশ্ন খুঁজুন</label>
+          <input id="qa-search" class="input" type="search" placeholder="আগে উত্তর দেওয়া প্রশ্ন খুঁজুন, যেমন: যাকাত, সালাত, মাযহাব" onInput="{{onSearch}}" style="min-height: 56px; font-size: 17px">
+        </div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container">
+        <div class="layout-side">
+          <div class="layout-side__main">
+            <div class="chip-row" role="group" aria-label="বিষয় অনুযায়ী ফিল্টার" style="margin-bottom: 20px">
+              <sc-for list="{{cats}}" as="c" hint-placeholder-count="6"><button type="button" class="chip {{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}">{{c.label}}</button></sc-for>
+            </div>
+            <p class="t-small t-muted" role="status" style="margin-bottom: 14px">{{countText}}</p>
+            <div style="display: flex; flex-direction: column; gap: 14px">
+              <sc-for list="{{shown}}" as="q" hint-placeholder-count="5">
+                <article class="card card-hover" style="padding: 22px 24px; display: flex; flex-direction: column; gap: 10px">
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center"><span class="badge badge-cat">{{q.cat}}</span><span class="badge badge-reviewed"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>রিভিউকৃত উত্তর</span><span class="t-caption t-muted" style="margin-left: auto">{{q.date}}</span></div>
+                  <h2 class="t-h4" style="font-size: 19px"><a href="QAAnswer.dc.html" style="color: var(--rh-ink); text-decoration: none">{{q.title}}</a></h2>
+                  <p class="t-small t-muted">{{q.excerpt}}</p>
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 4px">
+                    <span class="avatar avatar-sm">{{q.ini}}</span><span class="t-small">{{q.by}}</span>
+                    <a href="QAAnswer.dc.html" class="link-arrow" style="margin-left: auto">উত্তর পড়ুন <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+                  </div>
+                </article>
+              </sc-for>
+            </div>
+            <nav aria-label="পৃষ্ঠা" style="margin-top: 36px"><div class="pager"><span class="is-current" aria-current="page">১</span><a href="#">২</a><a href="#">৩</a><span class="is-gap">…</span><a href="#">৪১</a><a href="#" aria-label="পরের পৃষ্ঠা"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a></div></nav>
+          </div>
+
+          <aside class="layout-side__aside layout-side__aside--right sticky-col" aria-labelledby="ask-title">
+            <div class="card card-raised card-pad">
+              <sc-if value="{{notSent}}" hint-placeholder-val="{{true}}">
+                <form onSubmit="{{submit}}" style="display: flex; flex-direction: column; gap: 16px">
+                  <div>
+                    <h2 id="ask-title" class="t-h4">প্রশ্ন করুন</h2>
+                    <p class="t-small t-muted" style="margin-top: 4px">আগে খুঁজে দেখুন, হয়তো উত্তর ইতিমধ্যে আছে।</p>
+                  </div>
+                  <div class="field"><label class="label" for="ask-q">আপনার প্রশ্ন<span class="req" aria-hidden="true">*</span></label><input id="ask-q" class="input" required="" placeholder="এক লাইনে প্রশ্নটি লিখুন"></div>
+                  <div class="field"><label class="label" for="ask-cat">বিষয়</label><div class="select-wrap"><select id="ask-cat" class="select"><option>ইবাদত</option><option>আকীদাহ</option><option>ফিকহ</option><option>লেনদেন</option><option>পরিবার ও সমাজ</option><option>তাযকিয়াহ</option></select><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></div></div>
+                  <div class="field"><label class="label" for="ask-d">বিস্তারিত</label><textarea id="ask-d" class="textarea" placeholder="প্রেক্ষাপট লিখলে উত্তর দেওয়া সহজ হয়। ব্যক্তিগত তথ্য দেবেন না।"></textarea></div>
+                  <label class="check"><input type="checkbox" checked="">নাম প্রকাশ না করে প্রকাশ করুন</label>
+                  <button type="submit" class="btn btn-primary btn-block">প্রশ্ন জমা দিন <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg></button>
+                  <p class="t-caption t-muted">প্রশ্নটি আদব নীতিমালা মেনে মডারেট করা হবে। সাধারণত ৩ থেকে ৭ দিনের মধ্যে উত্তর প্রকাশিত হয়।</p>
+                </form>
+              </sc-if>
+              <sc-if value="{{sent}}" hint-placeholder-val="{{false}}">
+                <div class="empty" role="status" style="padding: 24px 8px">
+                  <span class="empty__icon" style="background: var(--rh-success-soft); color: var(--rh-success)"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                  <h2 class="t-h4">প্রশ্নটি জমা হয়েছে</h2>
+                  <p class="t-small t-muted">জাযাকাল্লাহু খাইরান। উত্তর প্রকাশ হলে ইমেইলে জানানো হবে এবং ড্যাশবোর্ডে দেখতে পাবেন।</p>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center"><a href="Dashboard.dc.html" class="btn btn-secondary btn-sm">আমার প্রশ্ন</a><button type="button" class="btn btn-ghost btn-sm" onClick="{{again}}">আরেকটি প্রশ্ন</button></div>
+                </div>
+              </sc-if>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const cat = this.state.cat ?? 'সব';
+    const q = (this.state.q ?? '').trim();
+    const all = [
+      { title: 'ভিন্ন মাযহাবের ইমামের পেছনে জামাতে সালাত আদায় করা যাবে কি?', excerpt: 'অফিসের সহকর্মী ভিন্ন মাযহাব অনুসরণ করেন এবং প্রায়ই জামাতে ইমামতি করেন। তাঁর পেছনে সালাত আদায়ে কোনো সমস্যা আছে কি?', cat: 'ইবাদত', by: 'উত্তর: মুফতি ইমরান খলিল', ini: 'ইক', date: '২৮ সেপ্টেম্বর ২০২৬' },
+      { title: 'সঞ্চয়পত্রের মুনাফা কি সুদের অন্তর্ভুক্ত?', excerpt: 'অবসরের টাকা সঞ্চয়পত্রে রাখার কথা ভাবছি। এর মুনাফা গ্রহণ করা জায়েজ কি না, বিকল্প কী হতে পারে?', cat: 'লেনদেন', by: 'উত্তর: মুফতি ইমরান খলিল', ini: 'ইক', date: '২৪ সেপ্টেম্বর ২০২৬' },
+      { title: 'রাগ নিয়ন্ত্রণের সুন্নাহসম্মত উপায় কী?', excerpt: 'পরিবারে ছোটখাটো বিষয়ে খুব রেগে যাই, পরে অনুশোচনা হয়। হাদিসে এ বিষয়ে কী নির্দেশনা আছে?', cat: 'তাযকিয়াহ', by: 'উত্তর: উস্তাযা সুমাইয়া কবির', ini: 'সক', date: '২০ সেপ্টেম্বর ২০২৬' },
+      { title: 'অমুসলিম প্রতিবেশীর সাথে সম্পর্ক কেমন হওয়া উচিত?', excerpt: 'আমাদের পাশের বাসার পরিবার অন্য ধর্মের। উৎসবে উপহার আদান-প্রদান ও সৌজন্য সাক্ষাৎ নিয়ে জানতে চাই।', cat: 'পরিবার ও সমাজ', by: 'উত্তর: মাওলানা আব্দুল হাকিম', ini: 'আহ', date: '১৫ সেপ্টেম্বর ২০২৬' },
+      { title: 'দোয়া কবুল হচ্ছে না মনে হলে কী করব?', excerpt: 'অনেকদিন ধরে একটি বিষয়ে দোয়া করছি। মাঝে মাঝে হতাশ লাগে। এ অবস্থায় করণীয় কী?', cat: 'আকীদাহ', by: 'উত্তর: উস্তায আব্দুর রহমান', ini: 'আর', date: '১১ সেপ্টেম্বর ২০২৬' },
+      { title: 'সফরে কসর ও দুই ওয়াক্ত একত্রে পড়ার নিয়ম', excerpt: 'কাজের প্রয়োজনে প্রায় প্রতি সপ্তাহে ঢাকা-খুলনা যাতায়াত করি। কত দূরত্বে কসর করব, জমা করা যাবে কি?', cat: 'ফিকহ', by: 'উত্তর: মুফতি ইমরান খলিল', ini: 'ইক', date: '৮ সেপ্টেম্বর ২০২৬' }
+    ];
+    const cats = ['সব', 'ইবাদত', 'আকীদাহ', 'ফিকহ', 'লেনদেন', 'তাযকিয়াহ', 'পরিবার ও সমাজ'].map((label) => ({ label, cls: label === cat ? 'is-active' : '', pressed: label === cat ? 'true' : 'false', pick: () => this.setState({ cat: label }) }));
+    const shown = all.filter((x) => (cat === 'সব' || x.cat === cat) && (!q || x.title.includes(q) || x.excerpt.includes(q)));
+    const sent = !!this.state.sent;
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      cats, shown,
+      countText: shown.length ? bn(shown.length) + 'টি উত্তর পাওয়া গেছে' : 'কোনো মিল পাওয়া যায়নি। পাশের ফর্মে প্রশ্নটি করে ফেলুন।',
+      onSearch: (e) => this.setState({ q: e.target.value }),
+      sent, notSent: !sent,
+      submit: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ sent: true }); },
+      again: () => this.setState({ sent: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

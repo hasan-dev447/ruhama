@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · ডিজাইন সিস্টেম</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <!-- toolbar -->
+  <div style="position: sticky; top: 0; z-index: 40; background: var(--rh-header-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--rh-border)">
+    <div class="container" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; min-height: 72px; padding-block: 10px">
+      <a href="Main.dc.html" class="brand" aria-label="Ruhama হোম">
+        <svg class="brand__mark mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+        <span class="brand__word">Ruhama</span>
+      </a>
+      <span class="badge badge-neutral">ডিজাইন সিস্টেম · সংস্করণ ১.০</span>
+      <div role="group" aria-label="থিম নির্বাচন" style="margin-left: auto; display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--rh-sage); border: 1px solid var(--rh-border)">
+        <button type="button" class="chip {{lightCls}}" aria-pressed="{{lightPressed}}" onClick="{{setLight}}" style="border: 0">লাইট</button>
+        <button type="button" class="chip {{darkCls}}" aria-pressed="{{darkPressed}}" onClick="{{setDark}}" style="border: 0">ডার্ক</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="container" style="padding-bottom: 96px">
+    <header style="padding: 64px 0 48px; display: flex; flex-direction: column; gap: 14px; max-width: 760px">
+      <span class="eyebrow">ফাউন্ডেশন</span>
+      <h1 class="t-h1">ডিজাইন সিস্টেম ও কম্পোনেন্ট লাইব্রেরি</h1>
+      <p class="t-body-lg t-muted">শান্ত, বিশ্বস্ত ও উষ্ণ। প্রতিটি রং, অক্ষর, দূরত্ব ও কম্পোনেন্ট নামকৃত টোকেন হিসেবে সংজ্ঞায়িত, যাতে Tailwind v4 ও shadcn/ui-তে হুবহু রূপান্তর করা যায়। উপরের বোতামে লাইট ও ডার্ক মোড বদলে দেখুন।</p>
+    </header>
+
+    <!-- LOGO -->
+    <section class="ds-block" aria-labelledby="ds-logo">
+      <h2 id="ds-logo" class="t-h3">লোগো ও ওয়ার্ডমার্ক</h2>
+      <p class="t-muted" style="max-width: 720px">একটি অবিচ্ছিন্ন সুতো দিয়ে আঁকা কোমল আট-কোণা তারা: আল্লাহর রজ্জুতে গাঁথা হৃদয়ের প্রতীক (সূরা আলে ইমরান : ১০৩)। কোথাও সুতো ছিঁড়ে না, শুরু ও শেষ এক বিন্দুতে মিলে যায়।</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 16px">
+        <div class="card" style="display: grid; place-items: center; min-height: 220px; background: #FAF7F0">
+          <svg class="mark" viewBox="0 0 48 48" aria-label="Ruhama লোগো, টিল" role="img" style="width: 104px; height: 104px; color: #0E4D45; stroke-width: 2"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+        </div>
+        <div class="card" style="display: grid; place-items: center; min-height: 220px; background: #0E4D45; border-color: #0E4D45">
+          <svg class="mark" viewBox="0 0 48 48" aria-label="Ruhama লোগো, গোল্ড" role="img" style="width: 104px; height: 104px; color: #D4A95C; stroke-width: 2"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+        </div>
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; gap: 20px; min-height: 220px; padding: 24px">
+          <span class="ds-label">ছোট আকার (ফেভিকন ২৪px পর্যন্ত)</span>
+          <div style="display: flex; align-items: flex-end; gap: 22px">
+            <svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 48px; height: 48px; color: var(--rh-primary); stroke-width: 2.4"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+            <svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 32px; height: 32px; color: var(--rh-primary); stroke-width: 3"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+            <svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 24px; height: 24px; color: var(--rh-primary); stroke-width: 3.6"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+            <svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 24px; height: 24px; color: var(--rh-accent); stroke-width: 3.6"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+          </div>
+          <span class="t-caption t-muted">২৪px-এ স্ট্রোক ৩.৬ ইউনিট (প্রায় ১.৮px) রাখুন, যাতে রেখা স্পষ্ট থাকে।</span>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 16px">
+        <div class="card card-pad" style="display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 160px">
+          <svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 52px; height: 52px; color: var(--rh-accent); stroke-width: 2.2"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+          <span class="brand-word" style="font-size: 52px; color: var(--rh-primary); line-height: 1">Ruhama</span>
+        </div>
+        <div class="card card-pad" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 160px; text-align: center">
+          <span class="brand-word" style="font-size: 40px; color: var(--rh-primary); line-height: 1">Ruhama</span>
+          <span style="font-family: var(--rh-font-heading); font-weight: 600; font-size: 17px">দয়ায় গাঁথা হৃদয়, ঐক্যে গড়া উম্মাহ</span>
+          <span class="t-caption t-muted">রুহামাউ বাইনাহুম: পরস্পরের প্রতি সহানুভূতিশীল (সূরা আল-ফাতহ : ২৯)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLORS -->
+    <section class="ds-block" aria-labelledby="ds-color">
+      <h2 id="ds-color" class="t-h3">রং</h2>
+      <p class="t-muted" style="max-width: 720px">টিল প্রধান ব্র্যান্ড রং: হেডার, প্রাইমারি বোতাম, লিংক। গোল্ড মূল্যবান অলংকারের মতো সংযমে: সুতো, আইকন, ফোকাস রিং, আয়াত কার্ডের বর্ডার। হালকা পটভূমিতে গোল্ড কখনো বডি টেক্সটে নয়। সব জোড়া WCAG ২.১ AA পূরণ করে।</p>
+      <h3 class="t-h4">লাইট মোড</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px">
+        <div class="swatch"><div class="swatch__chip" style="background: #0E4D45"></div><div class="swatch__meta"><strong>প্রাইমারি টিল</strong><span class="t-mono t-muted">--rh-primary</span><span class="t-mono">#0E4D45</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #0A3832"></div><div class="swatch__meta"><strong>প্রাইমারি ডার্ক</strong><span class="t-mono t-muted">--rh-primary-dark</span><span class="t-mono">#0A3832</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #5FA89A"></div><div class="swatch__meta"><strong>প্রাইমারি লাইট</strong><span class="t-mono t-muted">--rh-primary-light</span><span class="t-mono">#5FA89A</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #B88A3E"></div><div class="swatch__meta"><strong>মিহরাব গোল্ড</strong><span class="t-mono t-muted">--rh-accent</span><span class="t-mono">#B88A3E</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #F3E9D6"></div><div class="swatch__meta"><strong>গোল্ড সফট</strong><span class="t-mono t-muted">--rh-accent-soft</span><span class="t-mono">#F3E9D6</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #7A5718"></div><div class="swatch__meta"><strong>গোল্ড টেক্সট</strong><span class="t-mono t-muted">--rh-accent-ink</span><span class="t-mono">#7A5718</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #FAF7F0"></div><div class="swatch__meta"><strong>উষ্ণ আইভরি</strong><span class="t-mono t-muted">--rh-bg</span><span class="t-mono">#FAF7F0</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #FFFFFF"></div><div class="swatch__meta"><strong>সারফেস</strong><span class="t-mono t-muted">--rh-surface</span><span class="t-mono">#FFFFFF</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #E8F0EC"></div><div class="swatch__meta"><strong>সফট সেজ</strong><span class="t-mono t-muted">--rh-sage</span><span class="t-mono">#E8F0EC</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #1A2421"></div><div class="swatch__meta"><strong>টেক্সট ইংক</strong><span class="t-mono t-muted">--rh-ink</span><span class="t-mono">#1A2421</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #5B6763"></div><div class="swatch__meta"><strong>টেক্সট মিউটেড</strong><span class="t-mono t-muted">--rh-muted</span><span class="t-mono">#5B6763</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #E4DED2"></div><div class="swatch__meta"><strong>বর্ডার</strong><span class="t-mono t-muted">--rh-border</span><span class="t-mono">#E4DED2</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #2F7D5B"></div><div class="swatch__meta"><strong>সফল</strong><span class="t-mono t-muted">--rh-success</span><span class="t-mono">#2F7D5B</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #C08A2E"></div><div class="swatch__meta"><strong>সতর্কতা</strong><span class="t-mono t-muted">--rh-warning</span><span class="t-mono">#C08A2E</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #B5473A"></div><div class="swatch__meta"><strong>ত্রুটি</strong><span class="t-mono t-muted">--rh-error</span><span class="t-mono">#B5473A</span></div></div>
+      </div>
+      <h3 class="t-h4" style="margin-top: 16px">ডার্ক মোড</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px">
+        <div class="swatch"><div class="swatch__chip" style="background: #0C1614"></div><div class="swatch__meta"><strong>ব্যাকগ্রাউন্ড</strong><span class="t-mono t-muted">--rh-bg</span><span class="t-mono">#0C1614</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #12201D"></div><div class="swatch__meta"><strong>সারফেস</strong><span class="t-mono t-muted">--rh-surface</span><span class="t-mono">#12201D</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #182A26"></div><div class="swatch__meta"><strong>সারফেস রেইজড</strong><span class="t-mono t-muted">--rh-surface-raised</span><span class="t-mono">#182A26</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #EDE8DE"></div><div class="swatch__meta"><strong>টেক্সট</strong><span class="t-mono t-muted">--rh-ink</span><span class="t-mono">#EDE8DE</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #A3ADA8"></div><div class="swatch__meta"><strong>টেক্সট মিউটেড</strong><span class="t-mono t-muted">--rh-muted</span><span class="t-mono">#A3ADA8</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #5FB3A3"></div><div class="swatch__meta"><strong>প্রাইমারি</strong><span class="t-mono t-muted">--rh-primary</span><span class="t-mono">#5FB3A3</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #D4A95C"></div><div class="swatch__meta"><strong>গোল্ড</strong><span class="t-mono t-muted">--rh-accent</span><span class="t-mono">#D4A95C</span></div></div>
+        <div class="swatch"><div class="swatch__chip" style="background: #24352F"></div><div class="swatch__meta"><strong>বর্ডার</strong><span class="t-mono t-muted">--rh-border</span><span class="t-mono">#24352F</span></div></div>
+      </div>
+      <div class="card card-pad" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 16px 32px">
+        <div><strong>টিল ও আইভরি · ৯.১ : ১</strong><p class="t-small t-muted">হেডিং, লিংক, প্রাইমারি বোতাম</p></div>
+        <div><strong>মিউটেড ও আইভরি · ৫.৫ : ১</strong><p class="t-small t-muted">সহায়ক লেখা, মেটা তথ্য</p></div>
+        <div><strong>গোল্ড টেক্সট ও গোল্ড সফট · ৫.৪ : ১</strong><p class="t-small t-muted">রেফারেন্স ব্যাজ, আইব্রো লেবেল</p></div>
+        <div><strong>ডার্ক টিল ও ডার্ক ব্যাকগ্রাউন্ড · ৭.৪ : ১</strong><p class="t-small t-muted">ডার্ক মোডের প্রাইমারি</p></div>
+      </div>
+    </section>
+
+    <!-- TYPOGRAPHY -->
+    <section class="ds-block" aria-labelledby="ds-type">
+      <h2 id="ds-type" class="t-h3">টাইপোগ্রাফি</h2>
+      <p class="t-muted" style="max-width: 720px">হেডিং: Noto Serif Bengali · বডি ও UI: Hind Siliguri · আরবি: Amiri · ওয়ার্ডমার্ক: Cormorant Garamond · ল্যাটিন সংখ্যা ও UI ফলব্যাক: Inter। বাংলা যুক্তাক্ষরের জন্য বডির লাইন-হাইট ১.৭৫।</p>
+      <div class="card" style="overflow: hidden">
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 24px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>ডিসপ্লে</strong><p class="t-mono t-muted">.t-display · ৬৮/১.৩ · ৭০০</p></div>
+          <p class="t-display">দয়ায় গাঁথা হৃদয়</p>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>এইচ১</strong><p class="t-mono t-muted">.t-h1 · ৪৮/১.৩৫ · ৭০০</p></div>
+          <p class="t-h1" style="font-family: var(--rh-font-heading)">আমাদের যাত্রার ধাপ</p>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>এইচ২</strong><p class="t-mono t-muted">.t-h2 · ৩৮/১.৪ · ৭০০</p></div>
+          <p class="t-h2" style="font-family: var(--rh-font-heading)">আমরা যেমন পরিবেশ চাই</p>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>এইচ৩</strong><p class="t-mono t-muted">.t-h3 · ২৬/১.৪৫ · ৬০০</p></div>
+          <p class="t-h3" style="font-family: var(--rh-font-heading)">মতপার্থক্য থাকবে, শত্রুতা নয়</p>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>এইচ৪</strong><p class="t-mono t-muted">.t-h4 · ২০/১.৫ · ৬০০</p></div>
+          <p class="t-h4" style="font-family: var(--rh-font-heading)">ভিন্নমতের ভাইয়ের সাথে কথা বলার সুন্নাহ</p>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>বডি বড়</strong><p class="t-mono t-muted">.t-body-lg · ১৯/১.৮ · ৪০০</p></div>
+          <p class="t-body-lg">দলীয় পরিচয়ের ঊর্ধ্বে উঠে কুরআন ও সহিহ সুন্নাহর আলোকে ঈমান, ইলম ও ভ্রাতৃত্বের পথে একসাথে চলা।</p>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>বডি</strong><p class="t-mono t-muted">১৭/১.৭৫ (মোবাইলে ১৬) · ৪০০</p></div>
+          <p>জ্ঞান যত বাড়ে, বিনয় তত গভীর হোক। জানা মানে অন্যকে ছোট করা নয়; বরং দায়িত্ব আরও বেড়ে যাওয়া।</p>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>ছোট ও ক্যাপশন</strong><p class="t-mono t-muted">.t-small ১৫ · .t-caption ১৩</p></div>
+          <div><p class="t-small">৮ মিনিট পড়া · রিভিউ করেছেন শূরা সদস্য</p><p class="t-caption t-muted">সর্বশেষ হালনাগাদ: ২ অক্টোবর ২০২৬</p></div>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; border-bottom: 1px solid var(--rh-border); align-items: baseline">
+          <div><strong>আরবি আয়াত</strong><p class="t-mono t-muted">.ar · Amiri · ২৮ থেকে ৩৪px, লাইন-হাইট ২ · RTL</p></div>
+          <p class="ar" lang="ar" dir="rtl">مُحَمَّدٌ رَسُولُ اللَّهِ ۚ وَالَّذِينَ مَعَهُ أَشِدَّاءُ عَلَى الْكُفَّارِ رُحَمَاءُ بَيْنَهُمْ</p>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(180px, 240px) minmax(0, 1fr); gap: 8px 32px; padding: 20px 28px; align-items: baseline">
+          <div><strong>সংখ্যা</strong><p class="t-mono t-muted">কনটেন্টে বাংলা সংখ্যা</p></div>
+          <p class="t-h3" style="font-family: var(--rh-font-heading)">০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPACE / RADIUS / SHADOW -->
+    <section class="ds-block" aria-labelledby="ds-space">
+      <h2 id="ds-space" class="t-h3">দূরত্ব, কোণ ও ছায়া</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 24px">
+        <div class="card card-pad" style="display: flex; flex-direction: column; gap: 10px">
+          <span class="ds-label">৮px গ্রিড · সর্বোচ্চ কনটেন্ট প্রস্থ ১২০০px · পড়ার প্রস্থ ৭০ch</span>
+          <div style="display: flex; align-items: center; gap: 12px"><span class="t-mono" style="width: 92px">space-1 · ৮</span><span style="height: 12px; width: 8px; background: var(--rh-primary-light); border-radius: 3px"></span></div>
+          <div style="display: flex; align-items: center; gap: 12px"><span class="t-mono" style="width: 92px">space-2 · ১৬</span><span style="height: 12px; width: 16px; background: var(--rh-primary-light); border-radius: 3px"></span></div>
+          <div style="display: flex; align-items: center; gap: 12px"><span class="t-mono" style="width: 92px">space-3 · ২৪</span><span style="height: 12px; width: 24px; background: var(--rh-primary-light); border-radius: 3px"></span></div>
+          <div style="display: flex; align-items: center; gap: 12px"><span class="t-mono" style="width: 92px">space-4 · ৩২</span><span style="height: 12px; width: 32px; background: var(--rh-primary-light); border-radius: 3px"></span></div>
+          <div style="display: flex; align-items: center; gap: 12px"><span class="t-mono" style="width: 92px">space-6 · ৪৮</span><span style="height: 12px; width: 48px; background: var(--rh-primary-light); border-radius: 3px"></span></div>
+          <div style="display: flex; align-items: center; gap: 12px"><span class="t-mono" style="width: 92px">space-8 · ৬৪</span><span style="height: 12px; width: 64px; background: var(--rh-primary-light); border-radius: 3px"></span></div>
+          <div style="display: flex; align-items: center; gap: 12px"><span class="t-mono" style="width: 92px">space-12 · ৯৬</span><span style="height: 12px; width: 96px; background: var(--rh-primary-light); border-radius: 3px"></span></div>
+        </div>
+        <div class="card card-pad" style="display: flex; flex-direction: column; gap: 14px">
+          <span class="ds-label">কোণের ব্যাসার্ধ</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 14px">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 64px; height: 64px; border: 1.5px solid var(--rh-primary); border-radius: 8px; background: var(--rh-primary-soft)"></span><span class="t-mono">sm · ৮</span></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 64px; height: 64px; border: 1.5px solid var(--rh-primary); border-radius: 10px; background: var(--rh-primary-soft)"></span><span class="t-mono">md · ১০</span></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 64px; height: 64px; border: 1.5px solid var(--rh-primary); border-radius: 14px; background: var(--rh-primary-soft)"></span><span class="t-mono">lg · ১৪</span></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 64px; height: 64px; border: 1.5px solid var(--rh-primary); border-radius: 20px; background: var(--rh-primary-soft)"></span><span class="t-mono">xl · ২০</span></div>
+          </div>
+          <span class="t-caption t-muted">বোতাম ও ইনপুট md, কার্ড lg, ব্যান্ড ও মোডাল xl।</span>
+        </div>
+        <div class="card card-pad" style="display: flex; flex-direction: column; gap: 14px">
+          <span class="ds-label">স্তরভিত্তিক নরম ছায়া</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 16px">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><span style="width: 80px; height: 64px; border-radius: 14px; background: var(--rh-surface); border: 1px solid var(--rh-border); box-shadow: var(--rh-shadow-sm)"></span><span class="t-mono">shadow-sm</span></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><span style="width: 80px; height: 64px; border-radius: 14px; background: var(--rh-surface); border: 1px solid var(--rh-border); box-shadow: var(--rh-shadow-md)"></span><span class="t-mono">shadow-md</span></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px"><span style="width: 80px; height: 64px; border-radius: 14px; background: var(--rh-surface); border: 1px solid var(--rh-border); box-shadow: var(--rh-shadow-lg)"></span><span class="t-mono">shadow-lg</span></div>
+          </div>
+          <span class="t-caption t-muted">হোভারে কার্ড ৩px উপরে ওঠে এবং sm থেকে lg ছায়ায় যায়।</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUTTONS -->
+    <section class="ds-block" aria-labelledby="ds-btn">
+      <h2 id="ds-btn" class="t-h3">বোতাম</h2>
+      <div class="card card-pad" style="display: flex; flex-direction: column; gap: 22px">
+        <div class="ds-row"><span class="ds-label" style="width: 120px">প্রাইমারি</span><button type="button" class="btn btn-primary">যাত্রা শুরু করুন</button><button type="button" class="btn btn-primary">পরবর্তী পাঠ <svg class="ic ic-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button><button type="button" class="btn btn-primary" disabled="">অপেক্ষা করুন</button></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">সেকেন্ডারি</span><button type="button" class="btn btn-secondary">আমাদের ঘোষণাপত্র পড়ুন</button><button type="button" class="btn btn-secondary" disabled="">নিষ্ক্রিয়</button></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">গোস্ট</span><button type="button" class="btn btn-ghost">বাতিল</button><button type="button" class="btn btn-ghost"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>সংরক্ষণ</button></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">গোল্ড অ্যাকসেন্ট</span><button type="button" class="btn btn-gold">যুক্ত হোন</button><span class="t-caption t-muted">শুধু টিল ব্যান্ড বা বিশেষ আহ্বানে, পৃষ্ঠাপ্রতি একটি।</span></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">আকার</span><button type="button" class="btn btn-primary btn-sm">ছোট · ৪৪</button><button type="button" class="btn btn-primary">মাঝারি · ৪৮</button><button type="button" class="btn btn-primary btn-lg">বড় · ৫৪</button></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">আইকন বোতাম</span>
+          <button type="button" class="btn-icon btn-icon--outline" aria-label="খুঁজুন"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button>
+          <button type="button" class="btn-icon btn-icon--outline" aria-label="শেয়ার"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.59 13.51 6.83 3.98"></path><path d="m15.41 6.51-6.82 3.98"></path></svg></button>
+          <button type="button" class="btn-icon btn-icon--outline" aria-label="সংরক্ষণ"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg></button>
+          <span class="t-caption t-muted">ট্যাপ এরিয়া সর্বনিম্ন ৪৪×৪৪। কীবোর্ড ফোকাসে গোল্ড রিং।</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMS -->
+    <section class="ds-block" aria-labelledby="ds-form">
+      <h2 id="ds-form" class="t-h3">ফর্ম উপাদান</h2>
+      <div class="card card-pad">
+        <div class="form-grid">
+          <div class="field"><label class="label" for="ds-name">পূর্ণ নাম<span class="req" aria-hidden="true">*</span></label><input id="ds-name" class="input" placeholder="যেমন: আব্দুল্লাহ আল মামুন"><span class="hint">যে নামে আপনাকে ডাকা হবে।</span></div>
+          <div class="field"><label class="label" for="ds-focus">ইমেইল (ফোকাস অবস্থা)</label><input id="ds-focus" class="input is-focus" value="abdullah@example.com"></div>
+          <div class="field"><label class="label" for="ds-err">মোবাইল নম্বর</label><input id="ds-err" class="input is-error" value="০১৭১২৩" aria-invalid="true" aria-describedby="ds-err-t"><span id="ds-err-t" class="error-text"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>সঠিক ১১ সংখ্যার নম্বর লিখুন</span></div>
+          <div class="field"><label class="label" for="ds-dis">সদস্য আইডি (নিষ্ক্রিয়)</label><input id="ds-dis" class="input" value="RH-০০৪২" disabled=""></div>
+          <div class="field"><label class="label" for="ds-sel">জেলা</label><div class="select-wrap"><select id="ds-sel" class="select"><option>খুলনা</option><option>ঢাকা</option><option>চট্টগ্রাম</option><option>রাজশাহী</option></select><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></div></div>
+          <div class="field"><label class="label" for="ds-search">খুঁজুন</label><div class="input-icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input id="ds-search" class="input" type="search" placeholder="প্রবন্ধ, প্রশ্ন বা বিষয়"></div></div>
+          <div class="field" style="grid-column: 1 / -1"><label class="label" for="ds-ta">সংক্ষিপ্ত বার্তা</label><textarea id="ds-ta" class="textarea" placeholder="কেন যুক্ত হতে চান, দুই-এক লাইনে লিখুন"></textarea></div>
+          <fieldset class="field" style="border: 0; padding: 0; margin: 0">
+            <legend class="label" style="margin-bottom: 4px">চেকবক্স</legend>
+            <label class="check"><input type="checkbox" checked="">লেখা ও সম্পাদনা</label>
+            <label class="check"><input type="checkbox">অনুবাদ</label>
+          </fieldset>
+          <fieldset class="field" style="border: 0; padding: 0; margin: 0">
+            <legend class="label" style="margin-bottom: 4px">রেডিও</legend>
+            <label class="check"><input type="radio" name="ds-r" checked="">অনলাইন</label>
+            <label class="check"><input type="radio" name="ds-r">সরাসরি</label>
+          </fieldset>
+        </div>
+      </div>
+    </section>
+
+    <!-- BADGES -->
+    <section class="ds-block" aria-labelledby="ds-badge">
+      <h2 id="ds-badge" class="t-h3">ব্যাজ</h2>
+      <div class="card card-pad" style="display: flex; flex-direction: column; gap: 16px">
+        <div class="ds-row"><span class="ds-label" style="width: 120px">রিভিউ</span><span class="badge badge-reviewed"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>রিভিউকৃত</span><span class="badge badge-warning">রিভিউ চলছে</span></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">লেভেল</span><span class="badge badge-level">প্রাথমিক</span><span class="badge badge-level">মধ্যম</span><span class="badge badge-level">উচ্চ</span></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">বিষয়</span><span class="badge badge-cat">আকীদাহ</span><span class="badge badge-cat">ফিকহ</span><span class="badge badge-cat">তাযকিয়াহ</span></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">হাদিসের মান</span><span class="badge badge-sahih">সহিহ</span><span class="badge badge-hasan">হাসান</span></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">মজলিস ধরন</span><span class="badge badge-online">অনলাইন</span><span class="badge badge-live">সরাসরি</span></div>
+        <div class="ds-row"><span class="ds-label" style="width: 120px">রেফারেন্স</span><span class="ref-badge">সূরা আলে ইমরান : ১০৩</span></div>
+      </div>
+    </section>
+
+    <!-- SACRED TEXT COMPONENTS -->
+    <section class="ds-block" aria-labelledby="ds-sacred">
+      <h2 id="ds-sacred" class="t-h3">আয়াত কার্ড, হাদিস কার্ড ও দলিল বক্স</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 24px; align-items: start">
+        <article class="ayah-card">
+          <svg class="ayah-card__orn mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+          <p class="ar" lang="ar" dir="rtl">وَاعْتَصِمُوا بِحَبْلِ اللَّهِ جَمِيعًا وَلَا تَفَرَّقُوا</p>
+          <p class="ayah-card__tr">“তোমরা সবাই মিলে আল্লাহর রজ্জু দৃঢ়ভাবে আঁকড়ে ধরো এবং বিভক্ত হয়ো না।”</p>
+          <span class="ref-badge">সূরা আলে ইমরান : ১০৩</span>
+        </article>
+        <article class="hadith-card">
+          <svg class="hadith-card__quote" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"></path><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"></path></svg>
+          <p class="ar" lang="ar" dir="rtl">لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ</p>
+          <p class="hadith-card__text">“তোমাদের কেউ প্রকৃত মুমিন হতে পারবে না, যতক্ষণ না সে নিজের জন্য যা পছন্দ করে, তার ভাইয়ের জন্যও তা পছন্দ করে।”</p>
+          <div class="hadith-card__foot"><span>আনাস (রা.)</span><span class="meta-dot" aria-hidden="true"></span><span>সহিহ বুখারী : ১৩</span><span class="badge badge-sahih" style="margin-left: auto">সহিহ</span></div>
+        </article>
+      </div>
+      <aside class="dalil-box" aria-labelledby="ds-dalil">
+        <div class="dalil-box__head" id="ds-dalil"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>দলিল ও তথ্যসূত্র</div>
+        <ul class="dalil-list">
+          <li><span class="dalil-type">কুরআন</span><span>সূরা আলে ইমরান : ১০৩, ১০৫ · বিভক্তি থেকে সতর্কতা</span></li>
+          <li><span class="dalil-type">কুরআন</span><span>সূরা আল-হুজুরাত : ১০ · মুমিনরা পরস্পর ভাই</span></li>
+          <li><span class="dalil-type">হাদিস</span><span>সহিহ মুসলিম : ২৫৮৬ · মুমিনরা এক দেহের মতো</span></li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- CARDS -->
+    <section class="ds-block" aria-labelledby="ds-cards">
+      <h2 id="ds-cards" class="t-h3">কার্ড</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 20px">
+        <article class="card card-hover article-card">
+          <div class="article-card__media article-card__media--gold"><div class="rh-pattern" aria-hidden="true"></div><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg></div>
+          <div class="article-card__body">
+            <div class="article-card__meta"><span class="badge badge-cat">তাযকিয়াহ</span><span>৭ মিনিট পড়া</span></div>
+            <h3 class="article-card__title"><a href="Article.dc.html">রিয়া: নীরব শিরক থেকে অন্তরের সুরক্ষা</a></h3>
+            <div class="article-card__author"><span class="avatar avatar-sm">আর</span><span style="flex: 1">উস্তায আব্দুর রহমান</span><span class="badge badge-reviewed">রিভিউকৃত</span></div>
+          </div>
+        </article>
+        <a href="IlmCenter.dc.html" class="card card-hover cat-tile">
+          <span class="icon-tile icon-tile--teal"><svg class="ic ic-lg" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg></span>
+          <h3>ফিকহ</h3>
+          <div class="cat-tile__foot"><span>১২৬টি প্রবন্ধ</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></div>
+        </a>
+        <article class="card value-card">
+          <span class="icon-tile"><svg class="ic ic-lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span>
+          <h3>ইলম থাকবে, অহংকার নয়</h3>
+          <p>মূল্যবোধ কার্ড: আইকন টাইল, শিরোনাম ও এক লাইনের ব্যাখ্যা।</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- NAVIGATION -->
+    <section class="ds-block" aria-labelledby="ds-nav">
+      <h2 id="ds-nav" class="t-h3">নেভিগেশন</h2>
+      <div class="card card-pad" style="display: flex; flex-direction: column; gap: 28px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span class="ds-label">ব্রেডক্রাম্ব</span>
+          <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li><a href="IlmCenter.dc.html">ইলম কেন্দ্র</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">আকীদাহ</li></ol></nav>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <span class="ds-label">ট্যাব (ক্লিক করে দেখুন)</span>
+          <div class="tabs" role="tablist" aria-label="উদাহরণ ট্যাব">
+            <button type="button" role="tab" class="tab {{tab0}}" aria-selected="{{tabSel0}}" onClick="{{pickTab0}}">সারসংক্ষেপ</button>
+            <button type="button" role="tab" class="tab {{tab1}}" aria-selected="{{tabSel1}}" onClick="{{pickTab1}}">দলিল</button>
+            <button type="button" role="tab" class="tab {{tab2}}" aria-selected="{{tabSel2}}" onClick="{{pickTab2}}">আলোচনা</button>
+          </div>
+          <p class="t-muted" role="tabpanel">{{tabText}}</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <span class="ds-label">পেজিনেশন</span>
+          <nav aria-label="পৃষ্ঠা"><div class="pager" style="justify-content: flex-start"><a href="#" aria-label="আগের পৃষ্ঠা"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a><a href="#">১</a><span class="is-current" aria-current="page">২</span><a href="#">৩</a><span class="is-gap">…</span><a href="#">১২</a><a href="#" aria-label="পরের পৃষ্ঠা"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a></div></nav>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <span class="ds-label">চিপ ফিল্টার</span>
+          <div class="chip-row"><button type="button" class="chip is-active" aria-pressed="true">সব</button><button type="button" class="chip" aria-pressed="false">প্রাথমিক</button><button type="button" class="chip" aria-pressed="false">মধ্যম</button><button type="button" class="chip" aria-pressed="false">উচ্চ</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEEDBACK -->
+    <section class="ds-block" aria-labelledby="ds-feedback">
+      <h2 id="ds-feedback" class="t-h3">ফিডব্যাক ও অবস্থা</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 24px; align-items: start">
+        <div class="card card-pad" style="display: flex; flex-direction: column; gap: 12px">
+          <span class="ds-label">টোস্ট</span>
+          <div class="toast toast--success" role="status"><span class="toast__icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><div><strong>প্রবন্ধটি সংরক্ষিত হয়েছে</strong><p>আপনার ড্যাশবোর্ডের “সংরক্ষিত” অংশে পাবেন।</p></div></div>
+          <div class="toast toast--info" role="status"><span class="toast__icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></span><div><strong>প্রশ্নটি রিভিউয়ে পাঠানো হয়েছে</strong><p>উত্তর প্রকাশ হলে ইমেইলে জানানো হবে।</p></div></div>
+          <div class="toast toast--warning" role="status"><span class="toast__icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></span><div><strong>আসন প্রায় পূর্ণ</strong><p>এই মজলিসে আর ৮টি আসন বাকি।</p></div></div>
+          <div class="toast toast--error" role="alert"><span class="toast__icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></span><div><strong>সংযোগ বিচ্ছিন্ন</strong><p>ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।</p></div></div>
+          <button type="button" class="btn btn-secondary btn-sm" onClick="{{showToast}}" style="align-self: flex-start">লাইভ টোস্ট দেখুন</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 24px">
+          <div class="card">
+            <div class="empty">
+              <span class="empty__icon"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg></span>
+              <h3 class="t-h4">এখনো কিছু সংরক্ষণ করেননি</h3>
+              <p class="t-muted t-small" style="max-width: 320px">পছন্দের প্রবন্ধ বা আয়াতের পাশে বুকমার্ক চাপলে এখানে জমা থাকবে।</p>
+              <a href="IlmCenter.dc.html" class="btn btn-secondary btn-sm">ইলম কেন্দ্রে যান</a>
+            </div>
+          </div>
+          <div class="card card-pad" style="display: flex; flex-direction: column; gap: 12px" aria-busy="true" aria-label="লোড হচ্ছে">
+            <span class="ds-label">লোডিং স্কেলেটন</span>
+            <div style="display: flex; gap: 14px; align-items: center"><span class="sk" style="width: 44px; height: 44px; border-radius: 50%"></span><div style="flex: 1; display: flex; flex-direction: column; gap: 8px"><span class="sk" style="height: 14px; width: 60%"></span><span class="sk" style="height: 12px; width: 35%"></span></div></div>
+            <span class="sk" style="height: 120px; border-radius: 12px"></span>
+            <span class="sk" style="height: 14px; width: 90%"></span>
+            <span class="sk" style="height: 14px; width: 75%"></span>
+          </div>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr)); gap: 24px">
+        <div class="card card-pad" style="display: flex; flex-direction: column; gap: 16px">
+          <span class="ds-label">প্রগ্রেস বার</span>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="display: flex; justify-content: space-between; font-size: 14px"><span>ঈমানের ছয় স্তম্ভ</span><span class="t-muted">৬০%</span></div><div class="progress" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="কোর্স অগ্রগতি"><span style="width: 60%"></span></div></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="display: flex; justify-content: space-between; font-size: 14px"><span>যাত্রার অগ্রগতি</span><span class="t-muted">৮ ধাপের ৪</span></div><div class="progress progress--gold" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" aria-label="যাত্রার অগ্রগতি"><span style="width: 50%"></span></div></div>
+        </div>
+        <div class="card card-pad" style="display: flex; flex-direction: column; gap: 16px">
+          <span class="ds-label">অ্যাভাটার (ইনিশিয়াল, কোনো ছবি নয়)</span>
+          <div class="ds-row"><span class="avatar avatar-sm">আর</span><span class="avatar">মহ</span><span class="avatar avatar--gold">সক</span><span class="avatar avatar-lg">আক</span><span class="avatar avatar-xl avatar--gold avatar--ring">হক</span></div>
+        </div>
+        <div class="card card-pad" style="display: flex; flex-direction: column; gap: 16px; align-items: flex-start">
+          <span class="ds-label">মোডাল</span>
+          <p class="t-small t-muted">স্ক্রিম ব্লার, xl কোণ, ফোকাস ট্র্যাপ, Esc চাপলে বন্ধ।</p>
+          <button type="button" class="btn btn-primary btn-sm" onClick="{{openModal}}">মোডাল খুলুন</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MOTION -->
+    <section class="ds-block" aria-labelledby="ds-motion">
+      <h2 id="ds-motion" class="t-h3">মোশন</h2>
+      <div class="card" style="overflow-x: auto">
+        <table style="width: 100%; border-collapse: collapse; font-size: 15px; min-width: 640px">
+          <thead><tr style="text-align: left; border-bottom: 1px solid var(--rh-border)"><th style="padding: 14px 20px">টোকেন</th><th style="padding: 14px 20px">মান</th><th style="padding: 14px 20px">ব্যবহার</th></tr></thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--rh-border)"><td style="padding: 14px 20px" class="t-mono">--rh-ease</td><td style="padding: 14px 20px" class="t-mono">cubic-bezier(.22,.61,.36,1)</td><td style="padding: 14px 20px">সব রিভিল ও ট্রানজিশন, শান্ত ইজ-আউট</td></tr>
+            <tr style="border-bottom: 1px solid var(--rh-border)"><td style="padding: 14px 20px" class="t-mono">--rh-dur-fast</td><td style="padding: 14px 20px" class="t-mono">180ms</td><td style="padding: 14px 20px">হোভার, রং পরিবর্তন</td></tr>
+            <tr style="border-bottom: 1px solid var(--rh-border)"><td style="padding: 14px 20px" class="t-mono">--rh-dur</td><td style="padding: 14px 20px" class="t-mono">500ms</td><td style="padding: 14px 20px">সেকশন রিভিল: ফেড + ১২px উঠে আসা, কার্ডে ৮০ms স্ট্যাগার</td></tr>
+            <tr style="border-bottom: 1px solid var(--rh-border)"><td style="padding: 14px 20px" class="t-mono">--rh-dur-slow</td><td style="padding: 14px 20px" class="t-mono">900ms</td><td style="padding: 14px 20px">যাত্রার নোডে আলো জ্বলা</td></tr>
+            <tr><td style="padding: 14px 20px" class="t-mono">thread-draw</td><td style="padding: 14px 20px" class="t-mono">2.8s · scroll-linked</td><td style="padding: 14px 20px">হিরোর সোনালি সুতো ও যাত্রার সুতো; reduced-motion-এ সরাসরি পূর্ণ</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <sc-if value="{{modalOpen}}" hint-placeholder-val="{{false}}">
+    <div class="modal-scrim">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ds-modal-title">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px">
+          <h2 id="ds-modal-title" class="t-h4">মজলিসে রেজিস্ট্রেশন নিশ্চিত করুন</h2>
+          <button type="button" class="btn-icon" aria-label="বন্ধ করুন" onClick="{{closeModal}}" style="margin: -8px -8px 0 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+        </div>
+        <p class="t-muted" style="margin-top: 10px">“মতপার্থক্যের আদব: সাহাবিদের জীবন থেকে” · শনিবার, ১০ অক্টোবর, রাত ৯:০০। লাইভ সেশনের লিংক আপনার ইমেইলে পাঠানো হবে।</p>
+        <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 24px">
+          <button type="button" class="btn btn-ghost" onClick="{{closeModal}}">পরে করব</button>
+          <button type="button" class="btn btn-primary" onClick="{{closeModal}}">নিশ্চিত করুন</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{toastOpen}}" hint-placeholder-val="{{false}}">
+    <div class="toast-dock">
+      <div class="toast toast--success" role="status"><span class="toast__icon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><div style="flex: 1"><strong>জাযাকাল্লাহু খাইরান</strong><p>আপনার আবেদন গ্রহণ করা হয়েছে।</p></div><button type="button" class="btn-icon" aria-label="বন্ধ করুন" onClick="{{hideToast}}" style="margin: -6px -6px 0 0"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":7000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const tab = this.state.tab ?? 0;
+    const texts = [
+      'সারসংক্ষেপ: বিষয়টির মূল কথা সহজ ভাষায়, পাঁচ মিনিটে পড়ার উপযোগী।',
+      'দলিল: সংশ্লিষ্ট আয়াত ও হাদিস, প্রতিটির উৎস ও মানসহ।',
+      'আলোচনা: আদব মেনে পাঠকদের প্রশ্ন ও মডারেটরের উত্তর।'
+    ];
+    const v = {
+      theme: dark ? 'dark' : 'light',
+      lightCls: dark ? '' : 'is-active',
+      darkCls: dark ? 'is-active' : '',
+      lightPressed: dark ? 'false' : 'true',
+      darkPressed: dark ? 'true' : 'false',
+      setLight: () => this.setState({ dark: false }),
+      setDark: () => this.setState({ dark: true }),
+      tabText: texts[tab],
+      modalOpen: !!this.state.modal,
+      openModal: () => this.setState({ modal: true }),
+      closeModal: () => this.setState({ modal: false }),
+      toastOpen: !!this.state.toast,
+      showToast: () => { this.setState({ toast: true }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: false }), 3500); },
+      hideToast: () => this.setState({ toast: false })
+    };
+    [0, 1, 2].forEach((i) => {
+      v['tab' + i] = tab === i ? 'is-active' : '';
+      v['tabSel' + i] = tab === i ? 'true' : 'false';
+      v['pickTab' + i] = () => this.setState({ tab: i });
+    });
+    return v;
+  }
+}
+</script>
+</body>
+</html>

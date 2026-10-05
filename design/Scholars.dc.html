@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · স্কলার তালিকা</title>
+<meta name="description" content="Ruhama-র আলিম প্যানেল: যাঁরা লেখেন, উত্তর দেন ও রিভিউ করেন।">
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="about" logged-in="{{true}}" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" aria-labelledby="sc-title">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li><a href="About.dc.html">আমাদের পরিচয়</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">স্কলার</li></ol></nav>
+        <h1 id="sc-title" class="t-h1">আমাদের আলিম প্যানেল</h1>
+        <p class="lead">যাঁরা লেখেন, প্রশ্নের উত্তর দেন এবং প্রকাশের আগে প্রতিটি লেখা রিভিউ করেন। স্বচ্ছতার জন্য পরিচয়, ব্যক্তিপূজার জন্য নয়।</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; max-width: 760px">
+          <div class="input-icon" style="flex: 1 1 320px">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+            <label for="sc-search" class="sr-only">নাম বা বিষয় দিয়ে খুঁজুন</label>
+            <input id="sc-search" class="input" type="search" placeholder="নাম বা বিষয় দিয়ে খুঁজুন" onInput="{{onSearch}}" style="min-height: 54px">
+          </div>
+          <div class="select-wrap" style="flex: 0 1 220px">
+            <label for="sc-sort" class="sr-only">সাজান</label>
+            <select id="sc-sort" class="select" onChange="{{onSort}}" style="min-height: 54px"><option value="name">নাম অনুযায়ী</option><option value="answers">বেশি উত্তর আগে</option><option value="lectures">বেশি লেকচার আগে</option></select>
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container">
+        <div class="chip-row" role="group" aria-label="বিশেষজ্ঞতা অনুযায়ী ফিল্টার" style="margin-bottom: 18px">
+          <sc-for list="{{fields}}" as="f" hint-placeholder-count="8"><button type="button" class="chip {{f.cls}}" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}">{{f.label}}</button></sc-for>
+        </div>
+        <p class="t-small t-muted" role="status" style="margin-bottom: 18px">{{countText}}</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr)); gap: 20px">
+          <sc-for list="{{shown}}" as="s" hint-placeholder-count="8">
+            <article class="card card-hover scholar-card">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+                <span class="avatar avatar-lg {{s.av}}">{{s.ini}}</span>
+                <span class="badge badge-verified"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>যাচাইকৃত</span>
+              </div>
+              <div>
+                <h2 class="t-h4" style="font-size: 19px"><a href="ScholarProfile.dc.html" style="color: var(--rh-ink); text-decoration: none">{{s.name}}</a></h2>
+                <p class="t-small t-muted">{{s.title}}</p>
+              </div>
+              <div class="tag-row"><sc-for list="{{s.tags}}" as="t" hint-placeholder-count="3"><span class="tag">{{t}}</span></sc-for></div>
+              <div class="mini-stats" style="margin-top: auto">
+                <div><strong>{{s.a}}</strong><span>প্রবন্ধ</span></div>
+                <div><strong>{{s.q}}</strong><span>উত্তর</span></div>
+                <div><strong>{{s.l}}</strong><span>লেকচার</span></div>
+              </div>
+              <a href="ScholarProfile.dc.html" class="btn btn-secondary btn-sm btn-block">প্রোফাইল দেখুন</a>
+            </article>
+          </sc-for>
+        </div>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+          <div class="card"><div class="empty"><span class="empty__icon"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span><h2 class="t-h4">এই খোঁজে কাউকে পাওয়া যায়নি</h2><p class="t-small t-muted">বানান মিলিয়ে দেখুন অথবা অন্য বিষয় বেছে নিন।</p><button type="button" class="btn btn-secondary btn-sm" onClick="{{reset}}">ফিল্টার মুছুন</button></div></div>
+        </sc-if>
+
+        <div class="adab-strip" style="margin-top: 40px; align-items: center; flex-wrap: wrap">
+          <svg class="ic ic-lg" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--rh-primary)"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+          <p class="t-small" style="flex: 1 1 320px"><strong>“যাচাইকৃত” মানে কী?</strong> শূরা আলিমের শিক্ষাগত যোগ্যতা ও পরিচয় নিশ্চিত করেছে। এটি কোনো মতের শ্রেষ্ঠত্বের স্বীকৃতি নয়।</p>
+          <a href="About.dc.html#shura" class="link-arrow">যাচাই প্রক্রিয়া <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const field = this.state.field ?? 'সব';
+    const q = (this.state.q ?? '').trim();
+    const sort = this.state.sort ?? 'name';
+    const all = [
+      { name: 'ড. মাহমুদুল হাসান', ini: 'মহ', title: 'ইলমি রিভিউ প্রধান', tags: ['হাদিস', 'আকীদাহ', 'উসূলুল ফিকহ'], a: 68, q: 214, l: 42, av: '' },
+      { name: 'মুফতি ইমরান খলিল', ini: 'ইক', title: 'প্রশ্নোত্তর বিভাগ প্রধান', tags: ['ফিকহ', 'লেনদেন', 'পরিবার'], a: 34, q: 512, l: 28, av: '' },
+      { name: 'উস্তায আব্দুর রহমান', ini: 'আর', title: 'আকীদাহ ও ফিকহ বিভাগ', tags: ['আকীদাহ', 'তাযকিয়াহ'], a: 57, q: 98, l: 63, av: '' },
+      { name: 'উস্তাযা সুমাইয়া কবির', ini: 'সক', title: 'নারী শিক্ষা ও তাযকিয়াহ', tags: ['আখলাক', 'পরিবার', 'তাযকিয়াহ'], a: 49, q: 136, l: 35, av: 'avatar--gold' },
+      { name: 'মাওলানা আব্দুল হাকিম', ini: 'আহ', title: 'শূরা সমন্বয়ক', tags: ['ইবাদত', 'সীরাত', 'দাওয়াহ'], a: 26, q: 74, l: 81, av: 'avatar--gold' },
+      { name: 'শায়খ ইউসুফ নূর', ini: 'ইন', title: 'তাফসির বিভাগ', tags: ['তাফসির', 'কুরআনিক আরবি'], a: 31, q: 40, l: 112, av: '' },
+      { name: 'ড. রাশিদা পারভীন', ini: 'রপ', title: 'হাদিস ও নারী শিক্ষা', tags: ['হাদিস', 'পরিবার'], a: 22, q: 87, l: 19, av: 'avatar--gold' },
+      { name: 'মাওলানা জুবায়ের আহমাদ', ini: 'জআ', title: 'সীরাত ও ইতিহাস', tags: ['সীরাত', 'ইসলামের ইতিহাস'], a: 38, q: 26, l: 54, av: '' }
+    ];
+    const fields = ['সব', 'আকীদাহ', 'ফিকহ', 'হাদিস', 'তাফসির', 'তাযকিয়াহ', 'সীরাত', 'পরিবার'].map((label) => ({ label, cls: label === field ? 'is-active' : '', pressed: label === field ? 'true' : 'false', pick: () => this.setState({ field: label }) }));
+    let shown = all.filter((s) => (field === 'সব' || s.tags.includes(field)) && (!q || s.name.includes(q) || s.tags.some((t) => t.includes(q)) || s.title.includes(q)));
+    if (sort === 'answers') shown = shown.slice().sort((x, y) => y.q - x.q);
+    if (sort === 'lectures') shown = shown.slice().sort((x, y) => y.l - x.l);
+    shown = shown.map((s) => ({ ...s, a: bn(s.a), q: bn(s.q), l: bn(s.l) }));
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      fields, shown, empty: shown.length === 0,
+      countText: bn(shown.length) + ' জন আলিম' + (field !== 'সব' ? ' · বিষয়: ' + field : ''),
+      onSearch: (e) => this.setState({ q: e.target.value }),
+      onSort: (e) => this.setState({ sort: e.target.value }),
+      reset: () => this.setState({ field: 'সব', q: '' })
+    };
+  }
+}
+</script>
+</body>
+</html>

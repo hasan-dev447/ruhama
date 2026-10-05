@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112.64" fill="#0E4D45"/>
+  <g transform="translate(81.92 81.92) scale(7.253333333333333)">
+    <path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z" fill="none" stroke="#D4A95C" stroke-width="2.4" stroke-linejoin="round"/>
+  </g>
+</svg>

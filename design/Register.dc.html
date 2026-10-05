@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · রেজিস্টার</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <main class="auth-wrap" style="padding-block: 88px 72px">
+    <div class="rh-pattern" aria-hidden="true" style="z-index: -1"></div>
+    <div class="hero__glow" aria-hidden="true" style="top: -200px"></div>
+    <div style="position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center">
+      <a href="Main.dc.html" class="link-arrow" style="min-height: 44px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="transform: none"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>হোমে ফিরুন</a>
+      <button type="button" class="btn-icon" aria-label="{{themeLabel}}" onClick="{{toggleTheme}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></button>
+    </div>
+
+    <div class="card card-raised auth-card rh-in" style="width: min(500px, 100%)">
+      <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+        <svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 44px; height: 44px; color: var(--rh-accent); stroke-width: 2.2"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+        <h1 class="t-h3">নতুন অ্যাকাউন্ট খুলুন</h1>
+        <p class="t-small t-muted">কোর্সের অগ্রগতি, সংরক্ষিত প্রবন্ধ ও আপনার যাত্রা এক জায়গায়।</p>
+      </div>
+      <sc-if value="{{notDone}}" hint-placeholder-val="{{true}}">
+        <form onSubmit="{{submit}}" style="display: flex; flex-direction: column; gap: 16px; margin-top: 28px">
+          <div class="field"><label class="label" for="g-name">পূর্ণ নাম</label><input id="g-name" class="input" required="" autocomplete="name"></div>
+          <div class="field"><label class="label" for="g-email">ইমেইল</label><input id="g-email" class="input" type="email" required="" autocomplete="email" placeholder="you@example.com"></div>
+          <div class="field">
+            <label class="label" for="g-pass">পাসওয়ার্ড</label>
+            <input id="g-pass" class="input" type="password" required="" minlength="8" autocomplete="new-password" onInput="{{onPw}}" aria-describedby="g-pass-hint">
+            <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 4px" aria-hidden="true">
+              <span style="height: 4px; border-radius: 4px; background: {{s1}}"></span><span style="height: 4px; border-radius: 4px; background: {{s2}}"></span><span style="height: 4px; border-radius: 4px; background: {{s3}}"></span><span style="height: 4px; border-radius: 4px; background: {{s4}}"></span>
+            </div>
+            <span id="g-pass-hint" class="hint">{{pwHint}}</span>
+          </div>
+          <label class="check" style="align-items: flex-start"><input type="checkbox" required="" style="margin-top: 4px"><span class="t-small">আমি <a class="link" href="About.dc.html#adab">আদব ও ইনসাফ নীতি</a> এবং ব্যবহারের শর্তাবলি মেনে চলব।</span></label>
+          <label class="check"><input type="checkbox" checked=""><span class="t-small">সাপ্তাহিক চিঠি ইমেইলে পেতে চাই</span></label>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">অ্যাকাউন্ট খুলুন</button>
+        </form>
+      </sc-if>
+      <sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+        <div class="empty" role="status" style="padding: 28px 0 8px">
+          <span class="empty__icon" style="background: var(--rh-success-soft); color: var(--rh-success)"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></span>
+          <h2 class="t-h4">ইমেইল যাচাই করুন</h2>
+          <p class="t-small t-muted">আপনার ইমেইলে একটি নিশ্চিতকরণ লিংক পাঠানো হয়েছে। লিংকে ক্লিক করলেই অ্যাকাউন্ট চালু হবে।</p>
+          <a href="Dashboard.dc.html" class="btn btn-secondary btn-sm">ড্যাশবোর্ডের ঝলক দেখুন</a>
+        </div>
+      </sc-if>
+      <p class="t-small t-muted" style="text-align: center; margin-top: 24px">আগে থেকেই অ্যাকাউন্ট আছে? <a href="Login.dc.html" class="link" style="font-weight: 600">লগইন করুন</a></p>
+    </div>
+    <p class="ar" lang="ar" dir="rtl" style="position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; font-size: 22px; color: var(--rh-muted); opacity: 0.8">رُحَمَاءُ بَيْنَهُمْ</p>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const pw = this.state.pw ?? '';
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+    if (/\d/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw) || pw.length >= 12) score++;
+    const colors = ['var(--rh-error)', 'var(--rh-warning)', 'var(--rh-primary-light)', 'var(--rh-success)'];
+    const on = score ? colors[score - 1] : 'var(--rh-border)';
+    const hints = ['কমপক্ষে ৮ অক্ষর; সংখ্যা ও চিহ্ন মেশালে আরও নিরাপদ।', 'দুর্বল পাসওয়ার্ড', 'মাঝারি পাসওয়ার্ড', 'ভালো পাসওয়ার্ড', 'শক্তিশালী পাসওয়ার্ড'];
+    const done = !!this.state.done;
+    const v = {
+      theme: dark ? 'dark' : 'light',
+      toggleTheme: () => this.setState({ dark: !dark }),
+      themeLabel: dark ? 'লাইট মোড চালু করুন' : 'ডার্ক মোড চালু করুন',
+      onPw: (e) => this.setState({ pw: e.target.value }),
+      pwHint: hints[score],
+      done, notDone: !done,
+      submit: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ done: true }); }
+    };
+    [1, 2, 3, 4].forEach((i) => { v['s' + i] = i <= score ? on : 'var(--rh-border)'; });
+    return v;
+  }
+}
+</script>
+</body>
+</html>

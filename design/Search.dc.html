@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · সার্চ রেজাল্ট</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="search" logged-in="{{true}}" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" aria-labelledby="s-title" style="padding-bottom: 32px">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container" style="max-width: 1008px">
+        <h1 id="s-title" class="sr-only">সার্চ রেজাল্ট</h1>
+        <form role="search" onSubmit="{{noop}}" class="input-icon">
+          <svg class="ic ic-lg" viewBox="0 0 24 24" aria-hidden="true" style="left: 18px"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <label for="gs" class="sr-only">পুরো সাইটে খুঁজুন</label>
+          <input id="gs" class="input" type="search" value="{{q}}" onChange="{{onQ}}" placeholder="প্রবন্ধ, আয়াত, হাদিস, প্রশ্ন, ভিডিও…" style="min-height: 64px; font-size: 19px; padding-left: 54px; border-radius: 14px">
+        </form>
+        <p class="t-muted" role="status" style="margin-top: 14px">{{summary}}</p>
+        <div class="chip-row" role="group" aria-label="ফলাফলের ধরন" style="margin-top: 16px">
+          <sc-for list="{{chips}}" as="c" hint-placeholder-count="8"><button type="button" class="chip {{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" disabled="{{c.disabled}}">{{c.label}} <span style="opacity: 0.75">{{c.count}}</span></button></sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-sm">
+      <div class="container" style="max-width: 1008px; display: flex; flex-direction: column; gap: 36px">
+        <sc-for list="{{groups}}" as="g" hint-placeholder-count="5">
+          <section class="result-group" aria-label="{{g.name}}">
+            <div class="result-group__head">
+              <h2 class="t-h4" style="display: flex; align-items: center; gap: 10px"><span class="icon-tile icon-tile--teal" style="width: 34px; height: 34px; font-size: 14px">{{g.mark}}</span>{{g.name}} <span class="t-small t-muted" style="font-family: var(--rh-font-body); font-weight: 400">{{g.count}}</span></h2>
+              <a href="{{g.href}}" class="link-arrow">সব দেখুন <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+            </div>
+            <sc-for list="{{g.items}}" as="r" hint-placeholder-count="2">
+              <a href="{{r.href}}" class="result-item">
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+                  <span class="row-link__title" style="font-size: 17px"><sc-for list="{{r.t}}" as="s"><sc-if value="{{s.hit}}"><mark>{{s.x}}</mark></sc-if><sc-if value="{{s.plain}}">{{s.x}}</sc-if></sc-for></span>
+                  <sc-if value="{{r.hasSnip}}" hint-placeholder-val="{{true}}"><span class="t-small" style="color: var(--rh-muted); line-height: 1.7"><sc-for list="{{r.s}}" as="s"><sc-if value="{{s.hit}}"><mark>{{s.x}}</mark></sc-if><sc-if value="{{s.plain}}">{{s.x}}</sc-if></sc-for></span></sc-if>
+                  <span style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center"><sc-if value="{{r.isRef}}" hint-placeholder-val="{{false}}"><span class="ref-badge">{{r.meta}}</span></sc-if><sc-if value="{{r.isMeta}}" hint-placeholder-val="{{true}}"><span class="t-caption t-muted">{{r.meta}}</span></sc-if></span>
+                </span>
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="margin-top: 4px; color: var(--rh-muted)"><path d="m9 18 6-6-6-6"></path></svg>
+              </a>
+            </sc-for>
+          </section>
+        </sc-for>
+
+        <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+          <div class="card">
+            <div class="empty" style="padding-block: 56px">
+              <span class="empty__icon"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path><path d="M8 11h6"></path></svg></span>
+              <h2 class="t-h4">“{{q}}” লিখে কিছু পাওয়া যায়নি</h2>
+              <p class="t-small t-muted" style="max-width: 420px">বানান মিলিয়ে দেখুন, ছোট শব্দে খুঁজুন অথবা নিচের কোনো বিষয় দিয়ে শুরু করুন। উত্তর না পেলে প্রশ্ন করতে পারেন।</p>
+              <div class="chip-row" style="justify-content: center"><sc-for list="{{suggest}}" as="s" hint-placeholder-count="4"><button type="button" class="chip" onClick="{{s.pick}}">{{s.label}}</button></sc-for></div>
+              <a href="QA.dc.html" class="btn btn-primary btn-sm" style="margin-top: 6px">প্রশ্ন করুন</a>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"query":{"editor":"text","default":"ভাই"},"$preview":{"width":1440,"height":2600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const q = this.state.q ?? (this.props.query ?? 'ভাই');
+    const term = q.trim();
+    const type = this.state.type ?? 'সব';
+    const split = (text) => {
+      if (!term) return [{ x: text, hit: false, plain: true }];
+      const out = []; let i = 0;
+      while (i < text.length) {
+        const j = text.indexOf(term, i);
+        if (j < 0) { out.push({ x: text.slice(i), hit: false, plain: true }); break; }
+        if (j > i) out.push({ x: text.slice(i, j), hit: false, plain: true });
+        out.push({ x: term, hit: true, plain: false });
+        i = j + term.length;
+      }
+      return out;
+    };
+    const data = [
+      { g: 'প্রবন্ধ', mark: 'প', href: 'IlmCenter.dc.html', items: [
+        { t: 'ভিন্নমতের ভাইয়ের সাথে কথা বলার সুন্নাহ', s: 'মতের অমিল হলেই সম্পর্ক ভাঙতে হবে, এমন নয়। দ্বিমত রেখেও ভাইয়ের সম্মান অক্ষুণ্ণ রাখা যায়।', meta: 'আখলাক · ৬ মিনিট · রিভিউকৃত', href: 'Article.dc.html' },
+        { t: 'ভ্রাতৃত্বের হক: এক মুসলিমের ওপর আরেক মুসলিমের অধিকার', s: 'সালামের জবাব দেওয়া, অসুস্থ ভাইকে দেখতে যাওয়া, দাওয়াত কবুল করা: হাদিসে বর্ণিত অধিকারগুলো।', meta: 'সামাজিক দায়িত্ব · ৯ মিনিট · রিভিউকৃত', href: 'Article.dc.html' },
+        { t: 'মাযহাবের ভিন্নতা: কেন হয় এবং কীভাবে দেখব', s: 'ইজতিহাদের বৈধ পরিসর বোঝা এবং ভিন্ন মাযহাবের অনুসারীকে সম্মান করা।', meta: 'ফিকহ · ১২ মিনিট', href: 'Article.dc.html' } ] },
+      { g: 'আয়াত', mark: 'আ', href: 'About.dc.html#warnings', ref: true, items: [
+        { t: 'মুমিনরা তো পরস্পর ভাই ভাই; সুতরাং তোমাদের ভাইদের মধ্যে আপস-মীমাংসা করে দাও।', meta: 'সূরা আল-হুজুরাত : ১০', href: 'About.dc.html' },
+        { t: 'তোমরা ছিলে পরস্পরের শত্রু, তিনি তোমাদের হৃদয়ে প্রীতি স্থাপন করলেন, ফলে তাঁর অনুগ্রহে তোমরা ভাই ভাই হয়ে গেলে।', meta: 'সূরা আলে ইমরান : ১০৩', href: 'About.dc.html' } ] },
+      { g: 'হাদিস', mark: 'হা', href: 'IlmCenter.dc.html', ref: true, items: [
+        { t: 'তোমাদের কেউ প্রকৃত মুমিন হতে পারবে না, যতক্ষণ না সে নিজের জন্য যা পছন্দ করে, তার ভাইয়ের জন্যও তা পছন্দ করে।', meta: 'সহিহ বুখারী : ১৩ · সহিহ', href: 'Article.dc.html' },
+        { t: 'মুসলিম মুসলিমের ভাই; সে তার ওপর জুলুম করে না এবং তাকে শত্রুর হাতে ছেড়ে দেয় না।', meta: 'সহিহ বুখারী : ২৪৪২ · সহিহ', href: 'Article.dc.html' },
+        { t: 'পারস্পরিক ভালোবাসা, দয়া ও সহমর্মিতায় মুমিনদের দৃষ্টান্ত একটি দেহের মতো।', meta: 'সহিহ মুসলিম : ২৫৮৬ · সহিহ', href: 'Main.dc.html' } ] },
+      { g: 'প্রশ্নোত্তর', mark: 'প্র', href: 'QA.dc.html', items: [
+        { t: 'ভিন্ন মাযহাবের ইমামের পেছনে জামাতে সালাত আদায় করা যাবে কি?', s: 'হ্যাঁ, সালাত সহিহ হবে। সালাত শেষে তর্কে না গিয়ে ভাইয়ের সাথে ভ্রাতৃত্ব বজায় রাখুন।', meta: 'উত্তর: মুফতি ইমরান খলিল · রিভিউকৃত', href: 'QAAnswer.dc.html' },
+        { t: 'রাগ নিয়ন্ত্রণের সুন্নাহসম্মত উপায় কী?', s: 'পরিবারে ছোটখাটো বিষয়ে খুব রেগে যাই, পরে অনুশোচনা হয়।', meta: 'উত্তর: উস্তাযা সুমাইয়া কবির', href: 'QAAnswer.dc.html' } ] },
+      { g: 'ভিডিও', mark: 'ভি', href: 'Videos.dc.html', items: [
+        { t: 'ভিন্নমতের বন্ধুর সাথে সম্পর্ক', s: 'মতের পার্থক্য সত্ত্বেও ভাই হিসেবে আপন করে নেওয়ার বাস্তব পরামর্শ।', meta: 'নাঈম আহমাদ · ২৪:০৮', href: 'VideoDetail.dc.html' },
+        { t: 'তাকদিরের প্রতি ঈমান: চেষ্টা ও ভরসার ভারসাম্য', s: 'জিবরীল (আ.)-এর হাদিস থেকে তাকদিরের সংজ্ঞা ও চারটি স্তর।', meta: 'উস্তায আব্দুর রহমান · ৪৬:১০', href: 'VideoDetail.dc.html' } ] },
+      { g: 'স্কলার', mark: 'স্ক', href: 'Scholars.dc.html', items: [
+        { t: 'ড. মাহমুদুল হাসান', s: 'ইলমি রিভিউ প্রধান · হাদিস, আকীদাহ, উসূলুল ফিকহ', meta: '৬৮ প্রবন্ধ · ২১৪ উত্তর', href: 'ScholarProfile.dc.html' },
+        { t: 'উস্তায আব্দুর রহমান', s: 'আকীদাহ ও ফিকহ বিভাগ · আকীদাহ, তাযকিয়াহ', meta: '৫৭ প্রবন্ধ · ৬৩ লেকচার', href: 'ScholarProfile.dc.html' } ] },
+      { g: 'ইভেন্ট', mark: 'ই', href: 'Events.dc.html', items: [
+        { t: 'মতপার্থক্যের আদব: সাহাবিদের জীবন থেকে', s: 'ভিন্নমত সত্ত্বেও সাহাবিরা কীভাবে পরস্পরের ভাই হয়ে ছিলেন।', meta: '১০ অক্টোবর · অনলাইন', href: 'EventDetail.dc.html' },
+        { t: 'তাযকিয়াহ মজলিস: অন্তরের রোগ ও তার প্রতিকার', s: 'অহংকার, হিংসা ও রিয়া চেনা ও সারানোর এক বিকেল।', meta: '১৬ অক্টোবর · খুলনা', href: 'EventDetail.dc.html' } ] }
+    ];
+    const matched = data.map((g) => ({ ...g, hits: g.items.filter((r) => !term || r.t.includes(term) || (r.s || '').includes(term) || r.meta.includes(term)) }));
+    const total = matched.reduce((a, g) => a + g.hits.length, 0);
+    const chips = [{ label: 'সব', count: bn(total), n: total }].concat(matched.map((g) => ({ label: g.g, count: bn(g.hits.length), n: g.hits.length }))).map((c) => ({ ...c, cls: c.label === type ? 'is-active' : '', pressed: c.label === type ? 'true' : 'false', disabled: c.n === 0 && c.label !== 'সব', pick: () => this.setState({ type: c.label }) }));
+    const groups = matched.filter((g) => g.hits.length && (type === 'সব' || g.g === type)).map((g) => ({
+      name: g.g, mark: g.mark, href: g.href, count: bn(g.hits.length) + 'টি',
+      items: g.hits.map((r) => ({ href: r.href, t: split(r.t), s: split(r.s || ''), hasSnip: !!r.s, meta: r.meta, isRef: !!g.ref, isMeta: !g.ref }))
+    }));
+    const suggest = ['ঈমান', 'সালাত', 'তাকদির', 'রাগ'].map((label) => ({ label, pick: () => this.setState({ q: label, type: 'সব' }) }));
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      q, onQ: (e) => this.setState({ q: e.target.value, type: 'সব' }), noop: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+      chips, groups, suggest,
+      empty: !!term && total === 0,
+      summary: term ? '“' + term + '” এর জন্য ' + bn(total) + 'টি ফলাফল' : 'কী খুঁজছেন লিখুন',
+    };
+  }
+}
+</script>
+</body>
+</html>

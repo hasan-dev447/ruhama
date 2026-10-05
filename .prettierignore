@@ -1,0 +1,14 @@
+# design boards and their stylesheet are the visual source of truth, kept verbatim
+design/
+src/styles/ruhama.css
+# generated
+src/payload-types.ts
+src/migrations/*.json
+src/app/(payload)/admin/importMap.js
+public/sw.js
+.next/
+.cache/
+.outbox/
+test-results/
+playwright-report/
+package-lock.json

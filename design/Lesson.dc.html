@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · পাঠ ৮: তাকদিরের প্রতি ঈমান</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="learn" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <!-- lesson progress bar -->
+    <div style="border-bottom: 1px solid var(--rh-border); background: var(--rh-surface)">
+      <div class="container" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-block: 16px">
+        <nav aria-label="ব্রেডক্রাম্ব" style="flex: 1 1 320px"><ol class="crumbs"><li><a href="Courses.dc.html">শেখার পথ</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li><a href="Courses.dc.html">ঈমানের ছয় স্তম্ভ</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">পাঠ ৮</li></ol></nav>
+        <div style="flex: 1 1 280px; display: flex; align-items: center; gap: 12px">
+          <span class="t-small t-muted" style="white-space: nowrap">{{doneText}}</span>
+          <div class="progress" style="flex: 1" role="progressbar" aria-label="কোর্স অগ্রগতি" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{pct}}"><span style="width: {{pctCss}}"></span></div>
+          <span class="t-small" style="font-weight: 600">{{pctText}}</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="section-sm">
+      <div class="container">
+        <div class="layout-side">
+          <aside class="layout-side__aside sticky-col" aria-label="কোর্সের বিষয়সূচি" style="max-width: 320px">
+            <div class="card" style="padding: 18px">
+              <div style="display: flex; flex-direction: column; gap: 4px; padding: 4px 8px 14px; border-bottom: 1px solid var(--rh-border); margin-bottom: 8px">
+                <span class="badge badge-level" style="align-self: flex-start">প্রাথমিক</span>
+                <strong style="font-family: var(--rh-font-heading); font-size: 18px; margin-top: 8px">ঈমানের ছয় স্তম্ভ</strong>
+                <span class="t-caption t-muted">১২ পাঠ · ৩ ঘণ্টা · উস্তায আব্দুর রহমান</span>
+              </div>
+              <nav class="course-outline" aria-label="পাঠসমূহ">
+                <a href="#" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>ঈমান কী ও কেন</a>
+                <a href="#" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>আল্লাহর প্রতি ঈমান (১)</a>
+                <a href="#" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>আল্লাহর প্রতি ঈমান (২)</a>
+                <a href="#" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>ফেরেশতাদের প্রতি ঈমান</a>
+                <a href="#" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>আসমানি কিতাবসমূহ</a>
+                <a href="#" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>রাসূলগণের প্রতি ঈমান</a>
+                <a href="#" class="lesson-item"><span class="lesson-state is-done"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>আখিরাতের প্রতি ঈমান</a>
+                <a href="#" class="lesson-item is-current" aria-current="page"><span class="lesson-state {{curState}}">{{curMark}}</span>তাকদিরের প্রতি ঈমান</a>
+                <a href="#" class="lesson-item"><span class="lesson-state">৯</span>ঈমানের বৃদ্ধি ও হ্রাস</a>
+                <a href="#" class="lesson-item"><span class="lesson-state">১০</span>ঈমানের সুরক্ষা</a>
+                <a href="#" class="lesson-item"><span class="lesson-state">১১</span>ঈমান ও আমলের সম্পর্ক</a>
+                <a href="#" class="lesson-item"><span class="lesson-state">১২</span>পুনরালোচনা ও মূল্যায়ন</a>
+              </nav>
+            </div>
+          </aside>
+
+          <article class="layout-side__main" style="max-width: 800px">
+            <span class="eyebrow">মডিউল ৩ · পাঠ ৮</span>
+            <h1 class="t-h1" style="margin-top: 12px">তাকদিরের প্রতি ঈমান</h1>
+            <div class="stat-line" style="margin-top: 12px"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>১৪ মিনিট</span><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>রিভিউ: ড. মাহমুদুল হাসান</span></div>
+
+            <div class="pattern-host" style="margin-top: 28px; border-radius: var(--rh-radius-lg); background: var(--rh-band-bg); aspect-ratio: 16 / 8; display: grid; place-items: center; min-height: 220px">
+              <div class="rh-pattern" aria-hidden="true" style="background-color: #F3E9D6; opacity: 0.08"></div>
+              <button type="button" aria-label="অডিও পাঠ চালু করুন" style="display: grid; place-items: center; width: 76px; height: 76px; border-radius: 50%; border: 1.5px solid rgba(212,169,92,0.7); background: rgba(255,255,255,0.06); color: #D4A95C; cursor: pointer">
+                <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 30px; height: 30px; fill: currentColor; margin-left: 4px"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z"></path></svg>
+              </button>
+              <span style="position: absolute; left: 20px; bottom: 16px; color: var(--rh-band-muted); font-size: 14px">অডিও পাঠ · ১৪:২০</span>
+            </div>
+
+            <div class="prose" style="margin-top: 36px">
+              <p>তাকদিরের প্রতি ঈমান ঈমানের ছয়টি স্তম্ভের একটি। জিবরীল (আ.)-এর প্রসিদ্ধ হাদিসে রাসূলুল্লাহ ﷺ ঈমানের সংজ্ঞায় বলেছেন:</p>
+              <article class="hadith-card">
+                <p class="ar" lang="ar" dir="rtl">أَنْ تُؤْمِنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ وَالْيَوْمِ الْآخِرِ وَتُؤْمِنَ بِالْقَدَرِ خَيْرِهِ وَشَرِّهِ</p>
+                <p class="hadith-card__text">“(ঈমান হলো) তুমি ঈমান আনবে আল্লাহর প্রতি, তাঁর ফেরেশতাদের প্রতি, তাঁর কিতাবসমূহ, তাঁর রাসূলগণ ও শেষ দিবসের প্রতি, এবং ঈমান আনবে তাকদিরের ভালো-মন্দের প্রতি।”</p>
+                <div class="hadith-card__foot"><span>উমার ইবনুল খাত্তাব (রা.)</span><span class="meta-dot" aria-hidden="true"></span><span>সহিহ মুসলিম : ৮</span><span class="badge badge-sahih" style="margin-left: auto">সহিহ</span></div>
+              </article>
+              <h2 style="margin-top: 40px">তাকদির মানে কী</h2>
+              <p>তাকদির অর্থ আল্লাহর পূর্ণ জ্ঞান ও প্রজ্ঞা অনুযায়ী সবকিছুর নির্ধারণ। আলিমগণ একে চারটি বিষয়ের সমষ্টি হিসেবে ব্যাখ্যা করেছেন: আল্লাহর সর্বব্যাপী জ্ঞান, তা লিখে রাখা, তাঁর ইচ্ছা এবং তাঁর সৃষ্টি।</p>
+              <article class="ayah-card ayah-card--compact">
+                <svg class="ayah-card__orn mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+                <p class="ar" lang="ar" dir="rtl">إِنَّا كُلَّ شَيْءٍ خَلَقْنَاهُ بِقَدَرٍ</p>
+                <p class="ayah-card__tr">“নিশ্চয়ই আমি প্রতিটি জিনিস সৃষ্টি করেছি নির্ধারিত পরিমাপে।”</p>
+                <span class="ref-badge">সূরা আল-কামার : ৪৯</span>
+              </article>
+              <h2>চেষ্টা ও ভরসার ভারসাম্য</h2>
+              <p>তাকদিরে বিশ্বাস মানে হাত গুটিয়ে বসে থাকা নয়। রাসূলুল্লাহ ﷺ বলেছেন: “যা তোমার উপকারে আসে তার জন্য আগ্রহী হও, আল্লাহর সাহায্য চাও এবং অক্ষম হয়ে বসে থেকো না।” (সহিহ মুসলিম : ২৬৬৪)। তাই মুমিন সর্বোচ্চ চেষ্টা করেন এবং ফলাফল আল্লাহর ওপর ছেড়ে দেন।</p>
+            </div>
+
+            <!-- quiz -->
+            <section class="card card-pad" aria-labelledby="quiz-title" style="margin-top: 40px; display: flex; flex-direction: column; gap: 16px">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+                <h2 id="quiz-title" class="t-h4" style="display: flex; align-items: center; gap: 10px"><span class="icon-tile" style="width: 36px; height: 36px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg></span>নিজেকে যাচাই করুন</h2>
+                <span class="t-caption t-muted">প্রশ্ন ১ / ১</span>
+              </div>
+              <p style="font-weight: 600">তাকদিরের প্রতি ঈমানের সঠিক প্রভাব কোনটি?</p>
+              <div role="radiogroup" aria-labelledby="quiz-title" style="display: flex; flex-direction: column; gap: 10px">
+                <sc-for list="{{opts}}" as="o" hint-placeholder-count="4">
+                  <button type="button" role="radio" aria-checked="{{o.checked}}" class="quiz-opt {{o.cls}}" onClick="{{o.pick}}"><span class="quiz-opt__key">{{o.key}}</span><span>{{o.text}}</span></button>
+                </sc-for>
+              </div>
+              <sc-if value="{{showFeedback}}" hint-placeholder-val="{{false}}">
+                <div role="status" class="adab-strip" style="background: {{fbBg}}">
+                  <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: {{fbColor}}; margin-top: 3px"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                  <p class="t-small"><strong>{{fbTitle}}</strong> চেষ্টা করা আমাদের দায়িত্ব, ফলাফল আল্লাহর হাতে। এটাই সহিহ মুসলিমের ২৬৬৪ নম্বর হাদিসের শিক্ষা।</p>
+                </div>
+              </sc-if>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap">
+                <button type="button" class="btn btn-primary" onClick="{{check}}" disabled="{{checkDisabled}}">উত্তর যাচাই করুন</button>
+                <button type="button" class="btn btn-ghost" onClick="{{resetQuiz}}">আবার চেষ্টা</button>
+              </div>
+            </section>
+
+            <!-- prev / next -->
+            <nav aria-label="পাঠ নেভিগেশন" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 14px; margin-top: 32px">
+              <a href="#" class="card card-hover" style="padding: 18px 20px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--rh-ink)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg><span><span class="t-caption t-muted" style="display: block">আগের পাঠ</span><strong style="font-weight: 600">আখিরাতের প্রতি ঈমান</strong></span></a>
+              <a href="#" class="card card-hover" style="padding: 18px 20px; display: flex; align-items: center; justify-content: flex-end; gap: 14px; text-decoration: none; color: var(--rh-ink); text-align: right"><span><span class="t-caption t-muted" style="display: block">পরের পাঠ</span><strong style="font-weight: 600">ঈমানের বৃদ্ধি ও হ্রাস</strong></span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+            </nav>
+            <button type="button" class="btn {{completeBtn}} btn-block btn-lg" style="margin-top: 16px" onClick="{{toggleDone}}">{{completeText}}</button>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":3000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const bn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+    const done = !!this.state.done;
+    const count = done ? 8 : 7;
+    const pct = Math.round((count / 12) * 100);
+    const sel = this.state.sel;
+    const checked = !!this.state.checked;
+    const correct = 'খ';
+    const raw = [['ক', 'চেষ্টা ছেড়ে দিয়ে সব আল্লাহর ওপর ছেড়ে দেওয়া'], ['খ', 'সর্বোচ্চ চেষ্টা করা এবং ফলাফল আল্লাহর ওপর সোপর্দ করা'], ['গ', 'শুধু দোয়া করা, কোনো উপায় অবলম্বন না করা'], ['ঘ', 'ব্যর্থ হলে নিজের ভুলকে তাকদিরের দোহাই দেওয়া']];
+    const opts = raw.map(([key, text]) => {
+      let cls = '';
+      if (checked) { if (key === correct) cls = 'is-correct'; else if (key === sel) cls = 'is-wrong'; }
+      else if (key === sel) cls = 'is-selected';
+      return { key, text, cls, checked: key === sel ? 'true' : 'false', pick: () => { if (!checked) this.setState({ sel: key }); } };
+    });
+    const right = sel === correct;
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      doneText: '১২ পাঠের ' + bn(count) + 'টি সম্পন্ন', pct, pctCss: pct + '%', pctText: bn(pct) + '%',
+      curState: done ? 'is-done' : 'is-current', curMark: done ? '✓' : '৮',
+      opts,
+      checkDisabled: !sel || checked,
+      check: () => this.setState({ checked: true }),
+      resetQuiz: () => this.setState({ checked: false, sel: null }),
+      showFeedback: checked,
+      fbTitle: right ? 'সঠিক উত্তর!' : 'সঠিক উত্তর হলো (খ)।',
+      fbBg: right ? 'var(--rh-success-soft)' : 'var(--rh-warning-soft)',
+      fbColor: right ? 'var(--rh-success)' : 'var(--rh-warning-ink)',
+      completeBtn: done ? 'btn-secondary' : 'btn-primary',
+      completeText: done ? 'সম্পন্ন হয়েছে · আবার অসম্পূর্ণ করুন' : 'পাঠটি সম্পন্ন হিসেবে চিহ্নিত করুন',
+      toggleDone: () => this.setState({ done: !done })
+    };
+  }
+}
+</script>
+</body>
+</html>

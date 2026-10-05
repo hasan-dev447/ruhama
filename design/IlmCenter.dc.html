@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · ইলম কেন্দ্র</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="ilm" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main">
+    <section class="page-hero" aria-labelledby="ilm-title">
+      <div class="rh-pattern" aria-hidden="true"></div>
+      <div class="container">
+        <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">ইলম কেন্দ্র</li></ol></nav>
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px">
+          <div>
+            <h1 id="ilm-title" class="t-h1">ইলম কেন্দ্র</h1>
+            <p class="lead">প্রতিটি লেখা দলিলসহ এবং আলিমদের রিভিউ শেষে প্রকাশিত। নিজের স্তর অনুযায়ী বিষয় বেছে নিন।</p>
+          </div>
+          <div class="stat-line"><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>৪৭১টি প্রবন্ধ</span><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>সবগুলো রিভিউকৃত</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 48px">
+      <div class="container">
+        <div class="layout-side">
+          <aside class="layout-side__aside" aria-label="ফিল্টার">
+            <div class="filter-group">
+              <h3>বিষয়</h3>
+              <sc-for list="{{cats}}" as="c" hint-placeholder-count="7">
+                <label class="check"><input type="checkbox" checked="{{c.checked}}" onChange="{{c.toggle}}"><span>{{c.label}}</span><span class="filter-count">{{c.count}}</span></label>
+              </sc-for>
+            </div>
+            <div class="filter-group">
+              <h3>স্তর</h3>
+              <div class="chip-row">
+                <sc-for list="{{levels}}" as="l" hint-placeholder-count="4">
+                  <button type="button" class="chip {{l.cls}}" aria-pressed="{{l.pressed}}" onClick="{{l.pick}}">{{l.label}}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 10px; background: var(--rh-accent-soft); border-color: color-mix(in srgb, var(--rh-accent) 30%, transparent)">
+              <strong style="font-family: var(--rh-font-heading)">কোথা থেকে শুরু করব?</strong>
+              <p class="t-small t-muted">নতুন হলে “শেখার পথ”-এর সাজানো কোর্স দিয়ে শুরু করুন।</p>
+              <a href="Courses.dc.html" class="link-arrow">শেখার পথ <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+            </div>
+          </aside>
+
+          <div class="layout-side__main">
+            <div class="toolbar">
+              <div class="grow input-icon">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <label for="ilm-search" class="sr-only">প্রবন্ধ খুঁজুন</label>
+                <input id="ilm-search" class="input" type="search" placeholder="শিরোনাম বা লেখকের নাম লিখুন" onInput="{{onSearch}}">
+              </div>
+              <div class="select-wrap" style="flex: 0 1 220px">
+                <label for="ilm-sort" class="sr-only">সাজান</label>
+                <select id="ilm-sort" class="select" onChange="{{onSort}}">
+                  <option value="new">সর্বশেষ প্রকাশিত</option>
+                  <option value="short">কম সময়ে পড়া যায়</option>
+                  <option value="long">বিস্তারিত আগে</option>
+                </select>
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+              </div>
+            </div>
+            <p class="t-small t-muted" role="status" style="margin-bottom: 18px">{{resultText}}</p>
+
+            <sc-if value="{{hasResults}}" hint-placeholder-val="{{true}}">
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 20px">
+                <sc-for list="{{shown}}" as="a" hint-placeholder-count="6">
+                  <article class="card card-hover article-card">
+                    <div class="article-card__media {{a.tint}}" style="height: 132px"><div class="rh-pattern" aria-hidden="true"></div><svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 72px; height: 72px"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg></div>
+                    <div class="article-card__body" style="padding: 20px">
+                      <div class="article-card__meta"><span class="badge badge-cat">{{a.cat}}</span><span class="badge badge-level">{{a.level}}</span><span>{{a.time}}</span></div>
+                      <h3 class="article-card__title" style="font-size: 18px"><a href="Article.dc.html">{{a.title}}</a></h3>
+                      <div class="article-card__author"><span class="avatar avatar-sm {{a.av}}">{{a.ini}}</span><span style="flex: 1">{{a.author}}</span><span class="badge badge-reviewed" title="রিভিউকৃত"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>রিভিউকৃত</span></div>
+                    </div>
+                  </article>
+                </sc-for>
+              </div>
+              <nav aria-label="পৃষ্ঠা" style="margin-top: 48px"><div class="pager"><a href="#" aria-label="আগের পৃষ্ঠা"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></a><span class="is-current" aria-current="page">১</span><a href="#">২</a><a href="#">৩</a><span class="is-gap">…</span><a href="#">৫৩</a><a href="#" aria-label="পরের পৃষ্ঠা"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a></div></nav>
+            </sc-if>
+            <sc-if value="{{noResults}}" hint-placeholder-val="{{false}}">
+              <div class="card">
+                <div class="empty">
+                  <span class="empty__icon"><svg class="ic ic-xl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+                  <h3 class="t-h4">এই ফিল্টারে কোনো প্রবন্ধ পাওয়া যায়নি</h3>
+                  <p class="t-small t-muted" style="max-width: 360px">অন্য শব্দে খুঁজে দেখুন বা ফিল্টার কমিয়ে দিন। চাইলে বিষয়টি নিয়ে প্রশ্নও করতে পারেন।</p>
+                  <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center"><button type="button" class="btn btn-secondary btn-sm" onClick="{{reset}}">ফিল্টার মুছুন</button><a href="QA.dc.html" class="btn btn-ghost btn-sm">প্রশ্ন করুন</a></div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":3000}}'>
+class Component extends DCLogic {
+  bn(n) { return String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]); }
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const picked = this.state.cats ?? [];
+    const level = this.state.level ?? 'সব';
+    const q = (this.state.q ?? '').trim();
+    const sort = this.state.sort ?? 'new';
+    const all = [
+      { title: 'কালেমার দাবি: সাক্ষ্য থেকে জীবনযাপন পর্যন্ত', cat: 'আকীদাহ', level: 'প্রাথমিক', min: 8, author: 'উস্তায আব্দুর রহমান', ini: 'আর', tint: '', av: '' },
+      { title: 'ভিন্নমতের ভাইয়ের সাথে কথা বলার সুন্নাহ', cat: 'আখলাক', level: 'প্রাথমিক', min: 6, author: 'উস্তাযা সুমাইয়া কবির', ini: 'সক', tint: 'article-card__media--gold', av: 'avatar--gold' },
+      { title: 'মাযহাবের ভিন্নতা: কেন হয় এবং কীভাবে দেখব', cat: 'ফিকহ', level: 'মধ্যম', min: 12, author: 'ড. মাহমুদুল হাসান', ini: 'মহ', tint: 'article-card__media--teal', av: '' },
+      { title: 'সালাতে খুশু: অন্তরের উপস্থিতি ফেরানোর উপায়', cat: 'ইবাদত', level: 'প্রাথমিক', min: 9, author: 'মাওলানা আব্দুল হাকিম', ini: 'আহ', tint: '', av: 'avatar--gold' },
+      { title: 'রিয়া: নীরব শিরক থেকে অন্তরের সুরক্ষা', cat: 'তাযকিয়াহ', level: 'মধ্যম', min: 7, author: 'উস্তায আব্দুর রহমান', ini: 'আর', tint: 'article-card__media--gold', av: '' },
+      { title: 'সুদমুক্ত লেনদেন: দৈনন্দিন জীবনে করণীয়', cat: 'লেনদেন', level: 'মধ্যম', min: 11, author: 'মুফতি ইমরান খলিল', ini: 'ইক', tint: 'article-card__media--teal', av: '' },
+      { title: 'প্রতিবেশীর হক: হাদিসের আলোকে', cat: 'সামাজিক দায়িত্ব', level: 'প্রাথমিক', min: 5, author: 'উস্তাযা সুমাইয়া কবির', ini: 'সক', tint: '', av: 'avatar--gold' },
+      { title: 'আল্লাহর নাম ও গুণাবলি: মূলনীতি ও আদব', cat: 'আকীদাহ', level: 'উচ্চ', min: 18, author: 'ড. মাহমুদুল হাসান', ini: 'মহ', tint: 'article-card__media--gold', av: '' },
+      { title: 'ইজতিহাদ ও তাকলিদ: একটি ভারসাম্যপূর্ণ পাঠ', cat: 'ফিকহ', level: 'উচ্চ', min: 15, author: 'মুফতি ইমরান খলিল', ini: 'ইক', tint: 'article-card__media--teal', av: '' }
+    ];
+    const catDefs = [['আকীদাহ', 48], ['ফিকহ', 126], ['ইবাদত', 92], ['তাযকিয়াহ', 57], ['আখলাক', 64], ['লেনদেন', 39], ['সামাজিক দায়িত্ব', 45]];
+    const cats = catDefs.map(([label, count]) => ({
+      label, count: this.bn(count), checked: picked.includes(label),
+      toggle: () => this.setState({ cats: picked.includes(label) ? picked.filter((x) => x !== label) : picked.concat(label) })
+    }));
+    const levels = ['সব', 'প্রাথমিক', 'মধ্যম', 'উচ্চ'].map((label) => ({
+      label, cls: label === level ? 'is-active' : '', pressed: label === level ? 'true' : 'false',
+      pick: () => this.setState({ level: label })
+    }));
+    let shown = all.filter((a) => (picked.length === 0 || picked.includes(a.cat)) && (level === 'সব' || a.level === level) && (!q || a.title.includes(q) || a.author.includes(q)));
+    if (sort === 'short') shown = shown.slice().sort((a, b) => a.min - b.min);
+    if (sort === 'long') shown = shown.slice().sort((a, b) => b.min - a.min);
+    shown = shown.map((a) => ({ ...a, time: this.bn(a.min) + ' মিনিট' }));
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      cats, levels, shown,
+      hasResults: shown.length > 0, noResults: shown.length === 0,
+      resultText: this.bn(shown.length) + 'টি প্রবন্ধ দেখানো হচ্ছে' + (picked.length || level !== 'সব' || q ? ' (ফিল্টার চালু)' : ''),
+      onSearch: (e) => this.setState({ q: e.target.value }),
+      onSort: (e) => this.setState({ sort: e.target.value }),
+      reset: () => this.setState({ cats: [], level: 'সব', q: '' })
+    };
+  }
+}
+</script>
+</body>
+</html>

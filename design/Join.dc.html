@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruhama · যুক্ত হোন</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="./ruhama.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Hind+Siliguri:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Noto+Serif+Bengali:wght@600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rh" data-theme="{{theme}}" lang="bn">
+  <a class="skip-link" href="#main">মূল বিষয়বস্তুতে যান</a>
+  <dc-import name="SiteHeader" active="join" dark="{{isDark}}" toggle-theme="{{toggleTheme}}" hint-size="100%,80px"></dc-import>
+  <main id="main" class="pattern-host">
+    <div class="rh-pattern" aria-hidden="true"></div>
+    <section class="section" style="padding-top: 64px">
+      <div class="container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 56px; align-items: start">
+          <div style="display: flex; flex-direction: column; gap: 24px">
+            <nav aria-label="ব্রেডক্রাম্ব"><ol class="crumbs"><li><a href="Main.dc.html">হোম</a></li><li aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg></li><li aria-current="page">যুক্ত হোন</li></ol></nav>
+            <span class="eyebrow">একসাথে কাজ করি</span>
+            <h1 class="t-h1">আসুন, আগে আমরা কয়েকজন শুরু করি</h1>
+            <p class="t-body-lg t-muted">আপনি যে দল বা ধারারই হোন, যদি বিশ্বাস করেন মুসলিম পরিচয় আগে, তাহলে এই কাজ আপনারও। নিজের সময় ও দক্ষতা অনুযায়ী অবদান রাখুন।</p>
+            <ul class="list-reset" style="display: flex; flex-direction: column; gap: 14px">
+              <li style="display: flex; gap: 14px; align-items: flex-start"><span class="icon-tile" style="width: 40px; height: 40px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><div><strong>কোনো সদস্য ফি নেই</strong><p class="t-small t-muted">সব কাজ স্বেচ্ছাশ্রমে, আল্লাহর সন্তুষ্টির জন্য।</p></div></li>
+              <li style="display: flex; gap: 14px; align-items: flex-start"><span class="icon-tile" style="width: 40px; height: 40px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><div><strong>দলীয় পরিচয় ছাড়তে হবে না</strong><p class="t-small t-muted">শুধু ঘোষণাপত্রের আদব ও ইনসাফ মেনে চলার অঙ্গীকার।</p></div></li>
+              <li style="display: flex; gap: 14px; align-items: flex-start"><span class="icon-tile" style="width: 40px; height: 40px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span><div><strong>নিজের জেলায় কাজের সুযোগ</strong><p class="t-small t-muted">মজলিস আয়োজন থেকে অনলাইন কনটেন্ট পর্যন্ত।</p></div></li>
+            </ul>
+            <article class="ayah-card ayah-card--compact" style="margin-top: 12px">
+              <svg class="ayah-card__orn mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+              <p class="ar" lang="ar" dir="rtl">وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَىٰ</p>
+              <p class="ayah-card__tr">“সৎকর্ম ও তাকওয়ার কাজে তোমরা পরস্পরকে সহযোগিতা করো।”</p>
+              <span class="ref-badge">সূরা আল-মায়িদাহ : ২</span>
+            </article>
+          </div>
+
+          <div class="card card-raised" style="padding: 36px">
+            <sc-if value="{{notSent}}" hint-placeholder-val="{{true}}">
+              <form onSubmit="{{submit}}" style="display: flex; flex-direction: column; gap: 20px" aria-labelledby="join-form-title">
+                <div>
+                  <h2 id="join-form-title" class="t-h3">যুক্ত হওয়ার ফর্ম</h2>
+                  <p class="t-small t-muted" style="margin-top: 4px">তারকা (*) চিহ্নিত ঘরগুলো পূরণ করা আবশ্যক।</p>
+                </div>
+                <div class="field"><label class="label" for="j-name">পূর্ণ নাম<span class="req" aria-hidden="true">*</span></label><input id="j-name" class="input" required="" autocomplete="name" placeholder="যেমন: আব্দুল্লাহ আল মামুন"></div>
+                <div class="form-grid">
+                  <div class="field"><label class="label" for="j-phone">মোবাইল নম্বর<span class="req" aria-hidden="true">*</span></label><input id="j-phone" class="input" type="tel" inputmode="tel" required="" autocomplete="tel" placeholder="০১XXXXXXXXX"></div>
+                  <div class="field"><label class="label" for="j-email">ইমেইল</label><input id="j-email" class="input" type="email" autocomplete="email" placeholder="you@example.com"></div>
+                </div>
+                <div class="field">
+                  <label class="label" for="j-district">জেলা<span class="req" aria-hidden="true">*</span></label>
+                  <div class="select-wrap">
+                    <select id="j-district" class="select" required="">
+                      <option value="">জেলা নির্বাচন করুন</option>
+                      <optgroup label="ঢাকা বিভাগ"><option>ঢাকা</option><option>গাজীপুর</option><option>নারায়ণগঞ্জ</option><option>নরসিংদী</option><option>মানিকগঞ্জ</option><option>মুন্সীগঞ্জ</option><option>টাঙ্গাইল</option><option>কিশোরগঞ্জ</option><option>ফরিদপুর</option><option>গোপালগঞ্জ</option><option>মাদারীপুর</option><option>রাজবাড়ী</option><option>শরীয়তপুর</option></optgroup>
+                      <optgroup label="চট্টগ্রাম বিভাগ"><option>চট্টগ্রাম</option><option>কক্সবাজার</option><option>কুমিল্লা</option><option>ফেনী</option><option>নোয়াখালী</option><option>লক্ষ্মীপুর</option><option>চাঁদপুর</option><option>ব্রাহ্মণবাড়িয়া</option><option>রাঙ্গামাটি</option><option>খাগড়াছড়ি</option><option>বান্দরবান</option></optgroup>
+                      <optgroup label="রাজশাহী বিভাগ"><option>রাজশাহী</option><option>নাটোর</option><option>নওগাঁ</option><option>চাঁপাইনবাবগঞ্জ</option><option>পাবনা</option><option>সিরাজগঞ্জ</option><option>বগুড়া</option><option>জয়পুরহাট</option></optgroup>
+                      <optgroup label="খুলনা বিভাগ"><option>খুলনা</option><option>বাগেরহাট</option><option>সাতক্ষীরা</option><option>যশোর</option><option>ঝিনাইদহ</option><option>মাগুরা</option><option>নড়াইল</option><option>কুষ্টিয়া</option><option>চুয়াডাঙ্গা</option><option>মেহেরপুর</option></optgroup>
+                      <optgroup label="বরিশাল বিভাগ"><option>বরিশাল</option><option>পটুয়াখালী</option><option>ভোলা</option><option>পিরোজপুর</option><option>ঝালকাঠি</option><option>বরগুনা</option></optgroup>
+                      <optgroup label="সিলেট বিভাগ"><option>সিলেট</option><option>মৌলভীবাজার</option><option>হবিগঞ্জ</option><option>সুনামগঞ্জ</option></optgroup>
+                      <optgroup label="রংপুর বিভাগ"><option>রংপুর</option><option>দিনাজপুর</option><option>ঠাকুরগাঁও</option><option>পঞ্চগড়</option><option>নীলফামারী</option><option>লালমনিরহাট</option><option>কুড়িগ্রাম</option><option>গাইবান্ধা</option></optgroup>
+                      <optgroup label="ময়মনসিংহ বিভাগ"><option>ময়মনসিংহ</option><option>জামালপুর</option><option>শেরপুর</option><option>নেত্রকোনা</option></optgroup>
+                    </select>
+                    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                  </div>
+                  <span class="hint">বাংলাদেশের ৬৪টি জেলা, বিভাগ অনুযায়ী সাজানো।</span>
+                </div>
+                <fieldset class="field" style="border: 0; padding: 0; margin: 0">
+                  <legend class="label" style="margin-bottom: 8px">কোন কাজে আগ্রহী? <span class="t-muted" style="font-weight: 400">(একাধিক বাছাই করা যাবে)</span></legend>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 8px">
+                    <sc-for list="{{interests}}" as="i" hint-placeholder-count="5">
+                      <label class="check-card {{i.cls}}"><input type="checkbox" checked="{{i.checked}}" onChange="{{i.toggle}}"><span>{{i.label}}</span></label>
+                    </sc-for>
+                  </div>
+                </fieldset>
+                <div class="field"><label class="label" for="j-msg">সংক্ষিপ্ত বার্তা</label><textarea id="j-msg" class="textarea" placeholder="নিজের সম্পর্কে বা কীভাবে অবদান রাখতে চান, দুই-এক লাইনে লিখুন"></textarea></div>
+                <label class="check" style="align-items: flex-start"><input type="checkbox" required="" style="margin-top: 4px"><span class="t-small">আমি <a class="link" href="About.dc.html">ঘোষণাপত্র</a> পড়েছি এবং আদব ও ইনসাফ নীতি মেনে চলার অঙ্গীকার করছি।</span></label>
+                <button type="submit" class="btn btn-primary btn-lg btn-block">যুক্ত হোন <svg class="ic ic-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button>
+              </form>
+            </sc-if>
+            <sc-if value="{{sent}}" hint-placeholder-val="{{false}}">
+              <div class="empty" role="status" style="padding: 32px 8px">
+                <svg class="mark" viewBox="0 0 48 48" aria-hidden="true" style="width: 64px; height: 64px; color: var(--rh-accent); stroke-width: 2"><path d="M24 5Q32.78 20.36 37.43 37.43Q20.36 32.78 5 24Q20.36 15.22 37.43 10.57Q32.78 27.64 24 43Q15.22 27.64 10.57 10.57Q27.64 15.22 43 24Q27.64 32.78 10.57 37.43Q15.22 20.36 24 5Z"></path></svg>
+                <h2 class="t-h3">আহলান ওয়া সাহলান!</h2>
+                <p class="t-muted" style="max-width: 380px">আপনার আবেদন পেয়েছি। আপনার জেলার সমন্বয়ক আগামী কয়েক দিনের মধ্যে যোগাযোগ করবেন, ইনশাআল্লাহ।</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center"><a href="Register.dc.html" class="btn btn-primary">অ্যাকাউন্ট খুলুন</a><a href="Events.dc.html" class="btn btn-secondary">আসন্ন মজলিস</a></div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <dc-import name="SiteFooter" dark="{{isDark}}" hint-size="100%,660px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1440,"height":2200}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.state.dark ?? (this.props.theme === 'dark');
+    const picked = this.state.picked ?? ['লেখা'];
+    const interests = ['লেখা', 'দাওয়াহ', 'অনুবাদ', 'টেক', 'ইভেন্ট'].map((label) => {
+      const on = picked.includes(label);
+      return { label, checked: on, cls: on ? 'is-checked' : '', toggle: () => this.setState({ picked: on ? picked.filter((x) => x !== label) : picked.concat(label) }) };
+    });
+    const sent = !!this.state.sent;
+    return {
+      theme: dark ? 'dark' : 'light', isDark: dark, toggleTheme: () => this.setState({ dark: !dark }),
+      interests, sent, notSent: !sent,
+      submit: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ sent: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
