@@ -1,7 +1,7 @@
 'use client'
 
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
-import { CheckCheck, CircleCheck, SlidersHorizontal } from 'lucide-react'
+import { IconCheckAll, IconFilter, IconSuccess } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -107,11 +107,11 @@ export function NotificationList() {
             disabled={!unread}
             pending={markAll.isPending}
           >
-            <CheckCheck className="ic" aria-hidden="true" />
+            <IconCheckAll className="ic" aria-hidden="true" />
             সব পড়া হয়েছে
           </Button>
           <ButtonLink href="/settings#notify" variant="ghost" size="sm">
-            <SlidersHorizontal className="ic" aria-hidden="true" />
+            <IconFilter className="ic" aria-hidden="true" />
             পছন্দ ঠিক করুন
           </ButtonLink>
         </div>
@@ -185,7 +185,7 @@ export function NotificationList() {
                 className="empty__icon"
                 style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
               >
-                <CircleCheck className="ic ic-lg" aria-hidden="true" />
+                <IconSuccess className="ic ic-lg" aria-hidden="true" />
               </span>
               <h2 className="t-h4">
                 {tab === 'unread' ? 'সব পড়া হয়ে গেছে' : 'এখনো কোনো নোটিফিকেশন নেই'}

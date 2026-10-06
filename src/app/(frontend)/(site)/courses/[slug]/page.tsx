@@ -1,4 +1,4 @@
-import { BookOpen, Clock, Users } from 'lucide-react'
+import { IconBook, IconClock, IconUsers } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -88,18 +88,18 @@ export default async function CoursePage({ params }: Props) {
           <p className="lead">{course.description}</p>
           <div className="stat-line" style={{ marginTop: 20 }}>
             <span>
-              <BookOpen className="ic" aria-hidden="true" />
+              <IconBook className="ic" aria-hidden="true" />
               {bn(lessons.length)} পাঠ · {bn(modules.length)} মডিউল
             </span>
             {totalMinutes ? (
               <span>
-                <Clock className="ic" aria-hidden="true" />
+                <IconClock className="ic" aria-hidden="true" />
                 {formatMinutes(totalMinutes)}
               </span>
             ) : null}
             {course.enrolledCount ? (
               <span>
-                <Users className="ic" aria-hidden="true" />
+                <IconUsers className="ic" aria-hidden="true" />
                 {bnCompact(course.enrolledCount)} জন শিখছেন
               </span>
             ) : null}

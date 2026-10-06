@@ -110,6 +110,7 @@ export interface Config {
     'contact-messages': ContactMessage;
     pages: Page;
     media: Media;
+    avatars: Avatar;
     'audit-logs': AuditLog;
     'rate-limits': RateLimit1;
     'payload-kv': PayloadKv;
@@ -167,6 +168,7 @@ export interface Config {
     'contact-messages': ContactMessagesSelect<false> | ContactMessagesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    avatars: AvatarsSelect<false> | AvatarsSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'rate-limits': RateLimitsSelect<false> | RateLimitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -234,6 +236,9 @@ export interface User {
    * ইমেইলের লিংকে ক্লিক করে ঠিকানা নিশ্চিত করেছেন কিনা।
    */
   emailVerified: boolean;
+  /**
+   * প্রোফাইল ছবি থেকে নিজে থেকে বসে।
+   */
   image?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -255,6 +260,10 @@ export interface User {
   username?: string | null;
   journeyStage?: ('kalema' | 'iman' | 'ilm' | 'amal' | 'tazkiyah' | 'akhlaq' | 'ukhuwwah' | 'unity') | null;
   avatarColor?: ('teal' | 'gold' | 'sage' | 'deep') | null;
+  /**
+   * সদস্য একবারই বেছে নেন, পরে বদলানো যায় না। ভুল হলে শুধু সুপার অ্যাডমিন ঠিক করতে পারেন।
+   */
+  gender?: ('male' | 'female') | null;
   deletionRequestedAt?: string | null;
   account?: {
     docs?: (number | Account)[];
@@ -340,8 +349,28 @@ export interface User {
    * স্টাফের লেখা ও রিভিউ যে প্রোফাইলে দেখাবে।
    */
   person?: (number | null) | Person;
+  /**
+   * শুধু ভাইদের জন্য। সদস্য নিজের সেটিংস থেকে বদলান।
+   */
+  avatar?: (number | null) | Avatar;
+  /**
+   * প্রোফাইলের কভারে সদস্যের বেছে নেওয়া আয়াত, হাদিস বা লেখা।
+   */
+  cover?: {
+    kind?: ('none' | 'ayah' | 'hadith' | 'text') | null;
+    ayahKey?: string | null;
+    hadithKey?: string | null;
+    text?: string | null;
+    source?: string | null;
+  };
   privacy?: {
+    visibility?: ('public' | 'members' | 'custom' | 'private') | null;
+    allowedViewers?: (number | User)[] | null;
     profilePublic?: boolean | null;
+    showPhoto?: boolean | null;
+    showCover?: boolean | null;
+    showBio?: boolean | null;
+    showDistrict?: boolean | null;
     showActivity?: boolean | null;
     showJourney?: boolean | null;
     discoverable?: boolean | null;
@@ -518,6 +547,53 @@ export interface Media {
       filename?: string | null;
     };
     og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "avatars".
+ */
+export interface Avatar {
+  id: number;
+  user: number | User;
+  prefix?: string | null;
+  _objectKey?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    sm?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    md?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    lg?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -2149,6 +2225,10 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'avatars';
+        value: number | Avatar;
+      } | null)
+    | ({
         relationTo: 'audit-logs';
         value: number | AuditLog;
       } | null)
@@ -2218,6 +2298,7 @@ export interface UsersSelect<T extends boolean = true> {
   username?: T;
   journeyStage?: T;
   avatarColor?: T;
+  gender?: T;
   deletionRequestedAt?: T;
   account?: T;
   session?: T;
@@ -2225,10 +2306,26 @@ export interface UsersSelect<T extends boolean = true> {
   bio?: T;
   interests?: T;
   person?: T;
+  avatar?: T;
+  cover?:
+    | T
+    | {
+        kind?: T;
+        ayahKey?: T;
+        hadithKey?: T;
+        text?: T;
+        source?: T;
+      };
   privacy?:
     | T
     | {
+        visibility?: T;
+        allowedViewers?: T;
         profilePublic?: T;
+        showPhoto?: T;
+        showCover?: T;
+        showBio?: T;
+        showDistrict?: T;
         showActivity?: T;
         showJourney?: T;
         discoverable?: T;
@@ -3297,6 +3394,60 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "avatars_select".
+ */
+export interface AvatarsSelect<T extends boolean = true> {
+  user?: T;
+  prefix?: T;
+  _objectKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        sm?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        md?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        lg?:
           | T
           | {
               url?: T;

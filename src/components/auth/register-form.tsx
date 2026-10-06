@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CircleCheck, Smartphone } from 'lucide-react'
+import { IconMobile, IconSuccess } from '@/components/icons'
 import Link from 'next/link'
 import { useRef, useState, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -12,6 +12,8 @@ import { Button, ButtonLink } from '@/components/ui/button'
 import { Field, FormAlert, Input, PasswordInput } from '@/components/ui/form'
 import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
 import { authClient } from '@/lib/auth/client'
+
+import { GenderPicker } from './gender-picker'
 import { authErrorMessage } from '@/lib/auth/errors'
 
 import { SocialButtons } from './social-buttons'
@@ -20,6 +22,7 @@ const schema = z.object({
   name: z.string().trim().min(2, 'পূর্ণ নাম লিখুন।').max(80),
   email: z.string().trim().toLowerCase().email('সঠিক ইমেইল ঠিকানা দিন।'),
   password: z.string().min(8, 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।').max(128),
+  gender: z.enum(['male', 'female'], { message: 'ভাই অথবা বোন বেছে নিন।' }),
   agree: z.literal(true, { message: 'আদব নীতি ও শর্তাবলিতে সম্মতি দিন।' }),
   newsletter: z.boolean(),
 })
@@ -68,10 +71,18 @@ export function RegisterForm({
   const [pending, start] = useTransition()
   const form = useForm<Values, unknown, z.output<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: { name: '', email: '', password: '', agree: false as never, newsletter: true },
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      gender: undefined as never,
+      agree: false as never,
+      newsletter: true,
+    },
   })
   const { errors } = form.formState
   const password = useWatch({ control: form.control, name: 'password' }) ?? ''
+  const gender = useWatch({ control: form.control, name: 'gender' }) ?? null
   const score = passwordScore(password)
 
   const onValid = (values: z.output<typeof schema>) => {
@@ -83,7 +94,13 @@ export function RegisterForm({
     start(async () => {
       const callbackURL = `/verify-email?next=${encodeURIComponent(next)}`
       const { error } = await authClient.signUp.email(
-        { name: values.name, email: values.email, password: values.password, callbackURL },
+        {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          gender: values.gender,
+          callbackURL,
+        },
         { headers: { 'x-captcha-response': token } },
       )
       turnstile.current?.reset()
@@ -123,7 +140,7 @@ export function RegisterForm({
           className="empty__icon"
           style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
         >
-          <CircleCheck className="ic ic-lg" aria-hidden="true" />
+          <IconSuccess className="ic ic-lg" aria-hidden="true" />
         </span>
         <h2 className="t-h4">ইমেইল যাচাই করুন</h2>
         <p className="t-small t-muted">
@@ -201,6 +218,11 @@ export function RegisterForm({
             {errors.password?.message ?? HINTS[score]}
           </span>
         </div>
+        <GenderPicker
+          value={gender}
+          onChange={(g) => form.setValue('gender', g, { shouldValidate: true })}
+          error={errors.gender?.message}
+        />
         <div>
           <label className="check" style={{ alignItems: 'flex-start' }}>
             <input
@@ -246,7 +268,7 @@ export function RegisterForm({
           variant="ghost"
           block
         >
-          <Smartphone className="ic" aria-hidden="true" />
+          <IconMobile className="ic" aria-hidden="true" />
           মোবাইল নম্বর দিয়ে অ্যাকাউন্ট খুলুন
         </ButtonLink>
       </div>

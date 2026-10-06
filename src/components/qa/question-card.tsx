@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck } from 'lucide-react'
+import { IconNext, IconVerified } from '@/components/icons'
 import Link from 'next/link'
 
 import { PersonAvatar } from '@/components/content/cards'
@@ -16,7 +16,7 @@ export function QuestionCard({ question }: { question: QuestionCardView }) {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
         {question.category ? <Badge variant="cat">{question.category.name}</Badge> : null}
         <Badge variant="reviewed">
-          <BadgeCheck className="ic" aria-hidden="true" />
+          <IconVerified className="ic" aria-hidden="true" />
           রিভিউকৃত উত্তর
         </Badge>
         {question.publishedAt ? (
@@ -46,7 +46,7 @@ export function QuestionCard({ question }: { question: QuestionCardView }) {
           style={{ marginLeft: 'auto' }}
           aria-label={`উত্তর পড়ুন: ${question.title}`}
         >
-          উত্তর পড়ুন <ArrowRight className="ic" aria-hidden="true" />
+          উত্তর পড়ুন <IconNext className="ic" aria-hidden="true" />
         </Link>
       </div>
     </article>

@@ -50,6 +50,8 @@ export const FOOTER_COLUMNS: { title: string; links: { label: string; href: stri
     title: 'শিখুন',
     links: [
       { label: 'ইলম কেন্দ্র', href: '/ilm' },
+      { label: 'আল-কুরআন', href: '/quran' },
+      { label: 'হাদিস ভান্ডার', href: '/hadith' },
       { label: 'শেখার পথ', href: '/courses' },
       { label: 'প্রশ্নোত্তর', href: '/qa' },
       { label: 'মতপার্থক্যের আদব', href: '/ikhtilaf' },

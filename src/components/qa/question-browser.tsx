@@ -1,6 +1,6 @@
 'use client'
 
-import { SearchX } from 'lucide-react'
+import { IconSearchEmpty } from '@/components/icons'
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs'
 
 import { Button, ButtonLink } from '@/components/ui/button'
@@ -118,7 +118,7 @@ export function QuestionBrowser({
       ) : (
         <div className="card">
           <EmptyState
-            icon={<SearchX className="ic ic-xl" aria-hidden="true" />}
+            icon={<IconSearchEmpty className="ic ic-xl" aria-hidden="true" />}
             title={
               filtered ? 'এই খোঁজে কোনো উত্তর পাওয়া যায়নি' : 'এখনো কোনো উত্তর প্রকাশিত হয়নি'
             }

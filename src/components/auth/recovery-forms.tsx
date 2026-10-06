@@ -1,6 +1,6 @@
 'use client'
 
-import { CircleCheck } from 'lucide-react'
+import { IconSuccess } from '@/components/icons'
 import { useState, useTransition } from 'react'
 
 import { Button, ButtonLink } from '@/components/ui/button'
@@ -15,7 +15,7 @@ function Done({ title, text, action }: { title: string; text: string; action?: R
         className="empty__icon"
         style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
       >
-        <CircleCheck className="ic ic-lg" aria-hidden="true" />
+        <IconSuccess className="ic ic-lg" aria-hidden="true" />
       </span>
       <h2 className="t-h4">{title}</h2>
       <p className="t-small t-muted">{text}</p>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Share2 } from 'lucide-react'
+import { IconShare } from '@/components/icons'
 import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
@@ -44,7 +44,7 @@ export function ShareButton({
         className={cn('btn btn-sm', variant === 'ghost' ? 'btn-ghost' : 'btn-secondary', className)}
         onClick={share}
       >
-        <Share2 className="ic" aria-hidden="true" />
+        <IconShare className="ic" aria-hidden="true" />
         {text ?? 'শেয়ার'}
       </button>
     )
@@ -56,7 +56,7 @@ export function ShareButton({
       aria-label={label}
       onClick={share}
     >
-      <Share2 className="ic" aria-hidden="true" />
+      <IconShare className="ic" aria-hidden="true" />
     </button>
   )
 }

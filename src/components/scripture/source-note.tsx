@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react'
+import { IconInfo } from '@/components/icons'
 
 /** Dataset attribution under scripture pages. */
 export function SourceNote({
@@ -8,7 +8,7 @@ export function SourceNote({
 }) {
   return (
     <aside className="privacy-note" style={{ marginTop: 40 }} aria-label="তথ্যসূত্র">
-      <Info className="ic" aria-hidden="true" />
+      <IconInfo className="ic" aria-hidden="true" />
       <span>
         {items.map((s, i) => (
           <span key={s.url}>

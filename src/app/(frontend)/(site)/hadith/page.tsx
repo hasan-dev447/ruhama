@@ -1,4 +1,4 @@
-import { BookOpen } from 'lucide-react'
+import { IconBook } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -35,7 +35,7 @@ export default async function HadithIndexPage() {
           total ? (
             <div className="stat-line">
               <span>
-                <BookOpen className="ic" aria-hidden="true" />
+                <IconBook className="ic" aria-hidden="true" />
                 {bn(books.length)}টি গ্রন্থ · {bnNumber(total)}টি হাদিস
               </span>
             </div>
@@ -66,7 +66,7 @@ export default async function HadithIndexPage() {
                   }}
                 >
                   <IconTile teal size={48}>
-                    <BookOpen className="ic ic-lg" aria-hidden="true" />
+                    <IconBook className="ic ic-lg" aria-hidden="true" />
                   </IconTile>
                   <span style={{ minWidth: 0 }}>
                     <strong

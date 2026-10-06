@@ -25,6 +25,7 @@ import {
 } from './queries/people'
 import { getThread, listForumCategories, listThreads } from './queries/forum'
 import { getMemberProfile } from './queries/members'
+import { getPersonExtras } from './queries/profile-cover'
 import {
   getHadith,
   getHadithBook,
@@ -199,6 +200,15 @@ export const data = {
     tags: (slug) => [d('people', slug), c('people')],
     revalidate: 86400,
   }),
+  personExtras: cached(
+    ['person-extras'],
+    async (slug: string) => {
+      const payload = await p()
+      const person = await getPerson(payload, slug)
+      return person ? getPersonExtras(payload, person) : { cover: null, photo: null }
+    },
+    { tags: (slug) => [d('people', slug), c('people'), c('users')], revalidate: 86400 },
+  ),
   personContent: cached(
     ['person-content'],
     async (personId: number) => {

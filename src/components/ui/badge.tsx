@@ -1,4 +1,4 @@
-import { BadgeCheck, Check, MapPin, Video } from 'lucide-react'
+import { IconCheck, IconLocation, IconVerified, IconVideo } from '@/components/icons'
 
 import { cn } from '@/lib/utils'
 
@@ -48,7 +48,7 @@ export function ReviewedBadge({
 }) {
   return (
     <Badge variant="reviewed" style={style}>
-      <BadgeCheck className="ic" aria-hidden="true" />
+      <IconVerified className="ic" aria-hidden="true" />
       {label}
     </Badge>
   )
@@ -97,7 +97,7 @@ export function GradeBadge({
   if (grade === 'sahih')
     return (
       <Badge variant="sahih" style={style}>
-        <Check className="ic" aria-hidden="true" />
+        <IconCheck className="ic" aria-hidden="true" />
         {label}
       </Badge>
     )
@@ -123,12 +123,12 @@ export function ModeBadge({
 }) {
   return mode === 'online' ? (
     <Badge variant="online" style={style}>
-      <Video className="ic" aria-hidden="true" />
+      <IconVideo className="ic" aria-hidden="true" />
       অনলাইন
     </Badge>
   ) : (
     <Badge variant="live" style={style}>
-      <MapPin className="ic" aria-hidden="true" />
+      <IconLocation className="ic" aria-hidden="true" />
       সরাসরি
     </Badge>
   )

@@ -2,7 +2,7 @@ import {
   RichText as LexicalRichText,
   type JSXConvertersFunction,
 } from '@payloadcms/richtext-lexical/react'
-import { CircleAlert, Info, Lightbulb } from 'lucide-react'
+import { IconIdea, IconInfo, IconWarning } from '@/components/icons'
 import Image from 'next/image'
 import type { ReactNode } from 'react'
 
@@ -180,7 +180,7 @@ const makeConverters =
           title?: string
           body: string
         }
-        const Icon = f.tone === 'warning' ? CircleAlert : f.tone === 'gold' ? Lightbulb : Info
+        const Icon = f.tone === 'warning' ? IconWarning : f.tone === 'gold' ? IconIdea : IconInfo
         return (
           <aside
             className={cn(

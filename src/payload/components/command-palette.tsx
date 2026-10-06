@@ -3,19 +3,19 @@
 import { getTranslation } from '@payloadcms/translations'
 import { useAuth, useConfig, useEntityVisibility, useTranslation } from '@payloadcms/ui'
 import {
-  Bell,
-  CornerDownLeft,
-  ExternalLink,
-  FileText,
-  History,
-  LayoutDashboard,
-  LogOut,
-  Plus,
-  Search,
-  Settings,
-  ShieldCheck,
-  UserRound,
-} from 'lucide-react'
+  IconAdd,
+  IconBell,
+  IconDashboard,
+  IconDocument,
+  IconEnter,
+  IconExternal,
+  IconHistory,
+  IconLogout,
+  IconSearch,
+  IconSettings,
+  IconShield,
+  IconUser,
+} from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -81,12 +81,12 @@ function score(entry: Entry, q: string) {
   return 0
 }
 
-const ICON: Record<Kind, typeof FileText> = {
-  open: FileText,
-  create: Plus,
-  global: Settings,
-  page: LayoutDashboard,
-  site: ExternalLink,
+const ICON: Record<Kind, typeof IconDocument> = {
+  open: IconDocument,
+  create: IconAdd,
+  global: IconSettings,
+  page: IconDashboard,
+  site: IconExternal,
 }
 
 function readRecent(): string[] {
@@ -304,7 +304,7 @@ export function AdminCommandPalette() {
         aria-haspopup="dialog"
         aria-label="মেনু বা কাজ খুঁজুন"
       >
-        <Search size={16} aria-hidden="true" />
+        <IconSearch size={16} aria-hidden="true" />
         <span className="rh-cmd-trigger__text">খুঁজুন…</span>
         <kbd>{isMac ? '⌘' : 'Ctrl'} K</kbd>
       </button>
@@ -316,7 +316,7 @@ export function AdminCommandPalette() {
         >
           <div className="rh-cmd" role="dialog" aria-modal="true" aria-label="দ্রুত খুঁজুন">
             <div className="rh-cmd__search">
-              <Search size={18} aria-hidden="true" />
+              <IconSearch size={18} aria-hidden="true" />
               <input
                 ref={inputRef}
                 value={query}
@@ -340,15 +340,15 @@ export function AdminCommandPalette() {
                 results.map((entry, i) => {
                   const Icon =
                     entry.group === 'সাম্প্রতিক'
-                      ? History
+                      ? IconHistory
                       : entry.id === 'page:account'
-                        ? UserRound
+                        ? IconUser
                         : entry.id === 'page:logout'
-                          ? LogOut
+                          ? IconLogout
                           : entry.id === 'site:moderation'
-                            ? ShieldCheck
+                            ? IconShield
                             : entry.id === 'site:notifications'
-                              ? Bell
+                              ? IconBell
                               : ICON[entry.kind]
                   const heading = entry.group !== lastGroup ? entry.group : null
                   lastGroup = entry.group
@@ -369,10 +369,10 @@ export function AdminCommandPalette() {
                         </span>
                         <span className="rh-cmd__label">{entry.label}</span>
                         {entry.external ? (
-                          <ExternalLink size={14} className="rh-cmd__meta" aria-hidden="true" />
+                          <IconExternal size={14} className="rh-cmd__meta" aria-hidden="true" />
                         ) : null}
                         {i === active ? (
-                          <CornerDownLeft size={14} className="rh-cmd__meta" aria-hidden="true" />
+                          <IconEnter size={14} className="rh-cmd__meta" aria-hidden="true" />
                         ) : null}
                       </div>
                     </div>

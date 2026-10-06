@@ -12,7 +12,12 @@ export type ServiceContext = {
   ip?: string
 }
 
-export function requireUser(ctx: ServiceContext): User {
+/**
+ * The signed-in member. Members who have not chosen ভাই / বোন yet can do nothing else until they do
+ * (Google, Facebook, magic-link and phone sign-ups choose it on /onboarding).
+ */
+export function requireUser(ctx: ServiceContext, opts: { allowIncomplete?: boolean } = {}): User {
   if (!ctx.user) throw errors.unauthorized()
+  if (!opts.allowIncomplete && !ctx.user.gender) throw errors.profileIncomplete()
   return ctx.user
 }

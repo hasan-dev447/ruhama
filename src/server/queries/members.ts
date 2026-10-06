@@ -1,5 +1,9 @@
 import type { Payload } from 'payload'
 
+import { readPrivacy, type ProfilePrivacy } from '@/lib/profile-privacy'
+
+import { resolveCover, type ProfileCover } from './profile-cover'
+
 export const threadPath = (t: { id: number | string; slug?: string | null }) =>
   `/forum/${t.id}${t.slug ? `/${t.slug}` : ''}`
 
@@ -7,20 +11,24 @@ export type MemberProfile = {
   id: number
   username: string
   name: string
+  gender: 'male' | 'female' | null
   district: string | null
   bio: string | null
   avatarColor: string
+  /** photo (brothers only): small for the page, large for the full-screen view */
+  photo: { src: string; large: string } | null
+  cover: ProfileCover | null
   joinedAt: string
   roles: string[]
-  isPublic: boolean
+  privacy: ProfilePrivacy
   journeyStage: string | null
   completedCourses: { title: string; slug: string; completedAt: string }[]
   activity: { kind: 'thread' | 'helpful' | 'circle'; text: string; href: string; at: string }[]
 }
 
 /**
- * A member's public page. Only what the member chose to show is read: contact details,
- * questions and bookmarks are never part of it.
+ * Everything a member's page can show, with their privacy choices. The page decides per viewer
+ * what to display (see canViewProfile); contact details, questions and bookmarks are never read.
  */
 export async function getMemberProfile(
   payload: Payload,
@@ -37,35 +45,44 @@ export async function getMemberProfile(
       district: true,
       bio: true,
       avatarColor: true,
+      gender: true,
+      avatar: true,
+      cover: true,
       createdAt: true,
       role: true,
       privacy: true,
       journeyStage: true,
       banned: true,
     },
-    depth: 0,
+    depth: 1,
     limit: 1,
     overrideAccess: true,
   })
   const u = res.docs[0]
   if (!u || u.banned) return null
-  const privacy = u.privacy ?? {}
-  const isPublic = privacy.profilePublic !== false
+  const privacy = readPrivacy(u.privacy)
+  const avatar = u.avatar && typeof u.avatar === 'object' ? u.avatar : null
   const base: MemberProfile = {
     id: u.id,
     username: u.username ?? username,
     name: u.name,
+    gender: u.gender ?? null,
     district: u.district ?? null,
-    bio: isPublic ? (u.bio ?? null) : null,
+    bio: u.bio ?? null,
     avatarColor: u.avatarColor ?? 'gold',
+    photo:
+      u.gender === 'male' && avatar?.url
+        ? { src: avatar.sizes?.md?.url ?? avatar.url, large: avatar.sizes?.lg?.url ?? avatar.url }
+        : null,
+    cover: await resolveCover(payload, u.cover),
     joinedAt: u.createdAt,
     roles: (u.role ?? []) as string[],
-    isPublic,
-    journeyStage: isPublic && privacy.showJourney !== false ? (u.journeyStage ?? 'kalema') : null,
+    privacy,
+    journeyStage: u.journeyStage ?? 'kalema',
     completedCourses: [],
     activity: [],
   }
-  if (!isPublic || privacy.showActivity === false) return base
+  if (!privacy.showActivity) return base
 
   const [enrollments, threads, helpful, circles] = await Promise.all([
     payload.find({

@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck } from 'lucide-react'
+import { IconNext, IconVerified } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -51,13 +51,17 @@ export default async function ScholarsPage() {
             className="adab-strip"
             style={{ marginTop: 40, alignItems: 'center', flexWrap: 'wrap' }}
           >
-            <BadgeCheck className="ic" aria-hidden="true" style={{ color: 'var(--rh-primary)' }} />
+            <IconVerified
+              className="ic"
+              aria-hidden="true"
+              style={{ color: 'var(--rh-primary)' }}
+            />
             <p className="t-small" style={{ flex: '1 1 320px' }}>
               <strong>“যাচাইকৃত” মানে কী?</strong> শূরা আলিমের শিক্ষাগত যোগ্যতা ও পরিচয় নিশ্চিত
               করেছে। এটি কোনো মতের শ্রেষ্ঠত্বের স্বীকৃতি নয়।
             </p>
             <Link href="/about#shura" className="link-arrow">
-              যাচাই প্রক্রিয়া <ArrowRight className="ic" aria-hidden="true" />
+              যাচাই প্রক্রিয়া <IconNext className="ic" aria-hidden="true" />
             </Link>
           </div>
         </div>

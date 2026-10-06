@@ -398,7 +398,10 @@
 .hero__sub { margin-top: 22px; max-width: 680px; color: var(--rh-muted); }
 .hero__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 38px; }
 .hero__support { margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 10px; font-size: 15px; color: var(--rh-muted); }
-.hero__support .ar-inline { color: var(--rh-accent-ink); }
+.hero__support .ar-inline { color: var(--rh-accent-ink); line-height: 1.9; }
+/* Arabic marks rise above the line box, so the motto keeps clear room below the buttons */
+.hero__ctas + .hero__support { margin-top: 44px; line-height: 2; }
+.pledge-wrap { position: relative; margin-top: -24px; }
 .hero__thread { display: block; width: 100%; height: auto; margin-top: 36px; overflow: visible; }
 .thread-main { fill: none; stroke: var(--rh-accent); stroke-width: 1.75; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: rh-draw 2.8s 0.5s var(--rh-ease) forwards; }
 .thread-echo { fill: none; stroke: var(--rh-primary-light); stroke-width: 1; opacity: 0.45; stroke-dasharray: 1; stroke-dashoffset: 1; animation: rh-draw 3.2s 0.8s var(--rh-ease) forwards; }
@@ -671,8 +674,6 @@
 /* ---------- profiles ---------- */
 .cover-band { position: relative; isolation: isolate; overflow: hidden; height: 220px; background: var(--rh-band-bg); }
 .cover-band .rh-pattern { background-color: #F3E9D6; opacity: 0.08; z-index: -1; }
-.cover-band__thread { position: absolute; left: 0; right: 0; bottom: 18px; width: 100%; height: 120px; z-index: -1; pointer-events: none; }
-.cover-band__thread path { fill: none; stroke: #D4A95C; stroke-width: 1.5; opacity: 0.7; }
 .profile-head { position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px 28px; margin-top: -64px; }
 .avatar-hero { display: grid; place-items: center; width: 128px; height: 128px; border-radius: 50%; flex: none; font-family: var(--rh-font-heading); font-weight: 700; font-size: 44px; background: var(--rh-accent-soft); color: var(--rh-accent-ink); box-shadow: 0 0 0 6px var(--rh-bg), 0 0 0 7px color-mix(in srgb, var(--rh-accent) 55%, transparent); }
 .avatar-hero--teal { background: var(--rh-primary-soft); color: var(--rh-primary); }

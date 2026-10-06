@@ -26,13 +26,6 @@ export const profileSchema = z.object({
 })
 export type ProfileInput = z.input<typeof profileSchema>
 
-export const privacySchema = z.object({
-  profilePublic: z.boolean(),
-  showActivity: z.boolean(),
-  showJourney: z.boolean(),
-  discoverable: z.boolean(),
-})
-
 const pref = z.object({ email: z.boolean(), site: z.boolean() })
 export const notificationPrefsSchema = z.object({
   answer: pref,
@@ -57,19 +50,6 @@ export async function updateProfile(ctx: ServiceContext, input: ProfileInput) {
       ...(data.interests ? { interests: data.interests as never } : {}),
       ...(data.journeyStage ? { journeyStage: data.journeyStage as never } : {}),
     },
-    overrideAccess: true,
-    depth: 0,
-  })
-  return { saved: true }
-}
-
-export async function updatePrivacy(ctx: ServiceContext, input: z.input<typeof privacySchema>) {
-  const user = requireUser(ctx)
-  const privacy = privacySchema.parse(input)
-  await ctx.payload.update({
-    collection: 'users',
-    id: user.id,
-    data: { privacy },
     overrideAccess: true,
     depth: 0,
   })

@@ -1,4 +1,11 @@
-import { Ban, BookOpen, Heart, Megaphone, Scale, UserX } from 'lucide-react'
+import {
+  IconAnnounce,
+  IconBalance,
+  IconBan,
+  IconBook,
+  IconHeart,
+  IconUserBlocked,
+} from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -28,12 +35,12 @@ const anchorFor = (index: number, text: string) =>
   ANCHORS[text.replace(/\s+/g, '')] ?? headingId(index)
 
 const RULE_ICONS = {
-  book: BookOpen,
-  heart: Heart,
-  scale: Scale,
-  ban: Ban,
-  megaphone: Megaphone,
-  user: UserX,
+  book: IconBook,
+  heart: IconHeart,
+  scale: IconBalance,
+  ban: IconBan,
+  megaphone: IconAnnounce,
+  user: IconUserBlocked,
 } as const
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -187,7 +194,7 @@ export default async function AboutPage() {
                 >
                   {rules.map((r, i) => {
                     const Icon =
-                      RULE_ICONS[(r.icon ?? 'book') as keyof typeof RULE_ICONS] ?? BookOpen
+                      RULE_ICONS[(r.icon ?? 'book') as keyof typeof RULE_ICONS] ?? IconBook
                     return (
                       <div
                         key={r.id ?? i}

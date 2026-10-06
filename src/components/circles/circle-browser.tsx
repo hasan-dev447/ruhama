@@ -2,13 +2,13 @@
 
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs'
 
-import { CircleBeadsIcon } from '@/components/icons/design-icons'
 import { ButtonLink } from '@/components/ui/button'
 import { Select } from '@/components/ui/form'
 import { Chip, Pager, Skeleton } from '@/components/ui/primitives'
 import { usePublicList } from '@/hooks/use-public-list'
 import { DIVISIONS, districtLabel } from '@/lib/districts'
 import { bn } from '@/lib/format'
+import { IconCircles } from '@/components/icons'
 import type { CircleCardView } from '@/server/queries/types'
 
 import { CircleCard } from './circle-card'
@@ -145,7 +145,7 @@ export function CircleResults({ initial }: { initial: Page }) {
           <div className="rh-pattern" aria-hidden="true" />
           <div className="empty" style={{ paddingBlock: 56 }}>
             <span className="empty__icon">
-              <CircleBeadsIcon className="ic ic-xl" />
+              <IconCircles className="ic ic-xl" />
             </span>
             <h2 className="t-h4">
               {inDistrict

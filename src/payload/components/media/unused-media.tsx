@@ -1,6 +1,6 @@
 'use client'
 
-import { Sparkles, X } from 'lucide-react'
+import { IconClose, IconSparkle } from '@/components/icons'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -30,10 +30,10 @@ export function UnusedMedia() {
   if (filtered) {
     return (
       <div className="rh-unused">
-        <Sparkles size={16} aria-hidden="true" />
+        <IconSparkle size={16} aria-hidden="true" />
         <span>শুধু অব্যবহৃত ফাইল দেখানো হচ্ছে। বেছে নিয়ে একসাথে মুছতে পারেন।</span>
         <a href={pathname} className="rh-int-btn rh-int-btn--ghost">
-          <X size={15} aria-hidden="true" /> সব দেখুন
+          <IconClose size={15} aria-hidden="true" /> সব দেখুন
         </a>
       </div>
     )
@@ -46,7 +46,7 @@ export function UnusedMedia() {
 
   return (
     <div className="rh-unused">
-      <Sparkles size={16} aria-hidden="true" />
+      <IconSparkle size={16} aria-hidden="true" />
       <span>
         {ids.length.toLocaleString('bn-BD')}টি ফাইল কোথাও ব্যবহৃত হচ্ছে না (ড্রাফটেও নয়)।
       </span>

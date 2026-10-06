@@ -1,4 +1,4 @@
-import { ArrowRight, ExternalLink } from 'lucide-react'
+import { IconExternal, IconNext } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -139,7 +139,7 @@ export default async function VideoPage({ params }: Props) {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <ExternalLink className="ic" aria-hidden="true" />
+                        <IconExternal className="ic" aria-hidden="true" />
                         YouTube-এ দেখুন
                       </a>
                     </div>
@@ -184,7 +184,7 @@ export default async function VideoPage({ params }: Props) {
                       </span>
                     </span>
                     <span className="link-arrow">
-                      প্রোফাইল দেখুন <ArrowRight className="ic" aria-hidden="true" />
+                      প্রোফাইল দেখুন <IconNext className="ic" aria-hidden="true" />
                     </span>
                   </Link>
                 ) : null}
@@ -215,7 +215,7 @@ export default async function VideoPage({ params }: Props) {
                             <span className="row-link__title" style={{ flex: 1 }}>
                               {a.title}
                             </span>
-                            <ArrowRight
+                            <IconNext
                               className="ic"
                               aria-hidden="true"
                               style={{ color: 'var(--rh-muted)' }}

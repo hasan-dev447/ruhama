@@ -5,6 +5,7 @@ import * as migration_20261005_170847_site_settings_auth_toggle from './20261005
 import * as migration_20261006_000000_supabase_lockdown from './20261006_000000_supabase_lockdown'
 import * as migration_20261006_154718_integrations from './20261006_154718_integrations'
 import * as migration_20261006_162720_media_folders from './20261006_162720_media_folders'
+import * as migration_20261006_180808_profiles from './20261006_180808_profiles'
 
 export const migrations = [
   {
@@ -41,5 +42,10 @@ export const migrations = [
     up: migration_20261006_162720_media_folders.up,
     down: migration_20261006_162720_media_folders.down,
     name: '20261006_162720_media_folders',
+  },
+  {
+    up: migration_20261006_180808_profiles.up,
+    down: migration_20261006_180808_profiles.down,
+    name: '20261006_180808_profiles',
   },
 ]

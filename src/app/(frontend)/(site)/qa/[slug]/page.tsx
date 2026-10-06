@@ -1,4 +1,4 @@
-import { ChevronRight, Info, MessageCircleQuestion } from 'lucide-react'
+import { IconChevronNext, IconInfo, IconQuestion } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -180,7 +180,7 @@ export default async function QuestionPage({ params }: Props) {
                 className="t-caption t-muted"
                 style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}
               >
-                <Info
+                <IconInfo
                   className="ic ic-sm"
                   aria-hidden="true"
                   style={{ flex: 'none', marginTop: 3 }}
@@ -207,7 +207,7 @@ export default async function QuestionPage({ params }: Props) {
                   {related.map((q) => (
                     <li key={q.id}>
                       <Link href={`/qa/${q.slug}`} className="row-link">
-                        <MessageCircleQuestion
+                        <IconQuestion
                           className="ic"
                           aria-hidden="true"
                           style={{ color: 'var(--rh-primary)' }}
@@ -215,7 +215,7 @@ export default async function QuestionPage({ params }: Props) {
                         <span className="row-link__title" style={{ flex: 1 }}>
                           {q.title}
                         </span>
-                        <ChevronRight
+                        <IconChevronNext
                           className="ic"
                           aria-hidden="true"
                           style={{ color: 'var(--rh-muted)' }}

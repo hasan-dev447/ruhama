@@ -1,4 +1,4 @@
-import { BadgeCheck, ChevronLeft, ChevronRight, Clock } from 'lucide-react'
+import { IconChevronBack, IconChevronNext, IconClock, IconVerified } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -170,13 +170,13 @@ export default async function LessonPage({ params }: Props) {
               <div className="stat-line" style={{ marginTop: 12 }}>
                 {lesson.durationMinutes ? (
                   <span>
-                    <Clock className="ic" aria-hidden="true" />
+                    <IconClock className="ic" aria-hidden="true" />
                     {bn(lesson.durationMinutes)} মিনিট
                   </span>
                 ) : null}
                 {reviewer ? (
                   <span>
-                    <BadgeCheck className="ic" aria-hidden="true" />
+                    <IconVerified className="ic" aria-hidden="true" />
                     রিভিউ: {reviewer.name}
                   </span>
                 ) : null}
@@ -226,7 +226,7 @@ export default async function LessonPage({ params }: Props) {
                       color: 'var(--rh-ink)',
                     }}
                   >
-                    <ChevronLeft className="ic" aria-hidden="true" />
+                    <IconChevronBack className="ic" aria-hidden="true" />
                     <span>
                       <span className="t-caption t-muted" style={{ display: 'block' }}>
                         আগের পাঠ
@@ -258,7 +258,7 @@ export default async function LessonPage({ params }: Props) {
                       </span>
                       <strong style={{ fontWeight: 600 }}>{next.title}</strong>
                     </span>
-                    <ChevronRight className="ic" aria-hidden="true" />
+                    <IconChevronNext className="ic" aria-hidden="true" />
                   </Link>
                 ) : null}
               </nav>

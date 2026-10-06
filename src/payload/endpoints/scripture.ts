@@ -29,7 +29,14 @@ export const scriptureEndpoints = [
         z.coerce.number().int().min(1).max(114).parse(param(req, 'number')),
       )
       if (!res) throw errors.notFound('সূরাটি পাওয়া যায়নি।')
-      return res
+      // ?from=41&limit=40: one block for "load more"; without it, the whole surah
+      const q = query(req)
+      if (!q.get('from')) return res
+      const from = z.coerce.number().int().min(1).catch(1).parse(q.get('from'))
+      const limit = z.coerce.number().int().min(1).max(100).catch(40).parse(q.get('limit'))
+      const ayahs = res.ayahs.filter((a) => a.ayah >= from && a.ayah < from + limit)
+      const end = from + limit
+      return { surah: res.surah, ayahs, nextFrom: end <= res.surah.ayahCount ? end : null }
     },
     { cache: DAILY },
   ),

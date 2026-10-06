@@ -1,18 +1,18 @@
 import { getTranslation, type I18nClient } from '@payloadcms/translations'
 import {
-  ArrowUpRight,
-  CalendarDays,
-  ClipboardCheck,
-  FileText,
-  Flag,
-  Inbox,
-  MessageCircleQuestion,
-  Plus,
-  Send,
-  UploadCloud,
-  UserPlus,
-  Video,
-} from 'lucide-react'
+  IconAdd,
+  IconCalendar,
+  IconDocument,
+  IconInbox,
+  IconOpen,
+  IconQuestion,
+  IconReport,
+  IconReview,
+  IconSend,
+  IconUpload,
+  IconUserAdd,
+  IconVideo,
+} from '@/components/icons'
 import type { CollectionSlug, Payload, SanitizedPermissions, Where } from 'payload'
 
 import { ROLE_LABELS, rolesOf } from '@/lib/roles'
@@ -35,7 +35,7 @@ type Stat = {
   value: number
   href: string
   tone: Tone
-  icon: typeof FileText
+  icon: typeof IconDocument
   hint: string
 }
 
@@ -145,7 +145,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
       value: inReview,
       href: `${ADMIN}/collections/articles?where[reviewStatus][equals]=in_review`,
       tone: 'amber',
-      icon: ClipboardCheck,
+      icon: IconReview,
       hint: 'আর্টিকেল, ইখতিলাফ ও উত্তর',
     })
   if (approved !== null && roles.some((r) => r === 'super_admin' || r === 'shura'))
@@ -154,7 +154,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
       value: approved,
       href: `${ADMIN}/collections/articles?where[reviewStatus][equals]=approved`,
       tone: 'green',
-      icon: Send,
+      icon: IconSend,
       hint: 'দুজন reviewer approve করেছেন',
     })
   if (newQuestions !== null)
@@ -163,7 +163,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
       value: newQuestions,
       href: `${ADMIN}/collections/questions?where[moderation][equals]=pending`,
       tone: 'blue',
-      icon: MessageCircleQuestion,
+      icon: IconQuestion,
       hint: 'যাচাই করে উত্তর দিতে হবে',
     })
   if (pendingPosts !== null || openReports !== null)
@@ -172,7 +172,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
       value: (pendingPosts ?? 0) + (openReports ?? 0),
       href: '/forum/moderation',
       tone: 'red',
-      icon: Flag,
+      icon: IconReport,
       hint: 'আটকে থাকা পোস্ট ও রিপোর্ট',
     })
   if (newMessages !== null || newVolunteers !== null)
@@ -181,7 +181,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
       value: (newMessages ?? 0) + (newVolunteers ?? 0),
       href: `${ADMIN}/collections/contact-messages?where[status][equals]=new`,
       tone: 'blue',
-      icon: Inbox,
+      icon: IconInbox,
       hint: 'Contact ফর্ম ও ভলান্টিয়ার আবেদন',
     })
   if (newMembers !== null)
@@ -190,7 +190,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
       value: newMembers,
       href: `${ADMIN}/collections/users?sort=-createdAt`,
       tone: 'green',
-      icon: UserPlus,
+      icon: IconUserAdd,
       hint: 'গত এক সপ্তাহে যোগ দিয়েছেন',
     })
   if (upcoming !== null)
@@ -199,7 +199,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
       value: upcoming,
       href: `${ADMIN}/collections/events?sort=startsAt`,
       tone: 'slate',
-      icon: CalendarDays,
+      icon: IconCalendar,
       hint: 'Publish করা, তারিখ সামনে',
     })
 
@@ -207,35 +207,40 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
     can('articles', 'create') && {
       label: 'নতুন আর্টিকেল',
       href: `${ADMIN}/collections/articles/create`,
-      icon: FileText,
+      icon: IconDocument,
     },
     can('questions', 'read') && {
       label: 'প্রশ্নের উত্তর দিন',
       href: `${ADMIN}/collections/questions?where[moderation][equals]=pending`,
-      icon: MessageCircleQuestion,
+      icon: IconQuestion,
     },
     can('events', 'create') && {
       label: 'নতুন মজলিস',
       href: `${ADMIN}/collections/events/create`,
-      icon: CalendarDays,
+      icon: IconCalendar,
     },
     can('videos', 'create') && {
       label: 'নতুন ভিডিও',
       href: `${ADMIN}/collections/videos/create`,
-      icon: Video,
+      icon: IconVideo,
     },
     can('media', 'create') && {
       label: 'ছবি বা ফাইল আপলোড',
       href: `${ADMIN}/collections/media/create`,
-      icon: UploadCloud,
+      icon: IconUpload,
     },
     isModerator && {
       label: 'ফোরাম মডারেশন',
       href: '/forum/moderation',
-      icon: Flag,
+      icon: IconReport,
       external: true,
     },
-  ].filter(Boolean) as { label: string; href: string; icon: typeof FileText; external?: boolean }[]
+  ].filter(Boolean) as {
+    label: string
+    href: string
+    icon: typeof IconDocument
+    external?: boolean
+  }[]
 
   const roleNames = roles.map((r) => ROLE_LABELS[r] ?? r).join(', ')
   const today = new Intl.DateTimeFormat('bn-BD', {
@@ -259,7 +264,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
           </p>
         </div>
         <a className="rh-dash__site" href="/" target="_blank" rel="noopener">
-          সাইট দেখুন <ArrowUpRight size={16} aria-hidden="true" />
+          সাইট দেখুন <IconOpen size={16} aria-hidden="true" />
         </a>
       </header>
 
@@ -330,7 +335,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
                           aria-label={`নতুন ${getTranslation(e.label as never, i18n)}`}
                           title="নতুন যোগ করুন"
                         >
-                          <Plus size={14} aria-hidden="true" />
+                          <IconAdd size={14} aria-hidden="true" />
                         </a>
                       ) : null}
                     </li>

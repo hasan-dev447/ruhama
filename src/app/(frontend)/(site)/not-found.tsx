@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react'
+import { IconSearch } from '@/components/icons'
 import type { Metadata } from 'next'
 
 import { ButtonLink } from '@/components/ui/button'
@@ -75,7 +75,7 @@ export default function NotFound() {
           className="input-icon"
           style={{ width: '100%', maxWidth: 520, marginTop: 6 }}
         >
-          <Search className="ic" aria-hidden="true" />
+          <IconSearch className="ic" aria-hidden="true" />
           <label htmlFor="nf-search" className="sr-only">
             সাইটে খুঁজুন
           </label>

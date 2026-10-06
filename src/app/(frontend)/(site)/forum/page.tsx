@@ -1,4 +1,4 @@
-import { ArrowRight, Check, HeartHandshake } from 'lucide-react'
+import { IconCare, IconCheck, IconNext } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -57,7 +57,7 @@ export default async function ForumPage() {
         <div className="rh-container" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
           <div className="adab-banner" role="note" aria-labelledby="adab-h">
             <IconTile size={44} style={{ background: 'var(--rh-surface)' }}>
-              <HeartHandshake className="ic" aria-hidden="true" />
+              <IconCare className="ic" aria-hidden="true" />
             </IconTile>
             <div style={{ flex: 1 }}>
               <strong id="adab-h" style={{ fontFamily: 'var(--rh-font-heading)', fontSize: 17 }}>
@@ -66,14 +66,14 @@ export default async function ForumPage() {
               <ul>
                 {RULES.map((r) => (
                   <li key={r}>
-                    <Check className="ic" aria-hidden="true" />
+                    <IconCheck className="ic" aria-hidden="true" />
                     {r}
                   </li>
                 ))}
               </ul>
             </div>
             <Link href="/adab" className="link-arrow" style={{ alignSelf: 'center' }}>
-              পুরো নীতিমালা <ArrowRight className="ic" aria-hidden="true" />
+              পুরো নীতিমালা <IconNext className="ic" aria-hidden="true" />
             </Link>
           </div>
           <Suspense fallback={<Skeleton style={{ height: 520 }} />}>

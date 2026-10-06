@@ -1,6 +1,6 @@
 'use client'
 
-import { SearchX } from 'lucide-react'
+import { IconSearchEmpty } from '@/components/icons'
 import Link from 'next/link'
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs'
 
@@ -131,7 +131,7 @@ export function HadithBrowser({ book, initial }: { book: string; initial: Page }
       ) : (
         <div className="card">
           <EmptyState
-            icon={<SearchX className="ic ic-xl" aria-hidden="true" />}
+            icon={<IconSearchEmpty className="ic ic-xl" aria-hidden="true" />}
             title="কোনো হাদিস পাওয়া যায়নি"
             text="অন্য শব্দে খুঁজে দেখুন বা ফিল্টার কমিয়ে দিন।"
           >

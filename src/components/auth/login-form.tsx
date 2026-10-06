@@ -1,6 +1,6 @@
 'use client'
 
-import { CircleCheck, KeyRound, Mail, Smartphone } from 'lucide-react'
+import { IconKey, IconMail, IconMobile, IconSuccess } from '@/components/icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, useTransition } from 'react'
@@ -31,7 +31,7 @@ function go(router: ReturnType<typeof useRouter>, next: string) {
 function SuccessNote({ children }: { children: React.ReactNode }) {
   return (
     <div role="status" className="adab-strip" style={{ background: 'var(--rh-success-soft)' }}>
-      <CircleCheck
+      <IconSuccess
         className="ic"
         aria-hidden="true"
         style={{ color: 'var(--rh-success)', marginTop: 3 }}
@@ -333,36 +333,36 @@ const OTHER_MODES: Record<Mode, { mode: Mode; label: string; icon: React.ReactNo
     {
       mode: 'link',
       label: 'ইমেইলে লগইন লিংক নিন',
-      icon: <Mail className="ic" aria-hidden="true" />,
+      icon: <IconMail className="ic" aria-hidden="true" />,
     },
     {
       mode: 'phone',
       label: 'মোবাইল নম্বরে কোড নিন',
-      icon: <Smartphone className="ic" aria-hidden="true" />,
+      icon: <IconMobile className="ic" aria-hidden="true" />,
     },
   ],
   link: [
     {
       mode: 'password',
       label: 'পাসওয়ার্ড দিয়ে লগইন',
-      icon: <KeyRound className="ic" aria-hidden="true" />,
+      icon: <IconKey className="ic" aria-hidden="true" />,
     },
     {
       mode: 'phone',
       label: 'মোবাইল নম্বরে কোড নিন',
-      icon: <Smartphone className="ic" aria-hidden="true" />,
+      icon: <IconMobile className="ic" aria-hidden="true" />,
     },
   ],
   phone: [
     {
       mode: 'password',
       label: 'পাসওয়ার্ড দিয়ে লগইন',
-      icon: <KeyRound className="ic" aria-hidden="true" />,
+      icon: <IconKey className="ic" aria-hidden="true" />,
     },
     {
       mode: 'link',
       label: 'ইমেইলে লগইন লিংক নিন',
-      icon: <Mail className="ic" aria-hidden="true" />,
+      icon: <IconMail className="ic" aria-hidden="true" />,
     },
   ],
 }

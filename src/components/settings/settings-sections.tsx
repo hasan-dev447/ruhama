@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Info, KeyRound, Laptop, Mail, Smartphone } from 'lucide-react'
+import { IconKey, IconLaptop, IconMail, IconMobile } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import { useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -9,7 +9,6 @@ import { toast } from 'sonner'
 import {
   requestAccountDeletionAction,
   updateNotificationPrefsAction,
-  updatePrivacyAction,
   updateProfileAction,
 } from '@/actions/settings'
 import { OtpInput } from '@/components/auth/otp-input'
@@ -29,10 +28,12 @@ import {
 import { Modal } from '@/components/ui/modal'
 import { Skeleton } from '@/components/ui/primitives'
 import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
+
+import { GenderNote, PhotoField } from './profile-settings'
 import { authClient } from '@/lib/auth/client'
 import { authErrorMessage } from '@/lib/auth/errors'
 import { DIVISIONS } from '@/lib/districts'
-import { bn, formatRelative, initials } from '@/lib/format'
+import { bn, formatRelative } from '@/lib/format'
 import { JOURNEY_STAGES } from '@/lib/journey'
 import { INTEREST_OPTIONS } from '@/lib/options'
 import { isPlaceholderEmail, normalizeBdPhone } from '@/lib/phone'
@@ -48,12 +49,8 @@ export type SettingsUser = {
   avatarColor: 'teal' | 'gold' | 'sage' | 'deep'
   interests: string[]
   journeyStage: string
-  privacy: {
-    profilePublic: boolean
-    showActivity: boolean
-    showJourney: boolean
-    discoverable: boolean
-  }
+  gender: 'male' | 'female' | null
+  photo: string | null
   notificationPrefs: Record<
     'answer' | 'event' | 'forum' | 'weekly' | 'course',
     { email: boolean; site: boolean }
@@ -144,7 +141,7 @@ export function ProfileSection({ user }: { user: SettingsUser }) {
   }
 
   return (
-    <Card id="info" title="ব্যক্তিগত তথ্য">
+    <Card id="profile" title="ব্যক্তিগত তথ্য">
       <div
         style={{
           display: 'flex',
@@ -156,13 +153,10 @@ export function ProfileSection({ user }: { user: SettingsUser }) {
           borderBottom: '1px solid var(--rh-border)',
         }}
       >
-        <span
-          className="avatar avatar-xl avatar--ring"
-          style={{ background: sw.bg, color: sw.ink }}
-          aria-hidden="true"
-        >
-          {initials(name)}
-        </span>
+        <div style={{ flex: '1 1 100%', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <GenderNote gender={user.gender} />
+          <PhotoField name={name} gender={user.gender} photo={user.photo} swatch={sw} />
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <strong id="avatar-color">অ্যাভাটারের রং</strong>
           <div role="radiogroup" aria-labelledby="avatar-color" style={{ display: 'flex', gap: 8 }}>
@@ -186,7 +180,7 @@ export function ProfileSection({ user }: { user: SettingsUser }) {
               />
             ))}
           </div>
-          <span className="t-caption t-muted">আমরা ছবির বদলে নামের আদ্যক্ষর ব্যবহার করি।</span>
+          <span className="t-caption t-muted">ছবি না থাকলে নামের আদ্যক্ষর এই রঙে দেখাবে।</span>
         </div>
       </div>
       <form
@@ -290,60 +284,6 @@ export function ProfileSection({ user }: { user: SettingsUser }) {
           </Button>
         </div>
       </form>
-    </Card>
-  )
-}
-
-/* ---------------- privacy ---------------- */
-
-const PRIVACY_ROWS = [
-  ['profilePublic', 'প্রোফাইল পাবলিক', 'বন্ধ করলে প্রোফাইল প্রাইভেট হবে।'],
-  ['showActivity', 'কার্যক্রম দেখানো', 'সম্পন্ন কোর্স ও ফোরাম কার্যক্রম প্রোফাইলে দেখাবে।'],
-  ['showJourney', 'যাত্রার ধাপ দেখানো', 'আপনি কোন ধাপে আছেন তা অন্যরা দেখবেন।'],
-  [
-    'discoverable',
-    'স্থানীয় সার্কেলে খুঁজে পাওয়া যাবে',
-    'আপনার জেলার সার্কেল সমন্বয়ক আপনাকে আমন্ত্রণ জানাতে পারবেন।',
-  ],
-] as const
-
-export function PrivacySection({ initial }: { initial: SettingsUser['privacy'] }) {
-  const [privacy, setPrivacy] = useState(initial)
-  function toggle(key: keyof SettingsUser['privacy']) {
-    const next = { ...privacy, [key]: !privacy[key] }
-    setPrivacy(next)
-    void updatePrivacyAction(next).then((res) => {
-      if (res.ok) toast.success('গোপনীয়তা হালনাগাদ হয়েছে')
-      else {
-        setPrivacy(privacy)
-        toast.error('সংরক্ষণ করা যায়নি', { description: res.error })
-      }
-    })
-  }
-  return (
-    <Card id="privacy" title="গোপনীয়তা">
-      <div style={{ marginTop: 8 }}>
-        {PRIVACY_ROWS.map(([key, title, desc]) => (
-          <div key={key} className="setting-row">
-            <div>
-              <strong id={`pv-${key}`}>{title}</strong>
-              <p>{desc}</p>
-            </div>
-            <Switch
-              checked={privacy[key]}
-              onCheckedChange={() => toggle(key)}
-              labelledBy={`pv-${key}`}
-            />
-          </div>
-        ))}
-      </div>
-      <div className="privacy-note" style={{ marginTop: 16 }}>
-        <Info className="ic" aria-hidden="true" />
-        <span>
-          প্রোফাইল প্রাইভেট রাখলে অন্যরা শুধু আপনার নাম ও জেলা দেখবেন। ফোন, ইমেইল ও আপনার প্রশ্ন
-          সবসময় গোপন থাকে।
-        </span>
-      </div>
     </Card>
   )
 }
@@ -692,7 +632,7 @@ export function LoginsSection({
           <div className="setting-row">
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
               <span className="provider-logo" aria-hidden="true">
-                <Mail className="ic" />
+                <IconMail className="ic" />
               </span>
               <div style={{ minWidth: 0 }}>
                 <strong>ইমেইল ও পাসওয়ার্ড</strong>
@@ -709,7 +649,7 @@ export function LoginsSection({
               </Button>
               {has('credential') ? (
                 <Button variant="secondary" size="sm" onClick={() => setModal('password')}>
-                  <KeyRound className="ic" aria-hidden="true" /> পাসওয়ার্ড বদলান
+                  <IconKey className="ic" aria-hidden="true" /> পাসওয়ার্ড বদলান
                 </Button>
               ) : (
                 <Button variant="secondary" size="sm" onClick={setPassword}>
@@ -721,7 +661,7 @@ export function LoginsSection({
           <div className="setting-row">
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
               <span className="provider-logo" aria-hidden="true">
-                <Smartphone className="ic" />
+                <IconMobile className="ic" />
               </span>
               <div style={{ minWidth: 0 }}>
                 <strong>ফোন (ওটিপি)</strong>
@@ -880,9 +820,9 @@ export function SessionsSection() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
                   <span className="provider-logo" aria-hidden="true">
                     {/Android|iPhone/.test(s.userAgent ?? '') ? (
-                      <Smartphone className="ic" />
+                      <IconMobile className="ic" />
                     ) : (
-                      <Laptop className="ic" />
+                      <IconLaptop className="ic" />
                     )}
                   </span>
                   <div>

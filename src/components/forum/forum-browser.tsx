@@ -1,6 +1,6 @@
 'use client'
 
-import { MessagesSquare, PenSquare } from 'lucide-react'
+import { IconDiscussion, IconEdit } from '@/components/icons'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -66,7 +66,7 @@ export function NewThreadButton({
           setOpen(true)
         }}
       >
-        <PenSquare className="ic" aria-hidden="true" />
+        <IconEdit className="ic" aria-hidden="true" />
         নতুন আলোচনা
       </Button>
       {opened ? (
@@ -256,7 +256,7 @@ export function ForumBrowser({ initial, categories }: { initial: Page; categorie
           ) : (
             <div className="empty">
               <span className="empty__icon">
-                <MessagesSquare className="ic ic-lg" aria-hidden="true" />
+                <IconDiscussion className="ic ic-lg" aria-hidden="true" />
               </span>
               <h2 className="t-h4">এখানে এখনো কোনো আলোচনা নেই</h2>
               <p className="t-small t-muted">প্রথম আলোচনাটি আপনিই শুরু করুন।</p>

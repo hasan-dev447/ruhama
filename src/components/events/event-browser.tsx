@@ -1,6 +1,6 @@
 'use client'
 
-import { CalendarX } from 'lucide-react'
+import { IconCalendarOff } from '@/components/icons'
 import { parseAsInteger, parseAsStringLiteral, parseAsString, useQueryStates } from 'nuqs'
 
 import { ButtonLink } from '@/components/ui/button'
@@ -138,7 +138,7 @@ export function EventBrowser({ initial, districts }: { initial: Page; districts:
       ) : (
         <div className="card">
           <EmptyState
-            icon={<CalendarX className="ic ic-xl" aria-hidden="true" />}
+            icon={<IconCalendarOff className="ic ic-xl" aria-hidden="true" />}
             title={
               state.district !== 'all'
                 ? 'এই জেলায় আপাতত কোনো মজলিস নেই'

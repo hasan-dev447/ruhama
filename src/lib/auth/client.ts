@@ -20,6 +20,7 @@ export const authClient = createAuthClient({
         role: { type: 'string[]', required: false, input: false },
         username: { type: 'string', required: false },
         journeyStage: { type: 'string', required: false },
+        gender: { type: 'string', required: false },
       },
     }),
   ],

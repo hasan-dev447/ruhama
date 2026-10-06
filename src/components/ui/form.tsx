@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronDown, CircleAlert, Eye, EyeOff, Search } from 'lucide-react'
+import { IconChevronDown, IconHide, IconSearch, IconShow, IconWarning } from '@/components/icons'
 import { forwardRef, useId, useState } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -48,7 +48,7 @@ export function Field({
       {children}
       {error ? (
         <span id={htmlFor ? `${htmlFor}-error` : undefined} className="error-text" role="alert">
-          <CircleAlert className="ic ic-sm" aria-hidden="true" />
+          <IconWarning className="ic ic-sm" aria-hidden="true" />
           {error}
         </span>
       ) : hint ? (
@@ -99,9 +99,9 @@ export const PasswordInput = forwardRef<HTMLInputElement, Omit<InputProps, 'type
           style={{ position: 'absolute', right: 3, top: 3 }}
         >
           {visible ? (
-            <EyeOff className="ic" aria-hidden="true" />
+            <IconHide className="ic" aria-hidden="true" />
           ) : (
-            <Eye className="ic" aria-hidden="true" />
+            <IconShow className="ic" aria-hidden="true" />
           )}
         </button>
       </div>
@@ -142,7 +142,7 @@ export const Select = forwardRef<
       >
         {children}
       </select>
-      <ChevronDown className="ic" aria-hidden="true" />
+      <IconChevronDown className="ic" aria-hidden="true" />
     </div>
   )
 })
@@ -155,7 +155,7 @@ export const SearchInput = forwardRef<
   const inputId = id ?? auto
   return (
     <div className={cn('input-icon', wrapClassName)} style={wrapStyle}>
-      <Search className="ic" aria-hidden="true" />
+      <IconSearch className="ic" aria-hidden="true" />
       <label htmlFor={inputId} className="sr-only">
         {label}
       </label>
@@ -236,7 +236,7 @@ export function Switch({
 export function FormAlert({ children }: { children: React.ReactNode }) {
   return (
     <div className="form-alert" role="alert">
-      <CircleAlert className="ic" aria-hidden="true" />
+      <IconWarning className="ic" aria-hidden="true" />
       <span>{children}</span>
     </div>
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, ChevronRight, SearchX } from 'lucide-react'
+import { IconChevronNext, IconNext, IconSearchEmpty } from '@/components/icons'
 import Link from 'next/link'
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs'
 
@@ -67,7 +67,7 @@ function ResultItem({ hit }: { hit: SearchHit }) {
           </span>
         ) : null}
       </span>
-      <ChevronRight
+      <IconChevronNext
         className="ic"
         aria-hidden="true"
         style={{ color: 'var(--rh-muted)', marginTop: 4 }}
@@ -110,7 +110,7 @@ function GroupHead({
           onClick={onAll}
           style={{ background: 'none', border: 0, cursor: 'pointer' }}
         >
-          সব দেখুন <ArrowRight className="ic" aria-hidden="true" />
+          সব দেখুন <IconNext className="ic" aria-hidden="true" />
         </button>
       ) : null}
     </div>
@@ -211,7 +211,7 @@ export function SearchView() {
             <div className="card">
               <div className="empty" style={{ paddingBlock: 56 }}>
                 <span className="empty__icon">
-                  <SearchX className="ic ic-xl" aria-hidden="true" />
+                  <IconSearchEmpty className="ic ic-xl" aria-hidden="true" />
                 </span>
                 <h2 className="t-h4">“{results.q}” লিখে কিছু পাওয়া যায়নি</h2>
                 <p className="t-small t-muted" style={{ maxWidth: 420 }}>

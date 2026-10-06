@@ -1,6 +1,6 @@
 'use client'
 
-import { CircleCheck } from 'lucide-react'
+import { IconSuccess } from '@/components/icons'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
@@ -50,7 +50,7 @@ export function AnswerFeedback({ questionId }: { questionId: number }) {
             fontWeight: 500,
           }}
         >
-          <CircleCheck className="ic" aria-hidden="true" />
+          <IconSuccess className="ic" aria-hidden="true" />
           {DONE_TEXT[voted]}
         </span>
       ) : (

@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { CalendarPlus, CircleCheck } from 'lucide-react'
+import { IconCalendarAdd, IconSuccess } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import { useRef, useState, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -132,7 +132,7 @@ export function RegistrationCard({
           className="empty__icon"
           style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
         >
-          <CircleCheck className="ic ic-lg" aria-hidden="true" />
+          <IconSuccess className="ic ic-lg" aria-hidden="true" />
         </span>
         <h2 id="reg-title" className="t-h4">
           {confirmed.already && !done ? 'আপনার রেজিস্ট্রেশন নিশ্চিত' : 'রেজিস্ট্রেশন সম্পন্ন'}
@@ -161,7 +161,7 @@ export function RegistrationCard({
             className="btn btn-secondary btn-sm"
             download
           >
-            <CalendarPlus className="ic" aria-hidden="true" />
+            <IconCalendarAdd className="ic" aria-hidden="true" />
             ক্যালেন্ডারে যোগ করুন
           </a>
           {user ? (

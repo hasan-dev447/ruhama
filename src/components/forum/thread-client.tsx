@@ -2,14 +2,14 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  CircleCheck,
-  Flag,
-  Info,
-  MessageSquareReply,
-  ShieldAlert,
-  ThumbsUp,
-  Trash2,
-} from 'lucide-react'
+  IconDelete,
+  IconHelpful,
+  IconInfo,
+  IconModeration,
+  IconReply,
+  IconReport,
+  IconSuccess,
+} from '@/components/icons'
 import { usePathname, useRouter } from 'next/navigation'
 import { createContext, use, useEffect, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -249,7 +249,7 @@ function ModeratorMenu({ target }: { target: { type: 'thread' | 'post'; id: numb
   return (
     <>
       <Button variant="ghost" size="sm" onClick={() => setOpen(true)} aria-label="মডারেশন">
-        <ShieldAlert className="ic" aria-hidden="true" />
+        <IconModeration className="ic" aria-hidden="true" />
         মডারেশন
       </Button>
       <Modal
@@ -331,7 +331,7 @@ export function ThreadActions({ authorId }: { authorId: number | null }) {
           focusReply()
         }}
       >
-        <MessageSquareReply className="ic" aria-hidden="true" />
+        <IconReply className="ic" aria-hidden="true" />
         উত্তর দিন
       </Button>
       <span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
@@ -342,7 +342,7 @@ export function ThreadActions({ authorId }: { authorId: number | null }) {
             onClick={() => setConfirmOpen(true)}
             aria-label="আলোচনা মুছুন"
           >
-            <Trash2 className="ic" aria-hidden="true" />
+            <IconDelete className="ic" aria-hidden="true" />
             মুছুন
           </Button>
         ) : user ? (
@@ -352,7 +352,7 @@ export function ThreadActions({ authorId }: { authorId: number | null }) {
             onClick={() => setReportOpen(true)}
             aria-label="মূল পোস্ট রিপোর্ট করুন"
           >
-            <Flag className="ic" aria-hidden="true" />
+            <IconReport className="ic" aria-hidden="true" />
             রিপোর্ট
           </Button>
         ) : null}
@@ -456,7 +456,7 @@ export function PostActions({
         disabled={own}
         title={own ? 'নিজের উত্তর নিজে সহায়ক চিহ্নিত করা যায় না' : undefined}
       >
-        <ThumbsUp className="ic" aria-hidden="true" fill={liked ? 'currentColor' : 'none'} />
+        <IconHelpful className="ic" aria-hidden="true" fill={liked ? 'currentColor' : 'none'} />
         সহায়ক · {bn(count)}
       </Button>
       <Button
@@ -468,12 +468,12 @@ export function PostActions({
           focusReply()
         }}
       >
-        <MessageSquareReply className="ic" aria-hidden="true" />
+        <IconReply className="ic" aria-hidden="true" />
         উত্তর
       </Button>
       {(isThreadOwner || isModerator) && !own ? (
         <Button variant="ghost" size="sm" onClick={markBest} pending={pending}>
-          <CircleCheck className="ic" aria-hidden="true" />
+          <IconSuccess className="ic" aria-hidden="true" />
           {helpfulPostId === post.id ? 'সহায়ক চিহ্ন সরান' : 'সবচেয়ে সহায়ক'}
         </Button>
       ) : null}
@@ -485,7 +485,7 @@ export function PostActions({
             onClick={() => setConfirmOpen(true)}
             aria-label="উত্তর মুছুন"
           >
-            <Trash2 className="ic" aria-hidden="true" />
+            <IconDelete className="ic" aria-hidden="true" />
             মুছুন
           </Button>
         ) : user ? (
@@ -495,7 +495,7 @@ export function PostActions({
             onClick={() => setReportOpen(true)}
             aria-label={`${post.authorName}-এর উত্তর রিপোর্ট করুন`}
           >
-            <Flag className="ic" aria-hidden="true" />
+            <IconReport className="ic" aria-hidden="true" />
             রিপোর্ট
           </Button>
         ) : null}
@@ -558,7 +558,7 @@ export function ReplyBox({ locked }: { locked: boolean }) {
   if (locked) {
     return (
       <div className="privacy-note">
-        <Info className="ic" aria-hidden="true" />
+        <IconInfo className="ic" aria-hidden="true" />
         <span>এই আলোচনায় নতুন উত্তর বন্ধ করা হয়েছে।</span>
       </div>
     )
@@ -660,7 +660,7 @@ export function ReplyBox({ locked }: { locked: boolean }) {
           className="t-caption t-muted"
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         >
-          <Info className="ic ic-sm" aria-hidden="true" />
+          <IconInfo className="ic ic-sm" aria-hidden="true" />
           দলিল উল্লেখ করলে উৎস দিন। কারো ব্যক্তিগত সমালোচনা নয়।
         </span>
         <Button type="submit" disabled={body.trim().length < 2} pending={pending}>

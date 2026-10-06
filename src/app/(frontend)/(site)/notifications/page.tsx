@@ -15,6 +15,7 @@ export const metadata: Metadata = buildMetadata({
 export default async function NotificationsPage() {
   const { user } = await actionContext()
   if (!user) redirect('/login?next=/notifications')
+  if (!user.gender) redirect('/onboarding?next=/notifications')
   return (
     <main id="main">
       <section className="section-sm" style={{ paddingTop: 40 }}>

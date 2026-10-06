@@ -1,4 +1,4 @@
-import { CalendarDays, MapPin, Users, Video } from 'lucide-react'
+import { IconCalendar, IconLocation, IconUsers, IconVideo } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -141,7 +141,7 @@ export default async function EventPage({ params }: Props) {
                   }}
                 >
                   <div>
-                    <CalendarDays className="ic" aria-hidden="true" />
+                    <IconCalendar className="ic" aria-hidden="true" />
                     <div>
                       <strong>তারিখ ও সময়</strong>
                       <span className="t-muted">
@@ -153,9 +153,9 @@ export default async function EventPage({ params }: Props) {
                   </div>
                   <div>
                     {online ? (
-                      <Video className="ic" aria-hidden="true" />
+                      <IconVideo className="ic" aria-hidden="true" />
                     ) : (
-                      <MapPin className="ic" aria-hidden="true" />
+                      <IconLocation className="ic" aria-hidden="true" />
                     )}
                     <div>
                       <strong>স্থান</strong>
@@ -190,7 +190,7 @@ export default async function EventPage({ params }: Props) {
                     </div>
                   </div>
                   <div>
-                    <Users className="ic" aria-hidden="true" />
+                    <IconUsers className="ic" aria-hidden="true" />
                     <div>
                       <strong>কাদের জন্য</strong>
                       <span className="t-muted" style={{ whiteSpace: 'pre-line' }}>

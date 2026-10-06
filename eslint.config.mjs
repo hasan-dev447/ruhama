@@ -24,6 +24,23 @@ export default defineConfig([
       ],
     },
   },
+  {
+    // every icon comes from the brand set, so one change there reaches the whole site and admin
+    ignores: ['src/components/icons/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'lucide-react',
+              message: "Use the brand icons from '@/components/icons' (add new ones there).",
+            },
+          ],
+        },
+      ],
+    },
+  },
   globalIgnores([
     '.next/**',
     'node_modules/**',

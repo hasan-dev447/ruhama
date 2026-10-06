@@ -1,7 +1,7 @@
 'use client'
 
 import { RefreshRouteOnSave } from '@payloadcms/live-preview-react'
-import { Eye } from 'lucide-react'
+import { IconShow } from '@/components/icons'
 import { usePathname, useRouter } from 'next/navigation'
 
 /** Shown to staff while draft mode is on. Refreshes the page whenever the document is saved in the admin. */
@@ -15,7 +15,7 @@ export function PreviewBar() {
         serverURL={typeof window === 'undefined' ? '' : window.location.origin}
       />
       <div className="preview-bar" role="status">
-        <Eye className="ic ic-sm" aria-hidden="true" />
+        <IconShow className="ic ic-sm" aria-hidden="true" />
         <span>খসড়া প্রিভিউ চলছে। এই পাতা শুধু আপনি দেখছেন।</span>
         <a href={`/api/preview/exit?path=${encodeURIComponent(pathname ?? '/')}`}>
           প্রিভিউ বন্ধ করুন

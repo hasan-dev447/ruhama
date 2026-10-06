@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, CheckCheck } from 'lucide-react'
+import { IconBell, IconCheckAll } from '@/components/icons'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { formatRelative } from '@/lib/format'
@@ -26,7 +26,7 @@ async function call<T>(path: string, method: 'GET' | 'POST' = 'GET'): Promise<T 
   }
 }
 
-/** Bell in the admin header: review requests, reports and other notices for the signed-in staff member. */
+/** IconBell in the admin header: review requests, reports and other notices for the signed-in staff member. */
 export function AdminNotifications() {
   const [feed, setFeed] = useState<Feed | null>(null)
   const [open, setOpen] = useState(false)
@@ -101,7 +101,7 @@ export function AdminNotifications() {
           if (!open) void load()
         }}
       >
-        <Bell size={18} aria-hidden="true" />
+        <IconBell size={18} aria-hidden="true" />
         {unread ? (
           <span className="rh-bell__count">
             {unread > 9 ? '৯+' : unread.toLocaleString('bn-BD')}
@@ -114,7 +114,7 @@ export function AdminNotifications() {
             <strong>নোটিফিকেশন</strong>
             {unread ? (
               <button type="button" className="rh-bell__readall" onClick={readAll}>
-                <CheckCheck size={14} aria-hidden="true" /> সব পড়া হয়েছে
+                <IconCheckAll size={14} aria-hidden="true" /> সব পড়া হয়েছে
               </button>
             ) : null}
           </div>

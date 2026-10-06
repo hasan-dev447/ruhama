@@ -1,4 +1,11 @@
-import { CircleCheck, Clock, Columns2, HeartHandshake, Info, Users } from 'lucide-react'
+import {
+  IconCare,
+  IconClock,
+  IconColumns,
+  IconInfo,
+  IconSuccess,
+  IconUsers,
+} from '@/components/icons'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -121,7 +128,7 @@ export default async function IkhtilafTopicPage({ params }: Props) {
             />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 24 }}>
               <Badge variant="live">
-                <Columns2 className="ic" aria-hidden="true" />
+                <IconColumns className="ic" aria-hidden="true" />
                 মতপার্থক্যের বিষয়
               </Badge>
               {category ? (
@@ -148,12 +155,12 @@ export default async function IkhtilafTopicPage({ params }: Props) {
             >
               <div className="stat-line">
                 <span>
-                  <Clock className="ic" aria-hidden="true" />
+                  <IconClock className="ic" aria-hidden="true" />
                   {readingTimeLabel(doc.readingTime ?? 5)}
                 </span>
                 {doc.reviewNote ? (
                   <span>
-                    <Users className="ic" aria-hidden="true" />
+                    <IconUsers className="ic" aria-hidden="true" />
                     {doc.reviewNote}
                   </span>
                 ) : null}
@@ -176,7 +183,7 @@ export default async function IkhtilafTopicPage({ params }: Props) {
           >
             {doc.readFirst ? (
               <div className="adab-strip" role="note">
-                <Info
+                <IconInfo
                   className="ic"
                   aria-hidden="true"
                   style={{ color: 'var(--rh-primary)', marginTop: 3 }}
@@ -193,7 +200,7 @@ export default async function IkhtilafTopicPage({ params }: Props) {
             {consensus.length ? (
               <div className="card card-pad">
                 <h2 className="t-h4" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <CircleCheck
+                  <IconSuccess
                     className="ic"
                     aria-hidden="true"
                     style={{ color: 'var(--rh-primary)' }}
@@ -324,7 +331,7 @@ export default async function IkhtilafTopicPage({ params }: Props) {
                   style={{ backgroundColor: '#F3E9D6', opacity: 0.07 }}
                 />
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <HeartHandshake
+                  <IconCare
                     className="ic ic-lg"
                     aria-hidden="true"
                     style={{ color: 'var(--rh-accent)' }}
@@ -344,7 +351,7 @@ export default async function IkhtilafTopicPage({ params }: Props) {
                 >
                   {conduct.map((p) => (
                     <li key={p} style={{ display: 'flex', gap: 12 }}>
-                      <CircleCheck
+                      <IconSuccess
                         className="ic"
                         aria-hidden="true"
                         style={{ color: 'var(--rh-accent)', flex: 'none', marginTop: 4 }}

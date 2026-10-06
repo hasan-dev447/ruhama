@@ -1,7 +1,7 @@
 'use client'
 
 import { toast } from '@payloadcms/ui'
-import { Copy } from 'lucide-react'
+import { IconCopy } from '@/components/icons'
 import { useSyncExternalStore } from 'react'
 
 const CONSOLE: Record<'google' | 'facebook', string> = {
@@ -36,7 +36,7 @@ export function CallbackUrl({ provider }: { provider: 'google' | 'facebook' }) {
       <div className="rh-callback__row">
         <code>{url}</code>
         <button type="button" className="rh-int-btn rh-int-btn--ghost" onClick={copy}>
-          <Copy size={15} aria-hidden="true" /> কপি
+          <IconCopy size={15} aria-hidden="true" /> কপি
         </button>
       </div>
       <p className="field-description">{CONSOLE[provider]}</p>

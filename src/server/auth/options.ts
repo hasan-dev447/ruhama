@@ -1,7 +1,7 @@
 import { expo } from '@better-auth/expo'
 import { APIError, createAuthMiddleware } from 'better-auth/api'
 import { nextCookies } from 'better-auth/next-js'
-import { admin, bearer, captcha, magicLink, phoneNumber } from 'better-auth/plugins'
+import { admin, bearer, captcha, customSession, magicLink, phoneNumber } from 'better-auth/plugins'
 import { adminAc, userAc } from 'better-auth/plugins/admin/access'
 import type { BetterAuthPlugin } from 'better-auth'
 import type { BetterAuthOptions, PayloadAuthOptions } from 'payload-auth/better-auth'
@@ -244,6 +244,16 @@ const ruhamaGuards = {
 
 export const betterAuthOptions = {
   appName: 'Ruhama',
+  logger: {
+    log(level, message, ...args) {
+      // Google and Facebook are created at startup with credentials read later from admin > Integrations,
+      // so "missing clientId" at startup is expected rather than a problem
+      if (message.includes('is missing clientId or clientSecret')) return
+      const write =
+        level === 'error' ? console.error : level === 'warn' ? console.warn : console.log
+      write(`[Better Auth] ${message}`, ...args)
+    },
+  },
   baseURL: siteUrl,
   secret: process.env.BETTER_AUTH_SECRET,
   // extra origins (preview deployments, a local production run on another port), comma separated
@@ -321,6 +331,9 @@ export const betterAuthOptions = {
       username: { type: 'string', required: false, input: false },
       journeyStage: { type: 'string', required: false, input: false, defaultValue: 'kalema' },
       avatarColor: { type: 'string', required: false, input: false, defaultValue: 'gold' },
+      // ভাই / বোন: sent with email sign-up; Google, Facebook, magic-link and phone sign-ups choose it
+      // on /onboarding before anything else (the users collection keeps it from changing later)
+      gender: { type: 'string', required: false, input: true },
       deletionRequestedAt: { type: 'date', required: false, input: false, returned: false },
     },
   },
@@ -369,6 +382,14 @@ export const betterAuthOptions = {
     },
   },
   plugins: [
+    // the joined session user loses `image` inside payload-auth, so the photo is read back here,
+    // only for members who have one (an extra lookup for photo owners alone)
+    customSession(async ({ user, session }, ctx) => {
+      const avatar = (user as { avatar?: unknown }).avatar
+      if (!avatar) return { user: { ...user, image: null }, session }
+      const full = await ctx.context.internalAdapter.findUserById(user.id)
+      return { user: { ...user, image: full?.image ?? null }, session }
+    }),
     admin({
       roles: adminPluginRoles,
       defaultRole: 'member',

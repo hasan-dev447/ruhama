@@ -1,4 +1,4 @@
-import { CircleCheck } from 'lucide-react'
+import { IconSuccess } from '@/components/icons'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -181,7 +181,7 @@ export default async function CirclePage({ params }: Props) {
                   >
                     {rules.map((r) => (
                       <li key={r} style={{ display: 'flex', gap: 12 }}>
-                        <CircleCheck
+                        <IconSuccess
                           className="ic"
                           aria-hidden="true"
                           style={{ color: 'var(--rh-primary)', flex: 'none', marginTop: 4 }}

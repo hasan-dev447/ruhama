@@ -1,6 +1,6 @@
 'use client'
 
-import { VideoOff } from 'lucide-react'
+import { IconVideoOff } from '@/components/icons'
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs'
 
 import { Button } from '@/components/ui/button'
@@ -182,7 +182,7 @@ export function VideoBrowser({
       ) : (
         <div className="card">
           <EmptyState
-            icon={<VideoOff className="ic ic-xl" aria-hidden="true" />}
+            icon={<IconVideoOff className="ic ic-xl" aria-hidden="true" />}
             title="এই ফিল্টারে কোনো ভিডিও নেই"
             text="ফিল্টার কমিয়ে আবার দেখুন।"
           >

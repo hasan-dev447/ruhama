@@ -1,7 +1,7 @@
 import type { Payload } from 'payload'
 
 import { TIME_ZONE } from '@/lib/format'
-import { ayahReference } from '@/lib/quran-meta'
+import { ayahReference, surahPath } from '@/lib/quran-meta'
 
 import { CATEGORY_POPULATE, getIkhtilaf, listArticles, listCategories } from './articles'
 import { listUpcomingEvents } from './events'
@@ -13,6 +13,8 @@ export type DailyAyah = {
   reference: string
   ayahKey: string | null
   ayahId: number | null
+  /** the verse's own page, e.g. /quran/al-baqarah/255 */
+  href: string | null
 }
 export type DailyHadith = {
   arabic: string | null
@@ -21,6 +23,8 @@ export type DailyHadith = {
   reference: string
   grade: string | null
   hadithKey: string | null
+  /** the hadith's own page, e.g. /hadith/bukhari/1 */
+  href: string | null
 }
 
 /** Today's date in Bangladesh as YYYY-MM-DD */
@@ -57,7 +61,7 @@ type Reminder = {
         key?: string
         number?: number
         numberLabel?: string | null
-        book?: { name?: string } | number
+        book?: { name?: string; slug?: string } | number
       }
     | number
     | null
@@ -107,7 +111,7 @@ export async function getDaily(
         numberLabel: true,
         book: true,
       },
-      'hadith-collections': { name: true },
+      'hadith-collections': { name: true, slug: true },
     },
   })
   const docs = res.docs as unknown as (Reminder & { kind: 'ayah' | 'hadith' })[]
@@ -132,6 +136,7 @@ export async function getDaily(
         (doc?.surah && doc.ayah ? ayahReference(doc.surah, doc.ayah, to?.ayah) : ''),
       ayahKey: doc?.key ?? null,
       ayahId: doc?.id ?? null,
+      href: doc?.surah && doc.ayah ? surahPath(doc.surah, doc.ayah) : null,
     }
   }
   let hadith: DailyHadith | null = null
@@ -147,6 +152,7 @@ export async function getDaily(
         (book?.name && doc ? `${book.name} : ${doc.numberLabel ?? doc.number}` : ''),
       grade: h.custom?.grade || doc?.grade || null,
       hadithKey: doc?.key ?? null,
+      href: book?.slug && doc?.number ? `/hadith/${book.slug}/${doc.number}` : null,
     }
   }
   return { ayah, hadith, date: today }

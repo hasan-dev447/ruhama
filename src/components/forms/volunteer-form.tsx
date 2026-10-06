@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowRight } from 'lucide-react'
+import { IconNext } from '@/components/icons'
 import Link from 'next/link'
 import { useRef, useState, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -214,7 +214,7 @@ export function VolunteerForm({ initialInterest }: { initialInterest?: string | 
       </div>
       {!user ? <Turnstile ref={turnstile} onToken={setToken} action="volunteer" /> : null}
       <Button type="submit" size="lg" block pending={pending}>
-        যুক্ত হোন <ArrowRight className="ic" aria-hidden="true" />
+        যুক্ত হোন <IconNext className="ic" aria-hidden="true" />
       </Button>
     </form>
   )

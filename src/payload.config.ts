@@ -34,6 +34,7 @@ import {
 import { IkhtilafTopics } from './payload/collections/IkhtilafTopics'
 import { Enrollments, LessonProgress } from './payload/collections/Learning'
 import { Lessons } from './payload/collections/Lessons'
+import { Avatars } from './payload/collections/Avatars'
 import { Media } from './payload/collections/Media'
 import {
   AnswerVotes,
@@ -221,6 +222,7 @@ export default buildConfig({
     ContactMessages,
     Pages,
     Media,
+    Avatars,
     AuditLogs,
     RateLimits,
   ],
@@ -307,6 +309,13 @@ export default buildConfig({
         access: ({ req }) => hasRole(req.user as never, ...CONTENT_ROLES),
       },
       collections: {
+        avatars: {
+          prefix: 'avatars',
+          generateFileURL: ({ filename, prefix }) => {
+            const base = (process.env.NEXT_PUBLIC_MEDIA_URL || '').replace(/\/$/, '')
+            return `${base}/${prefix ? `${prefix}/` : ''}${filename}`
+          },
+        },
         media: {
           prefix: 'media',
           generateFileURL: ({ filename, prefix }) => {

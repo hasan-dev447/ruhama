@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import { ArrowRight } from 'lucide-react'
+import { IconNext } from '@/components/icons'
 import Link from 'next/link'
 import { Slot } from 'radix-ui'
 import { forwardRef } from 'react'
@@ -69,7 +69,7 @@ export function ButtonLink({
   return (
     <Link className={cn(buttonVariants({ variant, size, block }), className)} {...props}>
       {children}
-      {arrow ? <ArrowRight className="ic ic-arrow" aria-hidden="true" /> : null}
+      {arrow ? <IconNext className="ic ic-arrow" aria-hidden="true" /> : null}
     </Link>
   )
 }
@@ -102,7 +102,7 @@ export function LinkArrow({
 }) {
   return (
     <Link href={href} className={cn('link-arrow', className)}>
-      {children} <ArrowRight className="ic" aria-hidden="true" />
+      {children} <IconNext className="ic" aria-hidden="true" />
     </Link>
   )
 }

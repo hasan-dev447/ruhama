@@ -1,7 +1,7 @@
 'use client'
 
 import { FieldDescription, FieldLabel, useField, useFormFields } from '@payloadcms/ui'
-import { Eye, EyeOff, KeyRound, Trash2, Undo2 } from 'lucide-react'
+import { IconDelete, IconHide, IconKey, IconShow, IconUndo } from '@/components/icons'
 import type { TextFieldClientComponent } from 'payload'
 import { useState } from 'react'
 
@@ -27,7 +27,7 @@ export const SecretField: TextFieldClientComponent = ({ field, path }) => {
     <div className="field-type text rh-secret">
       <FieldLabel htmlFor={id} label={field.label} path={path} />
       <div className="rh-secret__status">
-        <KeyRound size={14} aria-hidden="true" />
+        <IconKey size={14} aria-hidden="true" />
         {clearing ? (
           <span className="rh-secret__warn">সংরক্ষণ করলে সংরক্ষিত মানটি মুছে যাবে।</span>
         ) : hint ? (
@@ -43,7 +43,7 @@ export const SecretField: TextFieldClientComponent = ({ field, path }) => {
       </div>
       {clearing ? (
         <button type="button" className="rh-int-btn rh-int-btn--ghost" onClick={() => setValue('')}>
-          <Undo2 size={15} aria-hidden="true" /> বাতিল করুন
+          <IconUndo size={15} aria-hidden="true" /> বাতিল করুন
         </button>
       ) : (
         <div className="rh-secret__row">
@@ -64,7 +64,7 @@ export const SecretField: TextFieldClientComponent = ({ field, path }) => {
               aria-label={visible ? 'লুকান' : 'দেখান'}
               aria-pressed={visible}
             >
-              {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+              {visible ? <IconHide size={16} /> : <IconShow size={16} />}
             </button>
           </div>
           {hint ? (
@@ -73,7 +73,7 @@ export const SecretField: TextFieldClientComponent = ({ field, path }) => {
               className="rh-int-btn rh-int-btn--danger"
               onClick={() => setValue(SECRET_CLEAR)}
             >
-              <Trash2 size={15} aria-hidden="true" /> মুছুন
+              <IconDelete size={15} aria-hidden="true" /> মুছুন
             </button>
           ) : null}
         </div>

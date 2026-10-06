@@ -1,7 +1,7 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { ArrowRight, Check, LogIn } from 'lucide-react'
+import { IconCheck, IconLogin, IconNext } from '@/components/icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
@@ -35,7 +35,7 @@ function LessonLink({
       aria-current={current ? 'page' : undefined}
     >
       <span className={cn('lesson-state', done ? 'is-done' : current && 'is-current')}>
-        {done ? <Check className="ic ic-sm" aria-label="সম্পন্ন" /> : bn(lesson.order)}
+        {done ? <IconCheck className="ic ic-sm" aria-label="সম্পন্ন" /> : bn(lesson.order)}
       </span>
       <span style={{ flex: 1 }}>{lesson.title}</span>
       {lesson.durationMinutes ? (
@@ -188,17 +188,17 @@ export function CourseCta({
           <Progress value={data.progress} label="কোর্স অগ্রগতি" />
           <ButtonLink href={nextHref} block>
             {data.progress >= 100 ? 'আবার পড়ুন' : 'চালিয়ে যান'}{' '}
-            <ArrowRight className="ic" aria-hidden="true" />
+            <IconNext className="ic" aria-hidden="true" />
           </ButtonLink>
         </>
       ) : signedIn || sessionPending ? (
         <Button block onClick={start} pending={pending} disabled={sessionPending}>
-          বিনামূল্যে শুরু করুন <ArrowRight className="ic" aria-hidden="true" />
+          বিনামূল্যে শুরু করুন <IconNext className="ic" aria-hidden="true" />
         </Button>
       ) : (
         <>
           <ButtonLink href={nextHref} block>
-            প্রথম পাঠ পড়ুন <ArrowRight className="ic" aria-hidden="true" />
+            প্রথম পাঠ পড়ুন <IconNext className="ic" aria-hidden="true" />
           </ButtonLink>
           <ButtonLink
             href={`/login?next=${encodeURIComponent(`/courses/${courseSlug}`)}`}
@@ -206,7 +206,7 @@ export function CourseCta({
             size="sm"
             block
           >
-            <LogIn className="ic" aria-hidden="true" /> অগ্রগতি সংরক্ষণে লগইন করুন
+            <IconLogin className="ic" aria-hidden="true" /> অগ্রগতি সংরক্ষণে লগইন করুন
           </ButtonLink>
         </>
       )}

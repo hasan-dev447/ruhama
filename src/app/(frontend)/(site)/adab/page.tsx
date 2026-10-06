@@ -1,4 +1,4 @@
-import { Flag } from 'lucide-react'
+import { IconReport } from '@/components/icons'
 import type { Metadata } from 'next'
 
 import { DocumentPage } from '@/components/content/document-page'
@@ -70,7 +70,7 @@ export default async function AdabPolicyPage() {
           className="adab-strip"
           style={{ marginTop: 32, alignItems: 'center', flexWrap: 'wrap' }}
         >
-          <Flag className="ic" aria-hidden="true" style={{ color: 'var(--rh-primary)' }} />
+          <IconReport className="ic" aria-hidden="true" style={{ color: 'var(--rh-primary)' }} />
           <p className="t-small" style={{ flex: '1 1 260px' }}>
             কোনো পোস্ট বা মন্তব্য নীতিমালার পরিপন্থী মনে হলে “রিপোর্ট” বাটন ব্যবহার করুন। মডারেটররা
             দ্রুত দেখবেন, ইনশাআল্লাহ।

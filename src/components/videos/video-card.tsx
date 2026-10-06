@@ -1,4 +1,4 @@
-import { Play } from 'lucide-react'
+import { IconPlay } from '@/components/icons'
 import Link from 'next/link'
 
 import { PersonAvatar } from '@/components/content/cards'
@@ -39,7 +39,7 @@ export function VideoThumb({
       </span>
       {play ? (
         <span className="vthumb__play" aria-hidden="true">
-          <Play className="ic" style={{ marginLeft: 3 }} />
+          <IconPlay className="ic" style={{ marginLeft: 3 }} />
         </span>
       ) : null}
       {duration ? <span className="vthumb__dur">{duration}</span> : null}

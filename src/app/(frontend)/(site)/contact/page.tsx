@@ -1,4 +1,4 @@
-import { Mail, MapPin, MessageCircleQuestion, Phone } from 'lucide-react'
+import { IconLocation, IconMail, IconPhone, IconQuestion } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -48,7 +48,7 @@ export default async function ContactPage() {
               <div className="card card-pad info-list">
                 {site.contactEmail ? (
                   <div>
-                    <Mail className="ic" aria-hidden="true" />
+                    <IconMail className="ic" aria-hidden="true" />
                     <div>
                       <strong>ইমেইল</strong>
                       <a href={`mailto:${site.contactEmail}`} className="link">
@@ -59,7 +59,7 @@ export default async function ContactPage() {
                 ) : null}
                 {site.contactPhone ? (
                   <div>
-                    <Phone className="ic" aria-hidden="true" />
+                    <IconPhone className="ic" aria-hidden="true" />
                     <div>
                       <strong>ফোন</strong>
                       <a href={`tel:${site.contactPhone.replace(/[^\d+]/g, '')}`} className="link">
@@ -70,7 +70,7 @@ export default async function ContactPage() {
                 ) : null}
                 {site.address ? (
                   <div>
-                    <MapPin className="ic" aria-hidden="true" />
+                    <IconLocation className="ic" aria-hidden="true" />
                     <div>
                       <strong>ঠিকানা</strong>
                       <span className="t-muted" style={{ whiteSpace: 'pre-line' }}>
@@ -81,7 +81,7 @@ export default async function ContactPage() {
                 ) : null}
               </div>
               <div className="adab-strip" style={{ alignItems: 'flex-start' }}>
-                <MessageCircleQuestion
+                <IconQuestion
                   className="ic"
                   aria-hidden="true"
                   style={{ color: 'var(--rh-primary)', marginTop: 3 }}

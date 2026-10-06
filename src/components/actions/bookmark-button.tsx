@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Bookmark } from 'lucide-react'
+import { IconBookmark } from '@/components/icons'
 import { usePathname, useRouter } from 'next/navigation'
 import { startTransition, useOptimistic } from 'react'
 import { toast } from 'sonner'
@@ -103,7 +103,11 @@ export function BookmarkButton({
 
   const label = optimisticSaved ? labels.remove : labels.save
   const icon = (
-    <Bookmark className="ic" aria-hidden="true" fill={optimisticSaved ? 'currentColor' : 'none'} />
+    <IconBookmark
+      className="ic"
+      aria-hidden="true"
+      fill={optimisticSaved ? 'currentColor' : 'none'}
+    />
   )
   if (variant === 'ghost') {
     return (

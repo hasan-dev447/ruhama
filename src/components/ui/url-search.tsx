@@ -1,6 +1,6 @@
 'use client'
 
-import { Search } from 'lucide-react'
+import { IconSearch } from '@/components/icons'
 import { parseAsString, useQueryStates } from 'nuqs'
 import { useEffect, useRef, useState } from 'react'
 
@@ -46,7 +46,7 @@ export function UrlSearchBox({
 
   return (
     <div className="input-icon" style={wrapStyle}>
-      <Search className="ic" aria-hidden="true" />
+      <IconSearch className="ic" aria-hidden="true" />
       <label htmlFor={id} className="sr-only">
         {label}
       </label>

@@ -1,4 +1,4 @@
-import { Clock, MapPin, Video } from 'lucide-react'
+import { IconClock, IconLocation, IconVideo } from '@/components/icons'
 import Link from 'next/link'
 
 import { eventPlace, eventWhen } from '@/components/content/cards'
@@ -39,14 +39,14 @@ export function EventCard({ event }: { event: EventCardView }) {
       </div>
       <div className="info-list" style={{ gap: 8 }}>
         <div>
-          <Clock className="ic" aria-hidden="true" />
+          <IconClock className="ic" aria-hidden="true" />
           <span>{eventWhen(event)}</span>
         </div>
         <div>
           {event.mode === 'online' ? (
-            <Video className="ic" aria-hidden="true" />
+            <IconVideo className="ic" aria-hidden="true" />
           ) : (
-            <MapPin className="ic" aria-hidden="true" />
+            <IconLocation className="ic" aria-hidden="true" />
           )}
           <span>{eventPlace(event)}</span>
         </div>

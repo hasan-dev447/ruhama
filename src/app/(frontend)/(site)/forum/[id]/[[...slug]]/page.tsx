@@ -1,4 +1,4 @@
-import { BadgeCheck, CircleCheck, ShieldCheck, Trash2 } from 'lucide-react'
+import { IconDelete, IconShield, IconSuccess, IconVerified } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound, permanentRedirect } from 'next/navigation'
@@ -124,7 +124,7 @@ export default async function ThreadPage({ params }: Props) {
 
             {thread.modNote ? (
               <aside className="mod-note" aria-labelledby="mod-h">
-                <ShieldCheck
+                <IconShield
                   className="ic"
                   aria-hidden="true"
                   style={{ color: 'var(--rh-primary)', marginTop: 3 }}
@@ -157,7 +157,7 @@ export default async function ThreadPage({ params }: Props) {
               >
                 {p.removed ? (
                   <div className="privacy-note">
-                    <Trash2 className="ic" aria-hidden="true" />
+                    <IconDelete className="ic" aria-hidden="true" />
                     <span>এই মন্তব্যটি আদব নীতিমালা ভঙ্গের কারণে মডারেটর সরিয়েছেন।</span>
                   </div>
                 ) : (
@@ -166,7 +166,7 @@ export default async function ThreadPage({ params }: Props) {
                   >
                     {thread.helpfulPostId === p.id ? (
                       <Badge variant="reviewed" style={{ marginBottom: 12 }}>
-                        <CircleCheck className="ic" aria-hidden="true" />
+                        <IconSuccess className="ic" aria-hidden="true" />
                         আলোচনা শুরুকারী এটিকে সহায়ক চিহ্নিত করেছেন
                       </Badge>
                     ) : null}
@@ -180,7 +180,7 @@ export default async function ThreadPage({ params }: Props) {
                       </div>
                       {p.author.scholar ? (
                         <Badge variant="verified">
-                          <BadgeCheck className="ic" aria-hidden="true" />
+                          <IconVerified className="ic" aria-hidden="true" />
                           আলিম প্যানেল
                         </Badge>
                       ) : p.author.staff ? (

@@ -1,23 +1,23 @@
 'use client'
 
-import { Copy, Link2 } from 'lucide-react'
+import { IconCopy, IconLink } from '@/components/icons'
 import { toast } from 'sonner'
 
 import { BookmarkButton } from '@/components/actions/bookmark-button'
 
-/** Per-ayah tools: bookmark, copy text with reference, copy a link to the ayah. */
+/** Per-ayah tools: bookmark, copy text with reference, copy the ayah's own link (`/quran/<surah>/<n>`). */
 export function AyahActions({
   id,
   arabic,
   translation,
   reference,
-  anchor,
+  path,
 }: {
   id: number
   arabic: string
   translation: string
   reference: string
-  anchor: string
+  path: string
 }) {
   async function copy(text: string, done: string) {
     try {
@@ -39,17 +39,15 @@ export function AyahActions({
         aria-label={`${reference} কপি করুন`}
         onClick={() => copy(`${arabic}\n\n“${translation}”\n(${reference})`, 'আয়াত কপি হয়েছে')}
       >
-        <Copy className="ic" aria-hidden="true" />
+        <IconCopy className="ic" aria-hidden="true" />
       </button>
       <button
         type="button"
         className="btn-icon"
         aria-label={`${reference}-এর লিংক কপি করুন`}
-        onClick={() =>
-          copy(`${window.location.origin}${window.location.pathname}#${anchor}`, 'লিংক কপি হয়েছে')
-        }
+        onClick={() => copy(`${window.location.origin}${path}`, 'লিংক কপি হয়েছে')}
       >
-        <Link2 className="ic" aria-hidden="true" />
+        <IconLink className="ic" aria-hidden="true" />
       </button>
     </div>
   )

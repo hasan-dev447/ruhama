@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, SearchX } from 'lucide-react'
+import { IconNext, IconSearchEmpty } from '@/components/icons'
 import Link from 'next/link'
 import {
   parseAsArrayOf,
@@ -161,7 +161,7 @@ export function ArticleBrowser({
             <strong style={{ fontFamily: 'var(--rh-font-heading)' }}>কোথা থেকে শুরু করব?</strong>
             <p className="t-small t-muted">নতুন হলে “শেখার পথ”-এর সাজানো কোর্স দিয়ে শুরু করুন।</p>
             <Link href="/courses" className="link-arrow">
-              শেখার পথ <ArrowRight className="ic" aria-hidden="true" />
+              শেখার পথ <IconNext className="ic" aria-hidden="true" />
             </Link>
           </div>
         </MobileFilters>
@@ -226,7 +226,7 @@ export function ArticleBrowser({
         ) : (
           <div className="card">
             <EmptyState
-              icon={<SearchX className="ic ic-xl" aria-hidden="true" />}
+              icon={<IconSearchEmpty className="ic ic-xl" aria-hidden="true" />}
               title="এই ফিল্টারে কোনো প্রবন্ধ পাওয়া যায়নি"
               text="অন্য শব্দে খুঁজে দেখুন বা ফিল্টার কমিয়ে দিন। চাইলে বিষয়টি নিয়ে প্রশ্নও করতে পারেন।"
             >

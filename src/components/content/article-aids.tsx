@@ -1,6 +1,6 @@
 'use client'
 
-import { List } from 'lucide-react'
+import { IconList } from '@/components/icons'
 import { useEffect, useRef, useState } from 'react'
 
 import type { Heading } from '@/lib/lexical'
@@ -81,12 +81,12 @@ export function TableOfContents({
       onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}
     >
       <summary>
-        <List className="ic ic-sm" aria-hidden="true" />
+        <IconList className="ic ic-sm" aria-hidden="true" />
         {title}
       </summary>
       <nav className="toc" aria-labelledby="toc-h">
         <h2 id="toc-h">
-          <List className="ic ic-sm" aria-hidden="true" />
+          <IconList className="ic ic-sm" aria-hidden="true" />
           {title}
         </h2>
         {headings.map((h) => (

@@ -1,7 +1,7 @@
 'use client'
 
 import { useDocumentInfo } from '@payloadcms/ui'
-import { Link2 } from 'lucide-react'
+import { IconLink } from '@/components/icons'
 import { useEffect, useState } from 'react'
 
 type Use = {
@@ -34,7 +34,7 @@ export function MediaUsage() {
   return (
     <div className="rh-usage">
       <span className="field-label">
-        <Link2 size={14} aria-hidden="true" /> কোথায় ব্যবহৃত
+        <IconLink size={14} aria-hidden="true" /> কোথায় ব্যবহৃত
       </span>
       {uses === null ? (
         <p className="rh-usage__muted">খোঁজা হচ্ছে</p>

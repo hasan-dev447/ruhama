@@ -1,6 +1,6 @@
 'use client'
 
-import { BookOpen } from 'lucide-react'
+import { IconBook } from '@/components/icons'
 import Link from 'next/link'
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs'
 
@@ -96,7 +96,7 @@ export function SurahBrowser({ surahs }: { surahs: SurahView[] }) {
       ) : (
         <div className="card">
           <EmptyState
-            icon={<BookOpen className="ic ic-xl" aria-hidden="true" />}
+            icon={<IconBook className="ic ic-xl" aria-hidden="true" />}
             title="এই নামে কোনো সূরা পাওয়া যায়নি"
             text="বানান মিলিয়ে দেখুন অথবা সূরার নম্বর লিখুন।"
           />

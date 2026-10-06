@@ -1,6 +1,6 @@
 'use client'
 
-import { RotateCcw } from 'lucide-react'
+import { IconRetry } from '@/components/icons'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -79,7 +79,7 @@ export function ErrorView({
               setTimeout(() => setRetrying(false), 1500)
             }}
           >
-            <RotateCcw className={retrying ? 'ic spin-icon' : 'ic'} aria-hidden="true" />
+            <IconRetry className={retrying ? 'ic spin-icon' : 'ic'} aria-hidden="true" />
             {retrying ? 'চেষ্টা করা হচ্ছে…' : 'আবার চেষ্টা করুন'}
           </button>
           <Link href="/" className="btn btn-secondary">

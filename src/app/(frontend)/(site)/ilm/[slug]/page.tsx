@@ -1,4 +1,4 @@
-import { HeartHandshake } from 'lucide-react'
+import { IconCare } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -266,7 +266,7 @@ export default async function ArticlePage({ params }: Props) {
                   className="adab-strip"
                   style={{ marginTop: 20, alignItems: 'center', flexWrap: 'wrap' }}
                 >
-                  <HeartHandshake
+                  <IconCare
                     className="ic"
                     aria-hidden="true"
                     style={{ color: 'var(--rh-primary)' }}

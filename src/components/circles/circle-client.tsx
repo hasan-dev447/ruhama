@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, CircleCheck, LogIn } from 'lucide-react'
+import { IconCheck, IconLogin, IconSuccess } from '@/components/icons'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -88,7 +88,7 @@ export function CircleJoinCard({ circleId }: { circleId: number }) {
           className="empty__icon"
           style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
         >
-          <CircleCheck className="ic ic-lg" aria-hidden="true" />
+          <IconSuccess className="ic ic-lg" aria-hidden="true" />
         </span>
         <h2 className="t-h4">আপনি এই সার্কেলের সদস্য</h2>
         <p className="t-small t-muted">
@@ -105,7 +105,7 @@ export function CircleJoinCard({ circleId }: { circleId: number }) {
           className="empty__icon"
           style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
         >
-          <CircleCheck className="ic ic-lg" aria-hidden="true" />
+          <IconSuccess className="ic ic-lg" aria-hidden="true" />
         </span>
         <h2 className="t-h4">অনুরোধ পাঠানো হয়েছে</h2>
         <p className="t-small t-muted">সমন্বয়ক শিগগিরই যোগাযোগ করবেন, ইনশাআল্লাহ।</p>
@@ -154,7 +154,7 @@ export function CircleJoinCard({ circleId }: { circleId: number }) {
           block
           style={{ marginTop: 16 }}
         >
-          <LogIn className="ic" aria-hidden="true" /> লগইন করে অনুরোধ পাঠান
+          <IconLogin className="ic" aria-hidden="true" /> লগইন করে অনুরোধ পাঠান
         </ButtonLink>
       )}
     </div>
@@ -231,7 +231,7 @@ export function MeetupList({ circleId, meetups }: { circleId: number; meetups: M
             >
               {isGoing ? (
                 <>
-                  <Check className="ic" aria-hidden="true" /> আসছি
+                  <IconCheck className="ic" aria-hidden="true" /> আসছি
                 </>
               ) : (
                 'আসব'

@@ -1,13 +1,18 @@
-import { UserRound } from 'lucide-react'
+import { IconUser } from '@/components/icons'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { TableOfContents } from '@/components/content/article-aids'
 import {
+  CoverSection,
+  PrivacySection,
+  type CoverState,
+  type PrivacyState,
+} from '@/components/settings/profile-settings'
+import {
   DeleteSection,
   LoginsSection,
   NotificationsSection,
-  PrivacySection,
   ProfileSection,
   SessionsSection,
   type SettingsUser,
@@ -16,7 +21,9 @@ import { ButtonLink } from '@/components/ui/button'
 import { PageHero } from '@/components/ui/primitives'
 import { oauthAvailability } from '@/server/integrations'
 import { buildMetadata } from '@/lib/seo'
+import { readPrivacy } from '@/lib/profile-privacy'
 import { actionContext } from '@/server/action-context'
+import { membersByIds } from '@/server/services/profile'
 
 export const metadata: Metadata = buildMetadata({
   title: 'প্রোফাইল সেটিংস',
@@ -25,7 +32,8 @@ export const metadata: Metadata = buildMetadata({
 })
 
 const SECTIONS = [
-  { id: 'info', text: 'ব্যক্তিগত তথ্য', level: 2 as const },
+  { id: 'profile', text: 'ব্যক্তিগত তথ্য', level: 2 as const },
+  { id: 'cover', text: 'প্রোফাইলের কভার', level: 2 as const },
   { id: 'privacy', text: 'গোপনীয়তা', level: 2 as const },
   { id: 'logins', text: 'লগইন পদ্ধতি', level: 2 as const },
   { id: 'sessions', text: 'সক্রিয় সেশন', level: 2 as const },
@@ -40,9 +48,32 @@ const pref = (
 ) => ({ email: p?.email ?? email, site: p?.site ?? site })
 
 export default async function SettingsPage() {
-  const { user } = await actionContext()
+  const ctx = await actionContext()
+  const { user } = ctx
   if (!user) redirect('/login?next=/settings')
-  const oauth = await oauthAvailability()
+  if (!user.gender) redirect('/onboarding?next=/settings')
+  const privacy = readPrivacy(user.privacy)
+  const [oauth, viewers] = await Promise.all([
+    oauthAvailability(),
+    membersByIds(ctx, privacy.allowedViewers),
+  ])
+  const avatar = user.avatar && typeof user.avatar === 'object' ? user.avatar : null
+  const [ayahSurah, ayahNumber] = (user.cover?.ayahKey ?? '1:1').split(':').map(Number)
+  const [hadithBook, hadithNumber] = (user.cover?.hadithKey ?? 'bukhari:1').split(':')
+  const cover: CoverState = {
+    kind: (user.cover?.kind as CoverState['kind']) ?? 'none',
+    surah: ayahSurah || 1,
+    ayah: ayahNumber || 1,
+    book: hadithBook || 'bukhari',
+    number: Number(hadithNumber) || 1,
+    text: user.cover?.text ?? '',
+    source: user.cover?.source ?? '',
+  }
+  const privacyState: PrivacyState = {
+    ...privacy,
+    discoverable: user.privacy?.discoverable ?? false,
+    viewers,
+  }
 
   const np = user.notificationPrefs
   const view: SettingsUser = {
@@ -57,12 +88,9 @@ export default async function SettingsPage() {
       (['teal', 'gold', 'sage', 'deep'] as const).find((c) => c === user.avatarColor) ?? 'gold',
     interests: (user.interests ?? []) as string[],
     journeyStage: user.journeyStage ?? 'kalema',
-    privacy: {
-      profilePublic: user.privacy?.profilePublic ?? true,
-      showActivity: user.privacy?.showActivity ?? true,
-      showJourney: user.privacy?.showJourney ?? true,
-      discoverable: user.privacy?.discoverable ?? false,
-    },
+    gender: user.gender ?? null,
+    photo:
+      user.gender === 'male' ? (avatar?.sizes?.md?.url ?? avatar?.url ?? user.image ?? null) : null,
     notificationPrefs: {
       answer: pref(np?.answer, true, true),
       event: pref(np?.event, true, true),
@@ -96,7 +124,7 @@ export default async function SettingsPage() {
                   size="sm"
                   style={{ justifyContent: 'flex-start' }}
                 >
-                  <UserRound className="ic" aria-hidden="true" />
+                  <IconUser className="ic" aria-hidden="true" />
                   পাবলিক প্রোফাইল দেখুন
                 </ButtonLink>
               ) : null}
@@ -106,7 +134,8 @@ export default async function SettingsPage() {
               style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
             >
               <ProfileSection user={view} />
-              <PrivacySection initial={view.privacy} />
+              <CoverSection initial={cover} />
+              <PrivacySection initial={privacyState} />
               <LoginsSection user={view} google={oauth.google} facebook={oauth.facebook} />
               <SessionsSection />
               <NotificationsSection initial={view.notificationPrefs} />

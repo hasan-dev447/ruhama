@@ -1,6 +1,6 @@
 'use client'
 
-import { X } from 'lucide-react'
+import { IconClose } from '@/components/icons'
 import { Dialog } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
@@ -52,7 +52,7 @@ export function Modal({
           aria-label="বন্ধ করুন"
           style={{ margin: '-8px -8px 0 0' }}
         >
-          <X className="ic" aria-hidden="true" />
+          <IconClose className="ic" aria-hidden="true" />
         </Dialog.Close>
       </div>
       <Dialog.Description className={description ? 't-small t-muted' : 'sr-only'}>

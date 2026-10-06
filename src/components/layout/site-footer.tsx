@@ -1,4 +1,4 @@
-import { Mail } from 'lucide-react'
+import { IconMail } from '@/components/icons'
 import Link from 'next/link'
 
 import { BrandMark } from '@/components/icons/brand-mark'
@@ -58,7 +58,7 @@ export function SiteFooter({ settings }: { settings: SiteSettingsView }) {
               ))}
               {settings.contactEmail && (
                 <a href={`mailto:${settings.contactEmail}`} aria-label="ইমেইল">
-                  <Mail className="ic" aria-hidden="true" />
+                  <IconMail className="ic" aria-hidden="true" />
                 </a>
               )}
             </div>

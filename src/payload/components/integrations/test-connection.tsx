@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth, useFormFields } from '@payloadcms/ui'
-import { CheckCircle2, Loader2, PlugZap, XCircle } from 'lucide-react'
+import { IconError, IconLoading, IconPlug, IconSuccess } from '@/components/icons'
 import { useState } from 'react'
 
 import type { IntegrationTarget } from '@/payload/globals/integrations-shared'
@@ -90,9 +90,9 @@ export function TestConnection({ target }: { target: IntegrationTarget }) {
           disabled={pending}
         >
           {pending ? (
-            <Loader2 size={16} className="rh-spin" aria-hidden="true" />
+            <IconLoading size={16} className="rh-spin" aria-hidden="true" />
           ) : (
-            <PlugZap size={16} aria-hidden="true" />
+            <IconPlug size={16} aria-hidden="true" />
           )}
           {pending ? 'পরীক্ষা চলছে' : 'সংযোগ পরীক্ষা করুন'}
         </button>
@@ -100,9 +100,9 @@ export function TestConnection({ target }: { target: IntegrationTarget }) {
       {result ? (
         <p className={`rh-test__result ${result.ok ? 'is-ok' : 'is-err'}`} role="status">
           {result.ok ? (
-            <CheckCircle2 size={16} aria-hidden="true" />
+            <IconSuccess size={16} aria-hidden="true" />
           ) : (
-            <XCircle size={16} aria-hidden="true" />
+            <IconError size={16} aria-hidden="true" />
           )}
           <span>{result.message}</span>
         </p>

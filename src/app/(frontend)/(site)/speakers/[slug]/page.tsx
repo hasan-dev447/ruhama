@@ -41,11 +41,14 @@ export default async function SpeakerProfilePage({ params }: Props) {
   const person = await data.person(slug)
   if (!person) notFound()
   if ((person.kinds ?? []).includes('scholar')) permanentRedirect(`/scholars/${slug}`)
-  const content = await data.personContent(person.id)
+  const [content, extras] = await Promise.all([
+    data.personContent(person.id),
+    data.personExtras(slug),
+  ])
   const path = `/speakers/${slug}`
   return (
     <>
-      <ProfileView person={person} content={content} variant="speaker" />
+      <ProfileView person={person} content={content} variant="speaker" extras={extras} />
       <JsonLd
         data={[
           personLd({

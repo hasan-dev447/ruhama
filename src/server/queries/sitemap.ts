@@ -1,6 +1,6 @@
 import type { CollectionSlug, Payload, Where } from 'payload'
 
-import { surahPath } from '@/lib/quran-meta'
+import { AYAH_PAGE, surahPath } from '@/lib/quran-meta'
 
 export type SitemapEntry = {
   path: string
@@ -175,18 +175,24 @@ export async function sitemapEntries(payload: Payload, type: SitemapType): Promi
     case 'quran': {
       const surahs = await payload.find({
         collection: 'surahs',
-        select: { number: true, updatedAt: true },
+        select: { number: true, ayahCount: true, updatedAt: true },
         depth: 0,
         limit: 200,
         pagination: false,
         sort: 'number',
       })
-      return surahs.docs.map((s) => ({
-        path: surahPath(s.number),
-        lastModified: s.updatedAt,
-        priority: 0.6,
-        changeFrequency: 'yearly' as const,
-      }))
+      // each surah, plus the later blocks of long surahs (/quran/al-baqarah/41, /81, ...), which are
+      // the canonical pages for their ayahs
+      return surahs.docs.flatMap((s) => {
+        const starts = [1]
+        for (let a = 1 + AYAH_PAGE; a <= (s.ayahCount ?? 0); a += AYAH_PAGE) starts.push(a)
+        return starts.map((start) => ({
+          path: start === 1 ? surahPath(s.number) : surahPath(s.number, start),
+          lastModified: s.updatedAt,
+          priority: start === 1 ? 0.6 : 0.4,
+          changeFrequency: 'yearly' as const,
+        }))
+      })
     }
   }
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { toast, useAuth, useDocumentInfo, useFormFields } from '@payloadcms/ui'
-import { Ban, LogOut, ShieldCheck } from 'lucide-react'
+import { IconBan, IconLogout, IconShield } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -117,11 +117,11 @@ export function UserAdminActions() {
             onClick={() => setConfirming(a)}
           >
             {a === 'revoke' ? (
-              <LogOut size={15} aria-hidden="true" />
+              <IconLogout size={15} aria-hidden="true" />
             ) : a === 'ban' ? (
-              <Ban size={15} aria-hidden="true" />
+              <IconBan size={15} aria-hidden="true" />
             ) : (
-              <ShieldCheck size={15} aria-hidden="true" />
+              <IconShield size={15} aria-hidden="true" />
             )}
             {LABELS[a].button}
           </button>

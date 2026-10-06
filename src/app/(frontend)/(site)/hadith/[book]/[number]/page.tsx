@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { IconChevronBack, IconChevronNext } from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -109,7 +109,7 @@ export default async function HadithPage({ params }: Props) {
                   color: 'var(--rh-ink)',
                 }}
               >
-                <ChevronLeft className="ic" aria-hidden="true" />
+                <IconChevronBack className="ic" aria-hidden="true" />
                 <span>
                   <span className="t-caption t-muted" style={{ display: 'block' }}>
                     আগের হাদিস
@@ -145,7 +145,7 @@ export default async function HadithPage({ params }: Props) {
                     {h.book.shortName} : {bn(next)}
                   </strong>
                 </span>
-                <ChevronRight className="ic" aria-hidden="true" />
+                <IconChevronNext className="ic" aria-hidden="true" />
               </Link>
             ) : null}
           </nav>

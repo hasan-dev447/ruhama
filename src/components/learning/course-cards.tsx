@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, BookOpen, Check, Clock } from 'lucide-react'
+import { IconBook, IconCheck, IconClock, IconNext } from '@/components/icons'
 import Link from 'next/link'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 
@@ -66,12 +66,12 @@ export function CourseCard({
         <p className="t-small t-muted clamp-3">{course.description}</p>
         <div className="stat-line">
           <span>
-            <BookOpen className="ic" aria-hidden="true" />
+            <IconBook className="ic" aria-hidden="true" />
             {bn(course.lessonCount)} পাঠ
           </span>
           {course.durationMinutes ? (
             <span>
-              <Clock className="ic" aria-hidden="true" />
+              <IconClock className="ic" aria-hidden="true" />
               {formatMinutes(course.durationMinutes)}
             </span>
           ) : null}
@@ -96,7 +96,7 @@ export function CourseCard({
               <ButtonLink href={continueHref} size="sm" block>
                 {enrollment.completed ? (
                   <>
-                    <Check className="ic" aria-hidden="true" /> আবার দেখুন
+                    <IconCheck className="ic" aria-hidden="true" /> আবার দেখুন
                   </>
                 ) : (
                   'চালিয়ে যান'
@@ -166,7 +166,7 @@ export function CourseGrid({ courses }: { courses: CourseCardView[] }) {
       ) : (
         <div className="card">
           <EmptyState
-            icon={<BookOpen className="ic ic-xl" aria-hidden="true" />}
+            icon={<IconBook className="ic ic-xl" aria-hidden="true" />}
             title="এই স্তরে এখনো কোনো কোর্স নেই"
             text="অন্য স্তর বেছে নিন, নতুন কোর্স শিগগিরই আসছে।"
           />
@@ -318,7 +318,7 @@ function Band({
         ) : null}
         <div>
           <ButtonLink href={cta.href} variant="gold" style={{ marginTop: 8 }}>
-            {cta.label} <ArrowRight className="ic" aria-hidden="true" />
+            {cta.label} <IconNext className="ic" aria-hidden="true" />
           </ButtonLink>
         </div>
       </div>
@@ -336,7 +336,11 @@ function Band({
               <span
                 className={`lesson-state${m.state === 'done' ? ' is-done' : m.state === 'current' ? ' is-current' : ''}`}
               >
-                {m.state === 'done' ? <Check className="ic ic-sm" aria-hidden="true" /> : bn(i + 1)}
+                {m.state === 'done' ? (
+                  <IconCheck className="ic ic-sm" aria-hidden="true" />
+                ) : (
+                  bn(i + 1)
+                )}
               </span>
               {m.title}
               <span

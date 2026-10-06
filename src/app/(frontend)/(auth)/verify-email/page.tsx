@@ -1,4 +1,4 @@
-import { CircleCheck } from 'lucide-react'
+import { IconSuccess } from '@/components/icons'
 import type { Metadata } from 'next'
 
 import { AuthCard } from '@/components/auth/auth-card'
@@ -38,7 +38,7 @@ export default async function VerifyEmailPage({ searchParams }: Props) {
           className="empty__icon"
           style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
         >
-          <CircleCheck className="ic ic-lg" aria-hidden="true" />
+          <IconSuccess className="ic ic-lg" aria-hidden="true" />
         </span>
         <h2 className="t-h4">ইমেইল যাচাই সম্পন্ন</h2>
         <p className="t-small t-muted">

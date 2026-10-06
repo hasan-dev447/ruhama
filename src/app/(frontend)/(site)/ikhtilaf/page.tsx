@@ -1,4 +1,4 @@
-import { Columns2, Info } from 'lucide-react'
+import { IconColumns, IconInfo } from '@/components/icons'
 import type { Metadata } from 'next'
 
 import { IkhtilafList } from '@/components/lists/ikhtilaf-list'
@@ -31,7 +31,7 @@ export default async function IkhtilafIndexPage() {
         aside={
           <div className="stat-line">
             <span>
-              <Columns2 className="ic" aria-hidden="true" />
+              <IconColumns className="ic" aria-hidden="true" />
               {bn(initial.totalDocs)}টি বিষয়
             </span>
           </div>
@@ -40,7 +40,7 @@ export default async function IkhtilafIndexPage() {
       <section className="section" style={{ paddingTop: 48 }}>
         <div className="rh-container" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
           <div className="adab-strip" role="note">
-            <Info
+            <IconInfo
               className="ic"
               aria-hidden="true"
               style={{ color: 'var(--rh-primary)', marginTop: 3 }}
@@ -58,7 +58,7 @@ export default async function IkhtilafIndexPage() {
           ) : (
             <div className="card">
               <EmptyState
-                icon={<Columns2 className="ic ic-xl" aria-hidden="true" />}
+                icon={<IconColumns className="ic ic-xl" aria-hidden="true" />}
                 title="এখনো কোনো বিষয় প্রকাশিত হয়নি"
                 text="রিভিউ শেষ হলেই বিষয়গুলো এখানে দেখা যাবে।"
               />

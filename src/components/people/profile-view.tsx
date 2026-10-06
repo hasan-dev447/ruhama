@@ -1,16 +1,18 @@
 import {
-  BadgeCheck,
-  BookOpen,
-  ChevronRight,
-  Info,
-  MessageCircleQuestion,
-  Mic,
-  PenLine,
-  ShieldCheck,
-} from 'lucide-react'
+  IconBook,
+  IconChevronNext,
+  IconInfo,
+  IconQuestion,
+  IconShield,
+  IconSpeaker,
+  IconVerified,
+  IconWrite,
+} from '@/components/icons'
 import Link from 'next/link'
 
 import { ShareButton } from '@/components/actions/share-button'
+import { ProfileCover } from '@/components/profile/profile-cover'
+import { ProfilePhoto } from '@/components/profile/profile-photo'
 import { eventPlace, eventWhen } from '@/components/content/cards'
 import { Badge } from '@/components/ui/badge'
 import { ButtonLink, LinkArrow } from '@/components/ui/button'
@@ -23,11 +25,10 @@ import {
   formatDay,
   formatDuration,
   formatMonth,
-  initials,
   readingTimeLabel,
 } from '@/lib/format'
-import { cn } from '@/lib/utils'
 import type { Person, Series } from '@/payload-types'
+import type { ProfileCover as ProfileCoverData } from '@/server/queries/profile-cover'
 import type {
   ArticleCardView,
   EventCardView,
@@ -52,7 +53,7 @@ const KIND_BADGE = {
   reviewer: ['রিভিউয়ার', 'reviewed'],
   speaker: ['বক্তা', 'level'],
 } as const
-const ROLE_ICON = { author: PenLine, reviewer: ShieldCheck, speaker: Mic } as const
+const ROLE_ICON = { author: IconWrite, reviewer: IconShield, speaker: IconSpeaker } as const
 const ROLE_LABEL = { author: 'লেখক', reviewer: 'রিভিউয়ার', speaker: 'বক্তা' } as const
 
 function Row({
@@ -80,7 +81,7 @@ function Row({
           </span>
           <span className="t-small t-muted">{meta}</span>
         </span>
-        <ChevronRight className="ic" aria-hidden="true" style={{ color: 'var(--rh-muted)' }} />
+        <IconChevronNext className="ic" aria-hidden="true" style={{ color: 'var(--rh-muted)' }} />
       </Link>
     </li>
   )
@@ -124,10 +125,13 @@ export function ProfileView({
   person,
   content,
   variant,
+  extras = { cover: null, photo: null },
 }: {
   person: Person
   content: PersonContent
   variant: 'scholar' | 'speaker'
+  /** the linked member's cover and photo, when they show them publicly */
+  extras?: { cover: ProfileCoverData | null; photo: { src: string; large: string } | null }
 }) {
   const isScholar = variant === 'scholar'
   const kinds = (person.kinds ?? []) as (keyof typeof KIND_BADGE)[]
@@ -153,25 +157,12 @@ export function ProfileView({
 
   return (
     <main id="main">
-      <div
-        className="cover-band"
-        aria-hidden="true"
-        style={isScholar ? undefined : { background: '#4A3A1C' }}
-      >
-        <div className="rh-pattern" />
-        <svg className="cover-band__thread" viewBox="0 0 1440 120" preserveAspectRatio="none">
-          <path d="M0 80C240 20 420 110 720 60S1200 10 1440 70" />
-        </svg>
-      </div>
+      <ProfileCover cover={extras.cover} tone={isScholar ? 'teal' : 'gold'} />
       <div className="rh-container">
         <div className="profile-head">
-          <span
-            className={cn('avatar-hero', tone === 'teal' && 'avatar-hero--teal')}
-            aria-hidden="true"
-          >
-            {initials(person.name)}
-          </span>
+          <ProfilePhoto name={person.name} photo={extras.photo} tone={tone} />
           <div
+            className="profile-head__info"
             style={{
               flex: '1 1 420px',
               display: 'flex',
@@ -195,7 +186,7 @@ export function ProfileView({
               </h1>
               {isScholar && person.verified ? (
                 <Badge variant="verified">
-                  <BadgeCheck className="ic" aria-hidden="true" />
+                  <IconVerified className="ic" aria-hidden="true" />
                   যাচাইকৃত আলিম
                 </Badge>
               ) : null}
@@ -322,7 +313,7 @@ export function ProfileView({
             ) : null}
             {!isScholar && person.disclaimer ? (
               <div className="privacy-note">
-                <Info className="ic" aria-hidden="true" />
+                <IconInfo className="ic" aria-hidden="true" />
                 <span>{person.disclaimer}</span>
               </div>
             ) : null}
@@ -366,7 +357,7 @@ export function ProfileView({
                           href={`/ilm/${a.slug}`}
                           title={a.title}
                           meta={articleMeta(a)}
-                          mark={<BookOpen className="ic" aria-hidden="true" />}
+                          mark={<IconBook className="ic" aria-hidden="true" />}
                         />
                       ))}
                     </ul>
@@ -395,7 +386,7 @@ export function ProfileView({
                           href={`/qa/${q.slug}`}
                           title={q.title}
                           meta={q.category?.name ?? 'প্রশ্নোত্তর'}
-                          mark={<MessageCircleQuestion className="ic" aria-hidden="true" />}
+                          mark={<IconQuestion className="ic" aria-hidden="true" />}
                         />
                       ))}
                     </ul>
@@ -435,7 +426,7 @@ export function ProfileView({
                           meta={[articleMeta(a), a.author ? `লেখক: ${a.author.name}` : null]
                             .filter(Boolean)
                             .join(' · ')}
-                          mark={<ShieldCheck className="ic" aria-hidden="true" />}
+                          mark={<IconShield className="ic" aria-hidden="true" />}
                         />
                       ))}
                     </ul>
@@ -447,7 +438,7 @@ export function ProfileView({
                 </TabsContent>
               </Tabs>
               <div className="privacy-note" style={{ marginTop: 32 }}>
-                <Info className="ic" aria-hidden="true" />
+                <IconInfo className="ic" aria-hidden="true" />
                 <span>
                   এই প্রোফাইলের উদ্দেশ্য স্বচ্ছতা: কে লিখছেন ও কে রিভিউ করছেন তা জানা। এখানে
                   ব্যক্তির প্রশংসা নয়, দলিলই মানদণ্ড।
@@ -463,7 +454,7 @@ export function ProfileView({
                 <section aria-labelledby="as-speaker">
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
                     <IconTile size={40}>
-                      <Mic className="ic" aria-hidden="true" />
+                      <IconSpeaker className="ic" aria-hidden="true" />
                     </IconTile>
                     <h2 id="as-speaker" className="t-h3">
                       বক্তা হিসেবে
@@ -526,7 +517,7 @@ export function ProfileView({
                 <section aria-labelledby="as-writer">
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
                     <IconTile teal size={40}>
-                      <PenLine className="ic" aria-hidden="true" />
+                      <IconWrite className="ic" aria-hidden="true" />
                     </IconTile>
                     <h2 id="as-writer" className="t-h3">
                       লেখক হিসেবে

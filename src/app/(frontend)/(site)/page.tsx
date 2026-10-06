@@ -1,13 +1,15 @@
 import {
-  BookOpen,
-  Check,
-  CircleCheck,
-  Handshake,
-  MessageCircleMore,
-  Search,
-  Users,
-} from 'lucide-react'
+  IconBook,
+  IconChat,
+  IconCheck,
+  IconSearch,
+  IconSuccess,
+  IconUnity,
+  IconUsers,
+} from '@/components/icons'
+
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { BookmarkButton } from '@/components/actions/bookmark-button'
 import { ShareButton } from '@/components/actions/share-button'
@@ -29,12 +31,12 @@ export const revalidate = 86400
 export const metadata: Metadata = buildMetadata({ path: '/' })
 
 const VALUE_ICONS = {
-  handshake: <Handshake className="ic ic-lg" aria-hidden="true" />,
-  book: <BookOpen className="ic ic-lg" aria-hidden="true" />,
-  message: <MessageCircleMore className="ic ic-lg" aria-hidden="true" />,
-  search: <Search className="ic ic-lg" aria-hidden="true" />,
+  handshake: <IconUnity className="ic ic-lg" aria-hidden="true" />,
+  book: <IconBook className="ic ic-lg" aria-hidden="true" />,
+  message: <IconChat className="ic ic-lg" aria-hidden="true" />,
+  search: <IconSearch className="ic ic-lg" aria-hidden="true" />,
   mark: <BrandMark style={{ width: 26, height: 26, strokeWidth: 2.6 }} />,
-  users: <Users className="ic ic-lg" aria-hidden="true" />,
+  users: <IconUsers className="ic ic-lg" aria-hidden="true" />,
 } as const
 
 const reveal = (i: number) =>
@@ -116,7 +118,7 @@ export default async function HomePage() {
       </section>
 
       {/* PLEDGE */}
-      <section aria-labelledby="pledge-title" style={{ position: 'relative', marginTop: -24 }}>
+      <section aria-labelledby="pledge-title" className="pledge-wrap">
         <div className="rh-container">
           <div className="card card-raised pledge reveal">
             <div className="pledge__head">
@@ -128,7 +130,7 @@ export default async function HomePage() {
             <ul className="pledge__list">
               {(home.pledges ?? []).map((pl) => (
                 <li key={pl.title} className="pledge__item">
-                  <CircleCheck className="ic" aria-hidden="true" />
+                  <IconSuccess className="ic" aria-hidden="true" />
                   <div>
                     <strong>{pl.title}</strong>
                     <p>{pl.text}</p>
@@ -209,7 +211,17 @@ export default async function HomePage() {
         <div className="rh-container">
           <SplitHead
             className="reveal"
-            action={<p className="t-muted t-small">{formatLongDate(`${daily.date}T06:00:00Z`)}</p>}
+            action={
+              <div
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}
+              >
+                <p className="t-muted t-small">{formatLongDate(`${daily.date}T06:00:00Z`)}</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+                  <LinkArrow href="/quran">কুরআন পড়ুন</LinkArrow>
+                  <LinkArrow href="/hadith">হাদিস ভান্ডার</LinkArrow>
+                </div>
+              </div>
+            }
           >
             <span className="eyebrow">প্রতিদিনের পাথেয়</span>
             <h2 id="daily-title" className="t-h2">
@@ -237,7 +249,16 @@ export default async function HomePage() {
                 translation={daily.ayah.translation}
                 reference={daily.ayah.reference}
                 actions={
-                  <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                    {daily.ayah.href ? (
+                      <Link
+                        href={daily.ayah.href}
+                        className="link t-small"
+                        style={{ marginRight: 8 }}
+                      >
+                        পুরো সূরা পড়ুন
+                      </Link>
+                    ) : null}
                     {daily.ayah.ayahId ? (
                       <BookmarkButton
                         target={{ collection: 'ayahs', id: daily.ayah.ayahId }}
@@ -270,6 +291,7 @@ export default async function HomePage() {
                 narrator={daily.hadith.narrator}
                 source={daily.hadith.reference}
                 grade={daily.hadith.grade}
+                href={daily.hadith.href ?? undefined}
               />
             ) : null}
           </div>
@@ -374,7 +396,7 @@ export default async function HomePage() {
                       key={pt.text}
                       style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}
                     >
-                      <Check
+                      <IconCheck
                         className="ic"
                         aria-hidden="true"
                         style={{ color: 'var(--rh-accent)', marginTop: 4 }}

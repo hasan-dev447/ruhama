@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight } from 'lucide-react'
+import { IconNext } from '@/components/icons'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
@@ -87,7 +87,7 @@ export function Journey({ steps }: { steps: JourneyStep[] }) {
                 <h3>{step.title}</h3>
                 <p>{step.text}</p>
                 <Link href={step.href} className="link-arrow">
-                  বিস্তারিত পড়ুন <ArrowRight className="ic" aria-hidden="true" />
+                  বিস্তারিত পড়ুন <IconNext className="ic" aria-hidden="true" />
                 </Link>
               </div>
             </li>

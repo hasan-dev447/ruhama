@@ -1,4 +1,4 @@
-import { BookOpen, Quote } from 'lucide-react'
+import { IconBook, IconQuote } from '@/components/icons'
 import Link from 'next/link'
 
 import { BrandMark } from '@/components/icons/brand-mark'
@@ -88,10 +88,10 @@ export function HadithCard({
       {eyebrow ? (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {eyebrow}
-          <Quote className="hadith-card__quote" aria-hidden="true" />
+          <IconQuote className="hadith-card__quote" aria-hidden="true" />
         </div>
       ) : showQuote ? (
-        <Quote className="hadith-card__quote" aria-hidden="true" />
+        <IconQuote className="hadith-card__quote" aria-hidden="true" />
       ) : null}
       {arabic ? (
         <p className="ar" lang="ar" dir="rtl" style={arabicStyle}>
@@ -149,7 +149,7 @@ export function DalilBox({
   return (
     <aside className="dalil-box" aria-labelledby={id}>
       <div className="dalil-box__head" id={id}>
-        <BookOpen className="ic" aria-hidden="true" />
+        <IconBook className="ic" aria-hidden="true" />
         {title}
       </div>
       <ul className="dalil-list">

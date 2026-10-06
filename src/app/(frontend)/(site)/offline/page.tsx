@@ -1,4 +1,4 @@
-import { RotateCcw, WifiOff } from 'lucide-react'
+import { IconOffline, IconRetry } from '@/components/icons'
 import type { Metadata } from 'next'
 
 import { OFFLINE_SLOT_ID } from '@/sw/protocol'
@@ -38,7 +38,7 @@ export default function OfflinePage() {
             color: 'var(--rh-accent-ink)',
           }}
         >
-          <WifiOff className="ic ic-lg" aria-hidden="true" />
+          <IconOffline className="ic ic-lg" aria-hidden="true" />
         </span>
         <h1 className="t-h2">আপনি এখন অফলাইনে</h1>
         <p className="t-body-lg t-muted">
@@ -46,7 +46,7 @@ export default function OfflinePage() {
         </p>
         {/* an empty href reloads the current address, which is the page the visitor wanted */}
         <a href="" className="btn btn-primary">
-          <RotateCcw className="ic" aria-hidden="true" />
+          <IconRetry className="ic" aria-hidden="true" />
           আবার চেষ্টা করুন
         </a>
         <section

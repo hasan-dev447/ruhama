@@ -1,6 +1,6 @@
 'use client'
 
-import { Moon, Sun } from 'lucide-react'
+import { IconDark, IconLight } from '@/components/icons'
 import { useTheme } from 'next-themes'
 
 import { useMounted } from '@/hooks/use-mounted'
@@ -19,8 +19,8 @@ export function ThemeToggle({ className }: { className?: string }) {
   const label = !mounted ? 'থিম পরিবর্তন করুন' : dark ? 'লাইট মোড চালু করুন' : 'ডার্ক মোড চালু করুন'
   return (
     <button type="button" className={cn('btn-icon', className)} aria-label={label} onClick={toggle}>
-      <Moon className="ic theme-icon-light" aria-hidden="true" />
-      <Sun className="ic theme-icon-dark" aria-hidden="true" />
+      <IconDark className="ic theme-icon-light" aria-hidden="true" />
+      <IconLight className="ic theme-icon-dark" aria-hidden="true" />
     </button>
   )
 }
@@ -36,8 +36,8 @@ export function ThemeToggleRow() {
       style={{ justifyContent: 'space-between' }}
     >
       {dark ? 'লাইট মোড' : 'ডার্ক মোড'}
-      <Moon className="ic theme-icon-light" aria-hidden="true" />
-      <Sun className="ic theme-icon-dark" aria-hidden="true" />
+      <IconDark className="ic theme-icon-light" aria-hidden="true" />
+      <IconLight className="ic theme-icon-dark" aria-hidden="true" />
     </button>
   )
 }

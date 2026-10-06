@@ -1,6 +1,6 @@
 'use client'
 
-import { BadgeCheck, SearchX } from 'lucide-react'
+import { IconSearchEmpty, IconVerified } from '@/components/icons'
 import Link from 'next/link'
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs'
 
@@ -36,7 +36,7 @@ export function ScholarCard({ scholar }: { scholar: ScholarCardView }) {
         <PersonAvatar person={{ name: scholar.name, tone: scholar.tone }} size="lg" />
         {scholar.verified ? (
           <Badge variant="verified">
-            <BadgeCheck className="ic" aria-hidden="true" />
+            <IconVerified className="ic" aria-hidden="true" />
             যাচাইকৃত
           </Badge>
         ) : null}
@@ -185,7 +185,7 @@ export function ScholarResults({
       ) : (
         <div className="card">
           <EmptyState
-            icon={<SearchX className="ic ic-xl" aria-hidden="true" />}
+            icon={<IconSearchEmpty className="ic ic-xl" aria-hidden="true" />}
             title="এই খোঁজে কাউকে পাওয়া যায়নি"
             text="বানান মিলিয়ে দেখুন অথবা অন্য বিষয় বেছে নিন।"
           >

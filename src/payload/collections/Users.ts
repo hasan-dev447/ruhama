@@ -1,6 +1,8 @@
 import { APIError, type CollectionConfig, type Field } from 'payload'
 
 import { DISTRICT_OPTIONS } from '@/lib/districts'
+import { canHavePhoto, GENDERS } from '@/lib/gender'
+import { MAX_ALLOWED_VIEWERS, VISIBILITY } from '@/lib/profile-privacy'
 import { JOURNEY_STAGES } from '@/lib/journey'
 import { INTEREST_OPTIONS } from '@/lib/options'
 import { ADMIN_ROLES, hasRole, ROLE_LABELS, ROLES, rolesOf, STAFF_ROLES } from '@/lib/roles'
@@ -59,6 +61,22 @@ const GENERATED_FIELD_TWEAKS: Record<string, Partial<Field> & Record<string, unk
     admin: { readOnly: true, position: 'sidebar' },
   },
   phoneNumber: { label: 'মোবাইল', index: true },
+  gender: {
+    label: 'পরিচয়',
+    type: 'select',
+    options: GENDERS.map((g) => ({ label: g.long, value: g.value })),
+    index: true,
+    saveToJWT: true,
+    admin: {
+      position: 'sidebar',
+      description:
+        'সদস্য একবারই বেছে নেন, পরে বদলানো যায় না। ভুল হলে শুধু সুপার অ্যাডমিন ঠিক করতে পারেন।',
+    },
+  },
+  image: {
+    label: 'ছবির ঠিকানা',
+    admin: { readOnly: true, position: 'sidebar', description: 'প্রোফাইল ছবি থেকে নিজে থেকে বসে।' },
+  },
 }
 
 const EXTRA_FIELDS: Field[] = [
@@ -80,11 +98,63 @@ const EXTRA_FIELDS: Field[] = [
     access: { update: fieldAdmins },
   },
   {
+    name: 'avatar',
+    label: 'প্রোফাইল ছবি',
+    type: 'upload',
+    relationTo: 'avatars',
+    admin: { position: 'sidebar', description: 'শুধু ভাইদের জন্য। সদস্য নিজের সেটিংস থেকে বদলান।' },
+  },
+  {
+    name: 'cover',
+    label: 'কভার',
+    type: 'group',
+    admin: { description: 'প্রোফাইলের কভারে সদস্যের বেছে নেওয়া আয়াত, হাদিস বা লেখা।' },
+    fields: [
+      {
+        name: 'kind',
+        label: 'ধরন',
+        type: 'select',
+        defaultValue: 'none',
+        options: [
+          { label: 'কিছু না', value: 'none' },
+          { label: 'কুরআনের আয়াত', value: 'ayah' },
+          { label: 'হাদিস', value: 'hadith' },
+          { label: 'নিজের লেখা', value: 'text' },
+        ],
+      },
+      { name: 'ayahKey', label: 'আয়াত (সূরা:আয়াত)', type: 'text' },
+      { name: 'hadithKey', label: 'হাদিস (গ্রন্থ:নম্বর)', type: 'text' },
+      { name: 'text', label: 'লেখা', type: 'textarea', maxLength: 200 },
+      { name: 'source', label: 'উৎস', type: 'text', maxLength: 80 },
+    ],
+  },
+  {
     name: 'privacy',
     label: 'গোপনীয়তা',
     type: 'group',
     fields: [
-      { name: 'profilePublic', label: 'প্রোফাইল পাবলিক', type: 'checkbox', defaultValue: true },
+      {
+        name: 'visibility',
+        label: 'কারা প্রোফাইল দেখতে পারবে',
+        type: 'select',
+        defaultValue: 'public',
+        options: VISIBILITY.map((v) => ({ label: v.label, value: v.value })),
+      },
+      {
+        name: 'allowedViewers',
+        label: 'যারা দেখতে পারবেন',
+        type: 'relationship',
+        relationTo: 'users',
+        hasMany: true,
+        maxRows: MAX_ALLOWED_VIEWERS,
+        admin: { condition: (_, sibling) => sibling?.visibility === 'custom' },
+      },
+      // older setting, replaced by `visibility` (read only for rows saved before it)
+      { name: 'profilePublic', type: 'checkbox', defaultValue: true, admin: { hidden: true } },
+      { name: 'showPhoto', label: 'ছবি দেখানো', type: 'checkbox', defaultValue: true },
+      { name: 'showCover', label: 'কভার দেখানো', type: 'checkbox', defaultValue: true },
+      { name: 'showBio', label: 'পরিচিতি দেখানো', type: 'checkbox', defaultValue: true },
+      { name: 'showDistrict', label: 'জেলা দেখানো', type: 'checkbox', defaultValue: true },
       { name: 'showActivity', label: 'কার্যক্রম দেখানো', type: 'checkbox', defaultValue: true },
       { name: 'showJourney', label: 'যাত্রার ধাপ দেখানো', type: 'checkbox', defaultValue: true },
       {
@@ -201,6 +271,35 @@ export function usersCollectionOverride({
       ...collection.hooks,
       beforeChange: [
         ...(collection.hooks?.beforeChange ?? []),
+        ({ data, originalDoc, req, operation }) => {
+          const superAdmin = hasRole(req.user, 'super_admin')
+          // ভাই / বোন is chosen once; only a super admin can correct a mistake
+          if (
+            operation === 'update' &&
+            originalDoc?.gender &&
+            data.gender !== undefined &&
+            data.gender !== originalDoc.gender &&
+            !superAdmin
+          ) {
+            throw new APIError(
+              'পরিচয় (ভাই/বোন) একবার বেছে নিলে আর বদলানো যায় না।',
+              403,
+              null,
+              true,
+            )
+          }
+          const gender = data.gender ?? originalDoc?.gender
+          // the photo comes only from the member's own upload (never a Google or Facebook picture),
+          // and sisters have none
+          if (data.image !== undefined && !req.context?.avatarUpdate) {
+            data.image = originalDoc?.image ?? null
+          }
+          if (gender && !canHavePhoto(gender)) {
+            data.image = null
+            data.avatar = null
+          }
+          return data
+        },
         ({ data, originalDoc, req }) => {
           // only a super admin can grant or remove the super admin role
           if (data.role && req.user) {

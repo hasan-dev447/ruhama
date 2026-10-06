@@ -1,6 +1,6 @@
 'use client'
 
-import { Play } from 'lucide-react'
+import { IconPlay } from '@/components/icons'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import { BrandMark } from '@/components/icons/brand-mark'
@@ -132,7 +132,7 @@ export const YouTubeFacade = forwardRef<
             aria-label={`ভিডিও চালু করুন: ${title}`}
             onClick={() => activate()}
           >
-            <Play className="ic ic-xl" aria-hidden="true" style={{ marginLeft: 4 }} />
+            <IconPlay className="ic ic-xl" aria-hidden="true" style={{ marginLeft: 4 }} />
           </button>
           {durationSeconds ? (
             <span className="vthumb__dur" style={{ right: 16, bottom: 16, fontSize: 14 }}>

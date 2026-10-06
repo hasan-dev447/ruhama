@@ -1,7 +1,14 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { CircleCheck, CircleX, ListChecks, LogIn, Pause, Play } from 'lucide-react'
+import {
+  IconChecklist,
+  IconError,
+  IconLogin,
+  IconPause,
+  IconPlay,
+  IconSuccess,
+} from '@/components/icons'
 import { usePathname } from 'next/navigation'
 import { startTransition, useOptimistic, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -69,7 +76,7 @@ export function LessonCompleteButton({
         block
         style={{ marginTop: 16 }}
       >
-        <LogIn className="ic" aria-hidden="true" /> অগ্রগতি সংরক্ষণে লগইন করুন
+        <IconLogin className="ic" aria-hidden="true" /> অগ্রগতি সংরক্ষণে লগইন করুন
       </ButtonLink>
     )
   }
@@ -117,7 +124,7 @@ export function LessonCompleteButton({
     >
       {done ? (
         <>
-          <CircleCheck className="ic" aria-hidden="true" /> সম্পন্ন হয়েছে · আবার অসম্পন্ন করুন
+          <IconSuccess className="ic" aria-hidden="true" /> সম্পন্ন হয়েছে · আবার অসম্পন্ন করুন
         </>
       ) : (
         'পাঠ সম্পন্ন হিসেবে চিহ্নিত করুন'
@@ -213,7 +220,7 @@ export function LessonQuiz({
           style={{ display: 'flex', alignItems: 'center', gap: 10 }}
         >
           <IconTile size={36}>
-            <ListChecks className="ic" aria-hidden="true" />
+            <IconChecklist className="ic" aria-hidden="true" />
           </IconTile>
           নিজেকে যাচাই করুন
         </h2>
@@ -224,7 +231,7 @@ export function LessonQuiz({
 
       {finished ? (
         <div role="status" className="adab-strip" style={{ background: 'var(--rh-success-soft)' }}>
-          <CircleCheck
+          <IconSuccess
             className="ic"
             aria-hidden="true"
             style={{ color: 'var(--rh-success)', marginTop: 3 }}
@@ -287,13 +294,13 @@ export function LessonQuiz({
               }}
             >
               {result.correct ? (
-                <CircleCheck
+                <IconSuccess
                   className="ic"
                   aria-hidden="true"
                   style={{ color: 'var(--rh-success)', marginTop: 3 }}
                 />
               ) : (
-                <CircleX
+                <IconError
                   className="ic"
                   aria-hidden="true"
                   style={{ color: 'var(--rh-error)', marginTop: 3 }}
@@ -387,9 +394,9 @@ export function AudioLesson({
         }}
       >
         {playing ? (
-          <Pause className="ic ic-lg" aria-hidden="true" />
+          <IconPause className="ic ic-lg" aria-hidden="true" />
         ) : (
-          <Play className="ic ic-lg" aria-hidden="true" style={{ marginLeft: 4 }} />
+          <IconPlay className="ic ic-lg" aria-hidden="true" style={{ marginLeft: 4 }} />
         )}
       </button>
       <span

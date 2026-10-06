@@ -1,4 +1,4 @@
-import { ChevronRight, Columns2, Heart } from 'lucide-react'
+import { IconChevronNext, IconColumns, IconHeart } from '@/components/icons'
 import Link from 'next/link'
 
 import { Badge } from '@/components/ui/badge'
@@ -69,7 +69,7 @@ export function IkhtilafPreviewCard({
       </div>
       {topic.conduct ? (
         <div className="adab-strip">
-          <Heart
+          <IconHeart
             className="ic"
             aria-hidden="true"
             style={{ color: 'var(--rh-accent-ink)', marginTop: 3 }}
@@ -93,7 +93,7 @@ export function IkhtilafRow({
     <li>
       <Link href={`/ikhtilaf/${topic.slug}`} className="row-link">
         <IconTile teal size={40}>
-          <Columns2 className="ic" aria-hidden="true" />
+          <IconColumns className="ic" aria-hidden="true" />
         </IconTile>
         <span style={{ flex: 1 }}>
           <span className="row-link__title" style={{ display: 'block' }}>
@@ -101,7 +101,7 @@ export function IkhtilafRow({
           </span>
           <span className="t-small t-muted">{ikhtilafMeta(topic)}</span>
         </span>
-        <ChevronRight className="ic" aria-hidden="true" style={{ color: 'var(--rh-muted)' }} />
+        <IconChevronNext className="ic" aria-hidden="true" style={{ color: 'var(--rh-muted)' }} />
       </Link>
     </li>
   )

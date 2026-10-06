@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react'
+import { IconBack } from '@/components/icons'
 import Link from 'next/link'
 
 import { ThemeToggle } from '@/components/layout/theme-toggle'
@@ -21,7 +21,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         }}
       >
         <Link href="/" className="link-arrow" style={{ minHeight: 44 }}>
-          <ArrowLeft className="ic" aria-hidden="true" />
+          <IconBack className="ic" aria-hidden="true" />
           হোমে ফিরুন
         </Link>
         <ThemeToggle />

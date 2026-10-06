@@ -1,7 +1,6 @@
-import { CalendarClock, Users } from 'lucide-react'
+import { IconCircles, IconSchedule, IconUsers } from '@/components/icons'
 import Link from 'next/link'
 
-import { CircleBeadsIcon } from '@/components/icons/design-icons'
 import { Badge } from '@/components/ui/badge'
 import { ButtonLink } from '@/components/ui/button'
 import { IconTile } from '@/components/ui/primitives'
@@ -37,7 +36,7 @@ export function CircleCard({ circle }: { circle: CircleCardView }) {
         }}
       >
         <IconTile teal>
-          <CircleBeadsIcon className="ic ic-lg" />
+          <IconCircles className="ic ic-lg" />
         </IconTile>
         <Badge variant={TYPE_BADGE[circle.type]}>{CIRCLE_TYPE_LABEL[circle.type]}</Badge>
       </div>
@@ -53,13 +52,13 @@ export function CircleCard({ circle }: { circle: CircleCardView }) {
       </div>
       <div className="info-list" style={{ gap: 8 }}>
         <div>
-          <CalendarClock className="ic" aria-hidden="true" />
+          <IconSchedule className="ic" aria-hidden="true" />
           <span>
             {FREQUENCY_LABEL[circle.frequency] ?? circle.frequency} · {circle.scheduleLabel}
           </span>
         </div>
         <div>
-          <Users className="ic" aria-hidden="true" />
+          <IconUsers className="ic" aria-hidden="true" />
           <span>{memberLabel(circle.memberCount, circle.memberUnit)}</span>
         </div>
       </div>

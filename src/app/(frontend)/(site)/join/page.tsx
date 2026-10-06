@@ -1,4 +1,4 @@
-import { Gift, MapPin, Users } from 'lucide-react'
+import { IconGift, IconLocation, IconUsers } from '@/components/icons'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
@@ -21,17 +21,17 @@ export const metadata: Metadata = buildMetadata({
 
 const POINTS = [
   {
-    icon: Gift,
+    icon: IconGift,
     title: 'কোনো সদস্য ফি নেই',
     text: 'সব কাজ স্বেচ্ছাশ্রমে, আল্লাহর সন্তুষ্টির জন্য।',
   },
   {
-    icon: Users,
+    icon: IconUsers,
     title: 'দলীয় পরিচয় ছাড়তে হবে না',
     text: 'শুধু ঘোষণাপত্রের আদব ও ইনসাফ মেনে চলার অঙ্গীকার।',
   },
   {
-    icon: MapPin,
+    icon: IconLocation,
     title: 'নিজের জেলায় কাজের সুযোগ',
     text: 'মজলিস আয়োজন থেকে অনলাইন কনটেন্ট পর্যন্ত।',
   },

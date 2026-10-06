@@ -1,6 +1,6 @@
 'use client'
 
-import { CircleCheck } from 'lucide-react'
+import { IconSuccess } from '@/components/icons'
 import { useActionState } from 'react'
 
 import { subscribeNewsletterAction } from '@/actions/newsletter'
@@ -28,7 +28,7 @@ export function NewsletterForm() {
           fontWeight: 500,
         }}
       >
-        <CircleCheck className="ic" aria-hidden="true" />
+        <IconSuccess className="ic" aria-hidden="true" />
         জাযাকাল্লাহু খাইরান! পরের শুক্রবার দেখা হবে।
       </div>
     )

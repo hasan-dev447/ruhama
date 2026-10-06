@@ -1,24 +1,24 @@
 'use client'
 
 import {
-  ArrowRight,
-  Bell,
-  ChevronDown,
-  ChevronRight,
-  LayoutDashboard,
-  LogOut,
-  Search,
-  Settings,
-  ShieldCheck,
-  User,
-  X,
-} from 'lucide-react'
+  IconBell,
+  IconChevronDown,
+  IconChevronNext,
+  IconClose,
+  IconDashboard,
+  IconLogout,
+  IconMenu,
+  IconNext,
+  IconSearch,
+  IconSettings,
+  IconShield,
+  IconUser,
+} from '@/components/icons'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Dialog as DialogPrimitive } from 'radix-ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { MenuIcon } from '@/components/icons/design-icons'
 import { NotifIcon } from '@/components/notifications/notif-icon'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { handleMenuKeys, useDismiss } from '@/hooks/use-dismiss'
@@ -99,7 +99,7 @@ export function SiteHeader() {
           </nav>
           <div className="site-header__actions">
             <Link href="/search" className="btn-icon" aria-label="খুঁজুন">
-              <Search className="ic" aria-hidden="true" />
+              <IconSearch className="ic" aria-hidden="true" />
             </Link>
             <ThemeToggle />
             <div className="hdr-auth-slot">
@@ -180,7 +180,7 @@ function NotificationsPanel({
         aria-expanded={open}
         onClick={onToggle}
       >
-        <Bell className="ic" aria-hidden="true" />
+        <IconBell className="ic" aria-hidden="true" />
         {unread > 0 && <span className="count-badge">{bn(unread > 9 ? '9+' : unread)}</span>}
       </button>
       {open && (
@@ -220,7 +220,7 @@ function NotificationsPanel({
               {!isLoading && data?.docs.length === 0 && (
                 <div className="empty" style={{ padding: '32px 16px' }}>
                   <span className="empty__icon">
-                    <Bell className="ic ic-lg" aria-hidden="true" />
+                    <IconBell className="ic ic-lg" aria-hidden="true" />
                   </span>
                   <p className="t-small t-muted">এখনো কোনো নোটিফিকেশন নেই।</p>
                 </div>
@@ -249,7 +249,7 @@ function NotificationsPanel({
             </div>
             <div className="dropdown__foot">
               <Link href="/notifications" className="link-arrow" onClick={onClose}>
-                সব নোটিফিকেশন দেখুন <ArrowRight className="ic" aria-hidden="true" />
+                সব নোটিফিকেশন দেখুন <IconNext className="ic" aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -293,7 +293,7 @@ function UserMenu({
         onClick={onToggle}
       >
         <UserAvatar name={user.name} image={user.image} tone="gold" />
-        <ChevronDown className="ic ic-sm" aria-hidden="true" />
+        <IconChevronDown className="ic ic-sm" aria-hidden="true" />
       </button>
       {open && (
         <>
@@ -334,15 +334,15 @@ function UserMenu({
               role="menuitem"
               onClick={onClose}
             >
-              <User className="ic" aria-hidden="true" />
+              <IconUser className="ic" aria-hidden="true" />
               প্রোফাইল
             </Link>
             <Link href="/dashboard" className="menu-item" role="menuitem" onClick={onClose}>
-              <LayoutDashboard className="ic" aria-hidden="true" />
+              <IconDashboard className="ic" aria-hidden="true" />
               ড্যাশবোর্ড
             </Link>
             <Link href="/settings" className="menu-item" role="menuitem" onClick={onClose}>
-              <Settings className="ic" aria-hidden="true" />
+              <IconSettings className="ic" aria-hidden="true" />
               সেটিংস
             </Link>
             {isModerator && (
@@ -352,13 +352,13 @@ function UserMenu({
                 role="menuitem"
                 onClick={onClose}
               >
-                <ShieldCheck className="ic" aria-hidden="true" />
+                <IconShield className="ic" aria-hidden="true" />
                 মডারেশন কিউ
               </Link>
             )}
             {isStaff && (
               <Link href="/admin" prefetch={false} className="menu-item" role="menuitem">
-                <LayoutDashboard className="ic" aria-hidden="true" />
+                <IconDashboard className="ic" aria-hidden="true" />
                 অ্যাডমিন প্যানেল
               </Link>
             )}
@@ -369,7 +369,7 @@ function UserMenu({
               role="menuitem"
               onClick={logout}
             >
-              <LogOut className="ic" aria-hidden="true" />
+              <IconLogout className="ic" aria-hidden="true" />
               লগআউট
             </button>
           </div>
@@ -398,7 +398,7 @@ function MobileDrawer({
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Trigger asChild>
         <button type="button" className="btn-icon only-mobile-nav" aria-label="মেনু খুলুন">
-          <MenuIcon />
+          <IconMenu className="ic ic-lg" />
         </button>
       </DialogPrimitive.Trigger>
       <DialogPrimitive.Portal>
@@ -408,7 +408,7 @@ function MobileDrawer({
           <div className="drawer__top">
             <BrandLink onClick={close} />
             <DialogPrimitive.Close className="btn-icon" aria-label="মেনু বন্ধ করুন">
-              <X className="ic ic-lg" aria-hidden="true" />
+              <IconClose className="ic ic-lg" aria-hidden="true" />
             </DialogPrimitive.Close>
           </div>
           <nav
@@ -423,7 +423,7 @@ function MobileDrawer({
                 aria-current={active === item.key ? 'page' : undefined}
                 onClick={close}
               >
-                {item.label} <ChevronRight className="ic" aria-hidden="true" />
+                {item.label} <IconChevronNext className="ic" aria-hidden="true" />
               </Link>
             ))}
           </nav>

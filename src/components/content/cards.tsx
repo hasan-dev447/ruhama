@@ -1,21 +1,21 @@
 import {
-  ArrowRight,
-  BookOpen,
-  Clock,
-  Columns2,
-  Compass,
-  Heart,
-  House,
-  Landmark,
-  MapPin,
-  Mic,
-  Scale,
-  Sprout,
-  Sunrise,
-  Users,
-  Video,
-  Wallet,
-} from 'lucide-react'
+  IconBalance,
+  IconBook,
+  IconClock,
+  IconColumns,
+  IconExplore,
+  IconGrowth,
+  IconHeart,
+  IconHome,
+  IconInstitution,
+  IconLocation,
+  IconMorning,
+  IconNext,
+  IconSpeaker,
+  IconUsers,
+  IconVideo,
+  IconWallet,
+} from '@/components/icons'
 import Link from 'next/link'
 
 import { BrandMark } from '@/components/icons/brand-mark'
@@ -38,18 +38,18 @@ import type { ArticleCardView, EventCardView, PersonRef } from '@/server/queries
 /* ---------------- category icon ---------------- */
 
 const CATEGORY_ICON = {
-  compass: Compass,
-  scale: Scale,
-  sunrise: Sunrise,
-  sprout: Sprout,
-  heart: Heart,
-  wallet: Wallet,
-  users: Users,
-  book: BookOpen,
-  columns: Columns2,
-  home: House,
-  landmark: Landmark,
-  mic: Mic,
+  compass: IconExplore,
+  scale: IconBalance,
+  sunrise: IconMorning,
+  sprout: IconGrowth,
+  heart: IconHeart,
+  wallet: IconWallet,
+  users: IconUsers,
+  book: IconBook,
+  columns: IconColumns,
+  home: IconHome,
+  landmark: IconInstitution,
+  mic: IconSpeaker,
 } as const
 
 export function CategoryIcon({
@@ -59,7 +59,7 @@ export function CategoryIcon({
   icon?: string | null
   className?: string
 }) {
-  const Icon = CATEGORY_ICON[(icon ?? 'book') as keyof typeof CATEGORY_ICON] ?? BookOpen
+  const Icon = CATEGORY_ICON[(icon ?? 'book') as keyof typeof CATEGORY_ICON] ?? IconBook
   return <Icon className={className} aria-hidden="true" />
 }
 
@@ -199,7 +199,7 @@ export function CategoryTile({
       <h3>{name}</h3>
       <div className="cat-tile__foot">
         <span>{foot}</span>
-        <ArrowRight
+        <IconNext
           className="ic"
           aria-hidden="true"
           style={all ? { opacity: 1, transform: 'none' } : undefined}
@@ -237,14 +237,14 @@ export function EventRow({ event }: { event: EventCardView }) {
         </h3>
         <div className="event-meta">
           <span>
-            <Clock className="ic" aria-hidden="true" />
+            <IconClock className="ic" aria-hidden="true" />
             {eventWhen(event)}
           </span>
           <span>
             {event.mode === 'online' ? (
-              <Video className="ic" aria-hidden="true" />
+              <IconVideo className="ic" aria-hidden="true" />
             ) : (
-              <MapPin className="ic" aria-hidden="true" />
+              <IconLocation className="ic" aria-hidden="true" />
             )}
             {eventPlace(event)}
           </span>

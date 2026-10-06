@@ -13,6 +13,8 @@ type MetaInput = {
   modifiedTime?: string | null
   authors?: string[]
   noIndex?: boolean
+  /** when the page repeats another page's content: the address search engines should index */
+  canonical?: string
 }
 
 /** Per-route metadata with canonical URL, Open Graph and Twitter cards. */
@@ -26,7 +28,7 @@ export function buildMetadata(input: MetaInput): Metadata {
   return {
     title,
     description,
-    alternates: { canonical: url },
+    alternates: { canonical: input.canonical ? absoluteUrl(input.canonical) : url },
     robots: input.noIndex ? { index: false, follow: false } : undefined,
     openGraph: {
       type: input.type === 'video.other' ? 'video.other' : (input.type ?? 'website'),

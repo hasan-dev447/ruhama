@@ -1,11 +1,11 @@
 import {
-  BellRing,
-  BookOpen,
-  CalendarDays,
-  ClipboardCheck,
-  MessageCircleCheck,
-  Users,
-} from 'lucide-react'
+  IconAnswered,
+  IconBook,
+  IconCalendar,
+  IconReminder,
+  IconReview,
+  IconUsers,
+} from '@/components/icons'
 
 import type { NotificationKind } from '@/hooks/use-notifications'
 import { cn } from '@/lib/utils'
@@ -19,16 +19,16 @@ const TONE: Partial<Record<NotificationKind, string>> = {
 export function NotifIcon({ kind }: { kind: NotificationKind }) {
   const Icon =
     kind === 'answer'
-      ? MessageCircleCheck
+      ? IconAnswered
       : kind === 'event'
-        ? CalendarDays
+        ? IconCalendar
         : kind === 'forum'
-          ? Users
+          ? IconUsers
           : kind === 'course'
-            ? BookOpen
+            ? IconBook
             : kind === 'review'
-              ? ClipboardCheck
-              : BellRing
+              ? IconReview
+              : IconReminder
   return (
     <span className={cn('notif-item__icon', TONE[kind])}>
       <Icon className="ic" aria-hidden="true" />

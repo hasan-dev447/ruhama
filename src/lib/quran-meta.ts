@@ -161,5 +161,24 @@ export function ayahReference(surah: number, ayah: number, ayahTo?: number | nul
   return `সূরা ${name} : ${bn(ayah)}${ayahTo && ayahTo > ayah ? `-${bn(ayahTo)}` : ''}`
 }
 
+/** `/quran/al-baqarah`, or `/quran/al-baqarah/255` for one ayah (a page of its own, shareable). */
 export const surahPath = (surah: number, ayah?: number) =>
-  `/quran/${surahMeta(surah)?.latin ?? surah}${ayah ? `#ayah-${ayah}` : ''}`
+  `/quran/${surahMeta(surah)?.latin ?? surah}${ayah ? `/${ayah}` : ''}`
+
+/** `/quran/al-kahf`; a bare number such as `/quran/18` redirects to the readable slug. */
+export function resolveSurah(param: string) {
+  if (/^\d+$/.test(param)) return { meta: surahMeta(Number(param)), redirect: true }
+  return { meta: surahBySlug(param), redirect: false }
+}
+
+/** Ayahs shown per page of a surah; "load more" adds the next block. */
+export const AYAH_PAGE = 40
+
+/** First ayah of the block that holds `ayah` (1, 41, 81, ...). */
+export const pageStart = (ayah: number) => Math.floor((ayah - 1) / AYAH_PAGE) * AYAH_PAGE + 1
+
+/** The address search engines should index for the block holding `ayah`. */
+export const pageCanonical = (surah: number, ayah: number) => {
+  const start = pageStart(ayah)
+  return start === 1 ? surahPath(surah) : surahPath(surah, start)
+}

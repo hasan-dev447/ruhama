@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { IconChevronBack, IconChevronNext } from '@/components/icons'
 import Link from 'next/link'
 
 import { bn } from '@/lib/format'
@@ -103,7 +103,7 @@ export function Breadcrumbs({
                 ) : (
                   <span aria-current={last ? 'page' : undefined}>{item.label}</span>
                 )}
-                {!last ? <ChevronRight className="ic" aria-hidden="true" /> : null}
+                {!last ? <IconChevronNext className="ic" aria-hidden="true" /> : null}
               </span>
             </li>
           )
@@ -274,7 +274,7 @@ export function Pager({
     <nav aria-label="পৃষ্ঠা">
       <div className="pager">
         {page > 1
-          ? item(page - 1, <ChevronLeft className="ic" aria-hidden="true" />, 'আগের পৃষ্ঠা')
+          ? item(page - 1, <IconChevronBack className="ic" aria-hidden="true" />, 'আগের পৃষ্ঠা')
           : null}
         {pageWindow(page, totalPages).map((p, i) =>
           p === 'gap' ? (
@@ -290,7 +290,7 @@ export function Pager({
           ),
         )}
         {page < totalPages
-          ? item(page + 1, <ChevronRight className="ic" aria-hidden="true" />, 'পরের পৃষ্ঠা')
+          ? item(page + 1, <IconChevronNext className="ic" aria-hidden="true" />, 'পরের পৃষ্ঠা')
           : null}
       </div>
     </nav>

@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CircleCheck, LogIn, Send } from 'lucide-react'
+import { IconLogin, IconSend, IconSuccess } from '@/components/icons'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useTransition } from 'react'
@@ -63,7 +63,7 @@ export function AskQuestionForm({
           className="empty__icon"
           style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
         >
-          <CircleCheck className="ic ic-lg" aria-hidden="true" />
+          <IconSuccess className="ic ic-lg" aria-hidden="true" />
         </span>
         <h2 className="t-h4">প্রশ্নটি জমা হয়েছে</h2>
         <p className="t-small t-muted">
@@ -112,7 +112,7 @@ export function AskQuestionForm({
           গোপন থাকবে।
         </p>
         <ButtonLink href={`/login?next=${encodeURIComponent(`${pathname ?? '/qa'}#ask`)}`} block>
-          <LogIn className="ic" aria-hidden="true" />
+          <IconLogin className="ic" aria-hidden="true" />
           লগইন করে প্রশ্ন করুন
         </ButtonLink>
         <p className="t-caption t-muted">
@@ -160,7 +160,7 @@ export function AskQuestionForm({
       </Field>
       <Checkbox label="নাম প্রকাশ না করে প্রকাশ করুন" {...form.register('anonymous')} />
       <Button type="submit" block pending={pending}>
-        প্রশ্ন জমা দিন <Send className="ic" aria-hidden="true" />
+        প্রশ্ন জমা দিন <IconSend className="ic" aria-hidden="true" />
       </Button>
       <p className="t-caption t-muted">
         প্রশ্নটি আদব নীতিমালা মেনে মডারেট করা হবে। সাধারণত ৩ থেকে ৭ দিনের মধ্যে উত্তর প্রকাশিত হয়।

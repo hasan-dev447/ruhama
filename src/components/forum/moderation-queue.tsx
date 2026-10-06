@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { CircleCheck, Eye, EyeOff, Flag, Trash2 } from 'lucide-react'
+import { IconDelete, IconHide, IconReport, IconShow, IconSuccess } from '@/components/icons'
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -118,17 +118,17 @@ function Decision({
         onClick={() => act(status === 'pending' ? 'approve' : 'dismiss')}
         pending={pending}
       >
-        <CircleCheck className="ic" aria-hidden="true" />
+        <IconSuccess className="ic" aria-hidden="true" />
         {status === 'pending' ? 'অনুমোদন' : status === 'hidden' ? 'আবার দেখান' : 'রিপোর্ট খারিজ'}
       </Button>
       {status !== 'hidden' ? (
         <Button size="sm" variant="secondary" onClick={() => act('hide')} disabled={pending}>
-          <EyeOff className="ic" aria-hidden="true" />
+          <IconHide className="ic" aria-hidden="true" />
           লুকান
         </Button>
       ) : null}
       <Button size="sm" variant="danger" onClick={() => act('remove')} disabled={pending}>
-        <Trash2 className="ic" aria-hidden="true" />
+        <IconDelete className="ic" aria-hidden="true" />
         সরিয়ে দিন
       </Button>
     </div>
@@ -177,7 +177,7 @@ export function ModerationQueue() {
                 </p>
                 {t.status === 'hidden' ? (
                   <Link href={href(t)} className="link t-small" target="_blank">
-                    <Eye className="ic ic-sm" aria-hidden="true" /> পুরো আলোচনা
+                    <IconShow className="ic ic-sm" aria-hidden="true" /> পুরো আলোচনা
                   </Link>
                 ) : null}
                 <Decision type="thread" id={t.id} threadId={t.id} status={t.status} />
@@ -243,7 +243,7 @@ export function ModerationQueue() {
                   className="setting-row"
                   style={{ padding: '14px 18px', alignItems: 'flex-start' }}
                 >
-                  <Flag
+                  <IconReport
                     className="ic"
                     aria-hidden="true"
                     style={{ color: 'var(--rh-error)', marginTop: 4 }}

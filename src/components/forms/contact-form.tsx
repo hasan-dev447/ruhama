@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CircleCheck, Send } from 'lucide-react'
+import { IconSend, IconSuccess } from '@/components/icons'
 import { useSearchParams } from 'next/navigation'
 import { useRef, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -72,7 +72,7 @@ export function ContactForm() {
           className="empty__icon"
           style={{ background: 'var(--rh-success-soft)', color: 'var(--rh-success)' }}
         >
-          <CircleCheck className="ic ic-lg" aria-hidden="true" />
+          <IconSuccess className="ic ic-lg" aria-hidden="true" />
         </span>
         <h2 className="t-h3">বার্তা পৌঁছেছে</h2>
         <p className="t-muted" style={{ maxWidth: 380 }}>
@@ -156,7 +156,7 @@ export function ContactForm() {
       </Field>
       {!user ? <Turnstile ref={turnstile} onToken={setToken} action="contact" /> : null}
       <Button type="submit" size="lg" pending={pending}>
-        বার্তা পাঠান <Send className="ic" aria-hidden="true" />
+        বার্তা পাঠান <IconSend className="ic" aria-hidden="true" />
       </Button>
     </form>
   )

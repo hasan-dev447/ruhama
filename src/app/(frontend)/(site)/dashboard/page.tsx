@@ -1,13 +1,13 @@
 import {
-  ArrowRight,
-  BookOpen,
-  Bookmark,
-  CalendarDays,
-  Compass,
-  MessageCircleQuestion,
-  Pencil,
-  Settings,
-} from 'lucide-react'
+  IconBook,
+  IconBookmark,
+  IconCalendar,
+  IconExplore,
+  IconNext,
+  IconPencil,
+  IconQuestion,
+  IconSettings,
+} from '@/components/icons'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -126,7 +126,7 @@ async function DashboardBody({ ctx, user }: { ctx: ServiceContext; user: User })
       </div>
     ) : (
       <EmptyState
-        icon={<BookOpen className="ic ic-xl" aria-hidden="true" />}
+        icon={<IconBook className="ic ic-xl" aria-hidden="true" />}
         title="এখনো কোনো কোর্স শুরু করেননি"
         text="নিজের গতিতে শিখুন; অগ্রগতি এখানে জমা থাকবে।"
       >
@@ -171,7 +171,7 @@ async function DashboardBody({ ctx, user }: { ctx: ServiceContext; user: User })
       </div>
     ) : (
       <EmptyState
-        icon={<CalendarDays className="ic ic-xl" aria-hidden="true" />}
+        icon={<IconCalendar className="ic ic-xl" aria-hidden="true" />}
         title="কোনো মজলিসে রেজিস্টার করা নেই"
         text="আসন্ন মজলিসগুলো দেখে নিন; অনলাইনে বা নিজের জেলায়।"
       >
@@ -187,7 +187,7 @@ async function DashboardBody({ ctx, user }: { ctx: ServiceContext; user: User })
         {saved.docs.slice(0, limit).map((b) => (
           <li key={b.id}>
             <Link href={b.href} className="row-link">
-              <Bookmark
+              <IconBookmark
                 className="ic"
                 aria-hidden="true"
                 fill="currentColor"
@@ -205,7 +205,7 @@ async function DashboardBody({ ctx, user }: { ctx: ServiceContext; user: User })
       </ul>
     ) : (
       <EmptyState
-        icon={<Bookmark className="ic ic-xl" aria-hidden="true" />}
+        icon={<IconBookmark className="ic ic-xl" aria-hidden="true" />}
         title="কিছু সংরক্ষণ করা নেই"
         text="প্রবন্ধ, আয়াত বা হাদিসে বুকমার্ক চাপলে এখানে জমা হবে; সংরক্ষিত প্রবন্ধ ইন্টারনেট ছাড়াও পড়া যাবে।"
       />
@@ -247,7 +247,7 @@ async function DashboardBody({ ctx, user }: { ctx: ServiceContext; user: User })
       </ul>
     ) : (
       <EmptyState
-        icon={<MessageCircleQuestion className="ic ic-xl" aria-hidden="true" />}
+        icon={<IconQuestion className="ic ic-xl" aria-hidden="true" />}
         title="এখনো কোনো প্রশ্ন করেননি"
         text="দ্বীনি যেকোনো জিজ্ঞাসা আলিম প্যানেলের কাছে পাঠাতে পারেন।"
       >
@@ -304,7 +304,7 @@ async function DashboardBody({ ctx, user }: { ctx: ServiceContext; user: User })
                   className="adab-strip"
                   style={{ marginTop: 20, alignItems: 'center', flexWrap: 'wrap' }}
                 >
-                  <Compass
+                  <IconExplore
                     className="ic"
                     aria-hidden="true"
                     style={{ color: 'var(--rh-primary)' }}
@@ -418,6 +418,7 @@ export default async function DashboardPage() {
   const ctx = await actionContext()
   const user = ctx.user
   if (!user) redirect('/login?next=/dashboard')
+  if (!user.gender) redirect('/onboarding?next=/dashboard')
   const interests = (user.interests ?? [])
     .map((v) => INTEREST_OPTIONS.find((o) => o.value === v)?.label)
     .filter(Boolean)
@@ -450,15 +451,15 @@ export default async function DashboardPage() {
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {user.username ? (
                 <ButtonLink href={`/members/${user.username}`} variant="ghost" size="sm">
-                  প্রোফাইল দেখুন <ArrowRight className="ic" aria-hidden="true" />
+                  প্রোফাইল দেখুন <IconNext className="ic" aria-hidden="true" />
                 </ButtonLink>
               ) : null}
               <ButtonLink href="/settings" variant="secondary" size="sm">
-                <Pencil className="ic" aria-hidden="true" />
+                <IconPencil className="ic" aria-hidden="true" />
                 প্রোফাইল সম্পাদনা
               </ButtonLink>
               <ButtonLink href="/settings#account" variant="ghost" size="sm" aria-label="সেটিংস">
-                <Settings className="ic" aria-hidden="true" />
+                <IconSettings className="ic" aria-hidden="true" />
               </ButtonLink>
             </div>
           </div>
