@@ -1,12 +1,12 @@
 'use client'
 
-import { CircleCheck, Eye, EyeOff, KeyRound, Mail, Smartphone } from 'lucide-react'
+import { CircleCheck, KeyRound, Mail, Smartphone } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, useTransition } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Checkbox, Field, FormAlert, Input } from '@/components/ui/form'
+import { Checkbox, Field, FormAlert, Input, PasswordInput } from '@/components/ui/form'
 import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
 import { authClient } from '@/lib/auth/client'
 import { authErrorMessage } from '@/lib/auth/errors'
@@ -46,7 +46,6 @@ function PasswordLogin({ next }: { next: string }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(true)
-  const [show, setShow] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [unverified, setUnverified] = useState(false)
   const [resent, setResent] = useState(false)
@@ -117,30 +116,13 @@ function PasswordLogin({ next }: { next: string }) {
             ভুলে গেছেন?
           </Link>
         </div>
-        <div style={{ position: 'relative' }}>
-          <Input
-            id="l-pass"
-            type={show ? 'text' : 'password'}
-            required
-            autoComplete="current-password"
-            style={{ paddingRight: 52 }}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            className="btn-icon"
-            aria-label={show ? 'পাসওয়ার্ড লুকান' : 'পাসওয়ার্ড দেখুন'}
-            onClick={() => setShow(!show)}
-            style={{ position: 'absolute', right: 3, top: 3 }}
-          >
-            {show ? (
-              <EyeOff className="ic" aria-hidden="true" />
-            ) : (
-              <Eye className="ic" aria-hidden="true" />
-            )}
-          </button>
-        </div>
+        <PasswordInput
+          id="l-pass"
+          required
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </div>
       <Checkbox
         label="এই ডিভাইসে লগইন থাকুক"

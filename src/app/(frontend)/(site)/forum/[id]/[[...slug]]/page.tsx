@@ -72,7 +72,7 @@ export default async function ThreadPage({ params }: Props) {
         <section className="section-sm" style={{ paddingTop: 32 }}>
           <div
             className="rh-container"
-            style={{ maxWidth: 920, display: 'flex', flexDirection: 'column', gap: 18 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: 18 }}
           >
             <Breadcrumbs
               items={[

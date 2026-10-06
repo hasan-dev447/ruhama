@@ -112,7 +112,7 @@ export default async function IkhtilafTopicPage({ params }: Props) {
       <main id="main">
         <header className="page-hero">
           <div className="rh-pattern" aria-hidden="true" />
-          <div className="rh-container" style={{ maxWidth: 1008 }}>
+          <div className="rh-container">
             <Breadcrumbs
               items={[
                 { label: 'হোম', href: '/' },
@@ -172,7 +172,7 @@ export default async function IkhtilafTopicPage({ params }: Props) {
         <section className="section" style={{ paddingTop: 56 }}>
           <div
             className="rh-container"
-            style={{ maxWidth: 1008, display: 'flex', flexDirection: 'column', gap: 32 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: 32 }}
           >
             {doc.readFirst ? (
               <div className="adab-strip" role="note">

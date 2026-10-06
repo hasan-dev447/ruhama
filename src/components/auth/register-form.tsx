@@ -9,7 +9,7 @@ import { z } from 'zod'
 
 import { subscribeNewsletterAction } from '@/actions/newsletter'
 import { Button, ButtonLink } from '@/components/ui/button'
-import { Field, FormAlert, Input } from '@/components/ui/form'
+import { Field, FormAlert, Input, PasswordInput } from '@/components/ui/form'
 import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
 import { authClient } from '@/lib/auth/client'
 import { authErrorMessage } from '@/lib/auth/errors'
@@ -53,10 +53,13 @@ export function RegisterForm({
   next,
   google,
   facebook,
+  requireVerification,
 }: {
   next: string
   google: boolean
   facebook: boolean
+  /** Site settings: verify the address before the first password sign-in */
+  requireVerification: boolean
 }) {
   const [done, setDone] = useState<string | null>(null)
   const [serverError, setServerError] = useState<string | null>(null)
@@ -96,6 +99,17 @@ export function RegisterForm({
         fd.set('email', values.email)
         fd.set('source', 'register')
         void subscribeNewsletterAction(null, fd)
+      }
+      if (!requireVerification) {
+        // verification is switched off: sign the new member straight in
+        const signedIn = await authClient.signIn.email({
+          email: values.email,
+          password: values.password,
+        })
+        if (!signedIn.error) {
+          window.location.assign(next)
+          return
+        }
       }
       setDone(values.email)
     })
@@ -152,9 +166,8 @@ export function RegisterForm({
           <label className="label" htmlFor="g-pass">
             পাসওয়ার্ড
           </label>
-          <Input
+          <PasswordInput
             id="g-pass"
-            type="password"
             autoComplete="new-password"
             aria-describedby="g-pass-hint"
             invalid={Boolean(errors.password)}

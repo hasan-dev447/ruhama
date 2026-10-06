@@ -7,6 +7,8 @@ import { TAGS } from '@/server/cache/tags'
 import { adminsOnly, anyone, editorsOnly, fieldRoles } from '../access'
 import { revalidateGlobal } from '../hooks/revalidate'
 
+import { Integrations } from './integrations'
+
 const ayahGroup = (name: string, label: string): Field => ({
   name,
   label,
@@ -386,4 +388,11 @@ export const ModerationSettings: GlobalConfig = {
   ],
 }
 
-export const GLOBALS = [SiteSettings, HomePage, AboutPage, AdabPolicy, ModerationSettings]
+export const GLOBALS = [
+  SiteSettings,
+  HomePage,
+  AboutPage,
+  AdabPolicy,
+  ModerationSettings,
+  Integrations,
+]

@@ -71,6 +71,7 @@ export default async function CirclePage({ params }: Props) {
         />
         <div className="rh-container">
           <Breadcrumbs
+            className="crumbs--band"
             items={[
               { label: 'স্থানীয় সার্কেল', href: '/circles' },
               {

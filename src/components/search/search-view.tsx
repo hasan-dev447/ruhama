@@ -143,7 +143,7 @@ export function SearchView() {
     <>
       <section className="page-hero" aria-labelledby="s-title" style={{ paddingBottom: 32 }}>
         <div className="rh-pattern" aria-hidden="true" />
-        <div className="rh-container" style={{ maxWidth: 1008 }}>
+        <div className="rh-container">
           <h1 id="s-title" className="sr-only">
             সার্চ রেজাল্ট
           </h1>
@@ -192,7 +192,6 @@ export function SearchView() {
         <div
           className="rh-container"
           style={{
-            maxWidth: 1008,
             display: 'flex',
             flexDirection: 'column',
             gap: 36,

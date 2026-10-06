@@ -44,7 +44,7 @@ export function DocumentPage({
                 {aside}
               </aside>
             ) : null}
-            <article className="layout-side__main" style={{ maxWidth: 760 }}>
+            <article className="layout-side__main">
               <RichText data={content} className="prose-first" />
               {children}
             </article>

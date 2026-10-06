@@ -9,6 +9,7 @@ import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { MobileFilters } from '@/components/ui/mobile-filters'
 import { Pager, Skeleton } from '@/components/ui/primitives'
 import { RelativeTime } from '@/components/ui/relative-time'
 import { UserAvatar } from '@/components/ui/user-avatar'
@@ -99,44 +100,46 @@ export function ForumBrowser({ initial, categories }: { initial: Page; categorie
   return (
     <div className="layout-side">
       <aside className="layout-side__aside" aria-label="বিভাগ" style={{ maxWidth: 280 }}>
-        <nav className="card" style={{ padding: 10 }} aria-labelledby="fcat-h">
-          <h2
-            id="fcat-h"
-            className="t-small"
-            style={{
-              fontFamily: 'var(--rh-font-body)',
-              fontWeight: 600,
-              color: 'var(--rh-muted)',
-              padding: '8px 12px',
-            }}
-          >
-            বিভাগ
-          </h2>
-          {[{ id: 0, slug: 'all', name: 'সব বিভাগ', threadCount: total }, ...categories].map(
-            (c) => (
-              <button
-                key={c.slug}
-                type="button"
-                className={cn('cat-link', state.category === c.slug && 'is-active')}
-                aria-pressed={state.category === c.slug}
-                onClick={() =>
-                  void setState({ category: c.slug === 'all' ? null : c.slug, page: null })
-                }
-                style={{
-                  width: '100%',
-                  border: 0,
-                  background: 'none',
-                  font: 'inherit',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-              >
-                <span style={{ flex: 1 }}>{c.name}</span>
-                <span className="t-caption t-muted">{bn(c.threadCount)}</span>
-              </button>
-            ),
-          )}
-        </nav>
+        <MobileFilters label="বিভাগ বেছে নিন" activeCount={state.category === 'all' ? 0 : 1}>
+          <nav className="card" style={{ padding: 10 }} aria-labelledby="fcat-h">
+            <h2
+              id="fcat-h"
+              className="t-small"
+              style={{
+                fontFamily: 'var(--rh-font-body)',
+                fontWeight: 600,
+                color: 'var(--rh-muted)',
+                padding: '8px 12px',
+              }}
+            >
+              বিভাগ
+            </h2>
+            {[{ id: 0, slug: 'all', name: 'সব বিভাগ', threadCount: total }, ...categories].map(
+              (c) => (
+                <button
+                  key={c.slug}
+                  type="button"
+                  className={cn('cat-link', state.category === c.slug && 'is-active')}
+                  aria-pressed={state.category === c.slug}
+                  onClick={() =>
+                    void setState({ category: c.slug === 'all' ? null : c.slug, page: null })
+                  }
+                  style={{
+                    width: '100%',
+                    border: 0,
+                    background: 'none',
+                    font: 'inherit',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ flex: 1 }}>{c.name}</span>
+                  <span className="t-caption t-muted">{bn(c.threadCount)}</span>
+                </button>
+              ),
+            )}
+          </nav>
+        </MobileFilters>
       </aside>
       <div className="layout-side__main">
         <div

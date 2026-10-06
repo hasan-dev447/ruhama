@@ -18,7 +18,7 @@ export default async function NotificationsPage() {
   return (
     <main id="main">
       <section className="section-sm" style={{ paddingTop: 40 }}>
-        <div className="rh-container" style={{ maxWidth: 840 }}>
+        <div className="rh-container">
           <Breadcrumbs
             items={[{ label: 'ড্যাশবোর্ড', href: '/dashboard' }, { label: 'নোটিফিকেশন' }]}
           />

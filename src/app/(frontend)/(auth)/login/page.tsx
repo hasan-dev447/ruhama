@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { AuthCard } from '@/components/auth/auth-card'
 import { LoginForm } from '@/components/auth/login-form'
 import { safeNext } from '@/lib/auth/errors'
-import { features } from '@/lib/env'
+import { oauthAvailability } from '@/server/integrations'
 import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({ title: 'লগইন', path: '/login', noIndex: true })
@@ -18,15 +18,15 @@ const NOTICES: Record<string, string> = {
 type Props = { searchParams: Promise<{ next?: string; mode?: string; error?: string }> }
 
 export default async function LoginPage({ searchParams }: Props) {
-  const sp = await searchParams
+  const [sp, oauth] = await Promise.all([searchParams, oauthAvailability()])
   const mode = sp.mode === 'link' || sp.mode === 'phone' ? sp.mode : 'password'
   return (
     <AuthCard title="আবার স্বাগতম" lead="আপনার যাত্রা যেখানে থেমেছিল, সেখান থেকেই শুরু করুন।">
       <LoginForm
         next={safeNext(sp.next)}
         initialMode={mode}
-        google={features.google()}
-        facebook={features.facebook()}
+        google={oauth.google}
+        facebook={oauth.facebook}
         notice={sp.error ? (NOTICES[sp.error] ?? NOTICES.oauth!) : null}
       />
       <p className="t-small t-muted" style={{ textAlign: 'center', marginTop: 24 }}>

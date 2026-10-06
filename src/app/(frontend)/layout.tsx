@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata, Viewport } from 'next'
 
 import '@/styles/globals.css'
@@ -43,6 +45,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           মূল বিষয়বস্তুতে যান
         </a>
         <AppProviders>{children}</AppProviders>
+        {/* Vercel's cookieless visitor counts and Core Web Vitals; both load from this origin
+            (/_vercel/...) and do nothing outside Vercel */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

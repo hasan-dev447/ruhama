@@ -1,3 +1,5 @@
+import { r2Endpoint } from './r2'
+
 /**
  * Response security headers, applied to every route from next.config.ts.
  *
@@ -9,7 +11,12 @@
 
 type Env = Partial<
   Record<
-    'NODE_ENV' | 'NEXT_PUBLIC_MEDIA_URL' | 'NEXT_PUBLIC_SUPABASE_URL' | 'NEXT_PUBLIC_SITE_URL',
+    | 'NODE_ENV'
+    | 'NEXT_PUBLIC_MEDIA_URL'
+    | 'NEXT_PUBLIC_SUPABASE_URL'
+    | 'NEXT_PUBLIC_SITE_URL'
+    | 'R2_ENDPOINT'
+    | 'R2_BUCKET',
     string
   >
 >
@@ -31,11 +38,20 @@ export function contentSecurityPolicy(env: Env = process.env): string {
   const dev = env.NODE_ENV !== 'production'
   const media = origin(env.NEXT_PUBLIC_MEDIA_URL)
   const supabase = origin(env.NEXT_PUBLIC_SUPABASE_URL)
+  // the admin uploads files straight to the bucket
+  const r2 = origin(r2Endpoint(env.R2_ENDPOINT, env.R2_BUCKET))
   const turnstile = 'https://challenges.cloudflare.com'
 
   const directives: Record<string, (string | null | false)[]> = {
     'default-src': ["'self'"],
-    'script-src': ["'self'", "'unsafe-inline'", dev && "'unsafe-eval'", turnstile],
+    // Vercel Analytics and Speed Insights load from /_vercel on Vercel, from their CDN in development
+    'script-src': [
+      "'self'",
+      "'unsafe-inline'",
+      dev && "'unsafe-eval'",
+      dev && 'https://va.vercel-scripts.com',
+      turnstile,
+    ],
     'style-src': ["'self'", "'unsafe-inline'"],
     // avatars from Google or Facebook sign-in and YouTube thumbnails arrive from many hosts
     'img-src': ["'self'", 'data:', 'blob:', 'https:'],
@@ -45,6 +61,7 @@ export function contentSecurityPolicy(env: Env = process.env): string {
       supabase,
       supabase && supabase.replace(/^https:/, 'wss:'),
       turnstile,
+      r2,
       dev && 'ws:',
     ],
     'media-src': ["'self'", 'blob:', media],

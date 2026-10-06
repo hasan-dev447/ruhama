@@ -1,3 +1,4 @@
+import { loadIntegrations, type SmsSettings } from '../integrations'
 import { writeOutbox } from '../outbox'
 
 export type SmsResult = { ok: true; id?: string } | { ok: false; error: string }
@@ -78,25 +79,26 @@ export class BdGatewaySmsProvider implements SmsProvider {
   }
 }
 
-let provider: SmsProvider | null = null
-
-export function getSmsProvider(): SmsProvider {
-  if (provider) return provider
-  const { SMS_PROVIDER, SMS_API_URL, SMS_API_KEY, SMS_SENDER_ID } = process.env
-  if (SMS_PROVIDER === 'bd_gateway' && SMS_API_URL && SMS_API_KEY && SMS_SENDER_ID) {
-    provider = new BdGatewaySmsProvider(SMS_API_URL, SMS_API_KEY, SMS_SENDER_ID)
-  } else if (process.env.NODE_ENV === 'production' && !process.env.OUTBOX_DIR) {
+/** The provider for given settings (from the admin's Integrations page, falling back to .env). */
+export function smsProviderFor(settings: SmsSettings): SmsProvider {
+  const { provider, apiUrl, apiKey, senderId } = settings
+  if (provider === 'bd_gateway' && apiUrl && apiKey && senderId) {
+    return new BdGatewaySmsProvider(apiUrl, apiKey, senderId)
+  }
+  if (process.env.NODE_ENV === 'production' && !process.env.OUTBOX_DIR) {
     // never print login codes into production logs: without a gateway, OTP requests fail visibly instead
     console.error(
-      '[sms] no SMS gateway configured (SMS_PROVIDER=bd_gateway with SMS_API_URL, SMS_API_KEY, SMS_SENDER_ID); OTP messages are not sent',
+      '[sms] no SMS gateway configured (admin > Integrations > SMS); OTP messages are not sent',
     )
-    provider = new UnavailableSmsProvider()
-  } else {
-    provider = new ConsoleSmsProvider()
+    return new UnavailableSmsProvider()
   }
-  return provider
+  return new ConsoleSmsProvider()
+}
+
+export async function getSmsProvider(): Promise<SmsProvider> {
+  return smsProviderFor((await loadIntegrations()).sms)
 }
 
 export async function sendSms(to: string, message: string): Promise<SmsResult> {
-  return getSmsProvider().send(to, message)
+  return (await getSmsProvider()).send(to, message)
 }

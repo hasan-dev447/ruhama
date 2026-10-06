@@ -184,6 +184,7 @@ export interface Config {
     'about-page': AboutPage;
     'adab-policy': AdabPolicy;
     'moderation-settings': ModerationSetting;
+    integrations: Integration;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -191,6 +192,7 @@ export interface Config {
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'adab-policy': AdabPolicySelect<false> | AdabPolicySelect<true>;
     'moderation-settings': ModerationSettingsSelect<false> | ModerationSettingsSelect<true>;
+    integrations: IntegrationsSelect<false> | IntegrationsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -226,21 +228,12 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
-  /**
-   * Users chosen display name
-   */
   name: string;
-  /**
-   * The email of the user
-   */
   email: string;
   /**
-   * Whether the email of the user has been verified
+   * ইমেইলের লিংকে ক্লিক করে ঠিকানা নিশ্চিত করেছেন কিনা।
    */
   emailVerified: boolean;
-  /**
-   * The image of the user
-   */
   image?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -249,28 +242,16 @@ export interface User {
    */
   role?: ('super_admin' | 'shura' | 'reviewer' | 'editor' | 'author' | 'moderator' | 'member')[] | null;
   /**
-   * Whether the user is banned from the platform
+   * ব্যান করা ইউজার লগইন করতে পারবেন না।
    */
   banned?: boolean | null;
-  /**
-   * The reason for the ban
-   */
   banReason?: string | null;
   /**
-   * The date and time when the ban will expire
+   * খালি থাকলে ব্যান স্থায়ী।
    */
   banExpires?: string | null;
-  /**
-   * The phone number of the user
-   */
   phoneNumber?: string | null;
-  /**
-   * Whether the phone number of the user has been verified
-   */
   phoneNumberVerified?: boolean | null;
-  /**
-   * The username of the user
-   */
   username?: string | null;
   journeyStage?: ('kalema' | 'iman' | 'ilm' | 'amal' | 'tazkiyah' | 'akhlaq' | 'ukhuwwah' | 'unity') | null;
   avatarColor?: ('teal' | 'gold' | 'sage' | 'deep') | null;
@@ -403,45 +384,15 @@ export interface User {
  */
 export interface Account {
   id: number;
-  /**
-   * The id of the account as provided by the SSO or equal to userId for credential accounts
-   */
   accountId: string;
-  /**
-   * The id of the provider as provided by the SSO
-   */
   providerId: string;
-  /**
-   * The user that the account belongs to
-   */
   user: number | User;
-  /**
-   * The access token of the account. Returned by the provider
-   */
   accessToken?: string | null;
-  /**
-   * The refresh token of the account. Returned by the provider
-   */
   refreshToken?: string | null;
-  /**
-   * The id token for the account. Returned by the provider
-   */
   idToken?: string | null;
-  /**
-   * The date and time when the access token will expire
-   */
   accessTokenExpiresAt?: string | null;
-  /**
-   * The date and time when the refresh token will expire
-   */
   refreshTokenExpiresAt?: string | null;
-  /**
-   * The scope of the account. Returned by the provider
-   */
   scope?: string | null;
-  /**
-   * The hashed password of the account. Mainly used for email and password authentication
-   */
   password?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -454,31 +405,13 @@ export interface Account {
  */
 export interface Session {
   id: number;
-  /**
-   * The date and time when the session will expire
-   */
   expiresAt: string;
-  /**
-   * The unique session token
-   */
   token: string;
   createdAt: string;
   updatedAt: string;
-  /**
-   * The IP address of the device
-   */
   ipAddress?: string | null;
-  /**
-   * The user agent information of the device
-   */
   userAgent?: string | null;
-  /**
-   * The user that the session belongs to
-   */
   user: number | User;
-  /**
-   * The admin who is impersonating this session
-   */
   impersonatedBy?: (number | null) | User;
 }
 /**
@@ -540,9 +473,6 @@ export interface Person {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -556,6 +486,9 @@ export interface Media {
   id: number;
   alt: string;
   credit?: string | null;
+  folder?: ('auto' | 'articles' | 'events' | 'courses' | 'people' | 'circles' | 'site') | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -602,17 +535,8 @@ export interface Media {
  */
 export interface Verification {
   id: number;
-  /**
-   * The identifier of the verification request
-   */
   identifier: string;
-  /**
-   * The value to be verified
-   */
   value: string;
-  /**
-   * The date and time when the verification request will expire
-   */
   expiresAt: string;
   createdAt: string;
   updatedAt: string;
@@ -625,9 +549,6 @@ export interface Verification {
  */
 export interface RateLimit {
   id: number;
-  /**
-   * The key for the rate limit.
-   */
   key: string;
   count: number;
   lastRequest: number;
@@ -642,9 +563,6 @@ export interface AdminInvitation {
   id: number;
   role: 'super_admin' | 'shura' | 'reviewer' | 'editor' | 'author' | 'moderator' | 'member';
   token: string;
-  /**
-   * The invitation is invalid after this time.
-   */
   expiresAt: string;
   url?: string | null;
   updatedAt: string;
@@ -723,9 +641,6 @@ export interface Article {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -884,9 +799,6 @@ export interface IkhtilafTopic {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -1036,9 +948,6 @@ export interface Question {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -1081,9 +990,6 @@ export interface Course {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -1289,9 +1195,6 @@ export interface Event {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -1413,9 +1316,6 @@ export interface Circle {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -1533,9 +1433,6 @@ export interface Video {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -1841,9 +1738,6 @@ export interface Bookmark {
         relationTo: 'hadiths';
         value: number | Hadith;
       };
-  /**
-   * collection:id, used for uniqueness
-   */
   targetKey: string;
   updatedAt: string;
   createdAt: string;
@@ -1869,9 +1763,6 @@ export interface Notification {
 export interface AnswerVote {
   id: number;
   question: number | Question;
-  /**
-   * user id or hashed visitor key
-   */
   voterKey: string;
   value: 'helpful' | 'unclear';
   updatedAt: string;
@@ -2021,9 +1912,6 @@ export interface Page {
   meta?: {
     title?: string | null;
     description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
     image?: (number | null) | Media;
   };
   updatedAt: string;
@@ -3371,6 +3259,9 @@ export interface PagesSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   credit?: T;
+  folder?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -3505,6 +3396,12 @@ export interface SiteSetting {
   defaultTitle?: string | null;
   defaultDescription?: string | null;
   ogImage?: (number | null) | Media;
+  auth?: {
+    /**
+     * চালু থাকলে নতুন সদস্যকে ইমেইলে পাঠানো লিংকে ক্লিক করে ঠিকানা যাচাই করতে হবে। বন্ধ করলে নিবন্ধনের সাথে সাথেই লগইন হয়ে যাবে (যাচাইয়ের ইমেইল তখন পাঠানো হয় না)। ইমেইল সেবা চালু না থাকলে বন্ধ রাখুন। লগইন লিংক, মোবাইল কোড ও Google/Facebook লগইনে এর প্রভাব নেই।
+     */
+    requireEmailVerification?: boolean | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3668,6 +3565,82 @@ export interface ModerationSetting {
   createdAt?: string | null;
 }
 /**
+ * Google ও Facebook লগইন, SMS আর ইমেইলের সেটিংস। এখানে দেওয়া মান .env-এর মানের চেয়ে অগ্রাধিকার পায় এবং সংরক্ষণের এক মিনিটের মধ্যে সাইটে কাজ শুরু করে। গোপন চাবিগুলো এনক্রিপ্ট করে রাখা হয়।
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integrations".
+ */
+export interface Integration {
+  id: number;
+  google?: {
+    /**
+     * বন্ধ করলে লগইন ও রেজিস্টার পাতা থেকে বাটনটি সরে যাবে।
+     */
+    enabled?: boolean | null;
+    /**
+     * Google Cloud Console > APIs & Services > Credentials > OAuth client ID (Web application) থেকে।
+     */
+    clientId?: string | null;
+    /**
+     * সংরক্ষণের পর আর দেখা যায় না। বদলাতে চাইলে নতুনটি লিখুন।
+     */
+    clientSecret?: string | null;
+    clientSecretEnc?: string | null;
+    clientSecretHint?: string | null;
+  };
+  facebook?: {
+    /**
+     * বন্ধ করলে লগইন ও রেজিস্টার পাতা থেকে বাটনটি সরে যাবে।
+     */
+    enabled?: boolean | null;
+    /**
+     * developers.facebook.com > আপনার অ্যাপ > App settings > Basic থেকে App ID।
+     */
+    clientId?: string | null;
+    /**
+     * সংরক্ষণের পর আর দেখা যায় না। বদলাতে চাইলে নতুনটি লিখুন।
+     */
+    clientSecret?: string | null;
+    clientSecretEnc?: string | null;
+    clientSecretHint?: string | null;
+  };
+  sms?: {
+    /**
+     * মোবাইল নম্বরে লগইন কোড পাঠাতে আসল গেটওয়ে লাগবে।
+     */
+    provider?: ('console' | 'bd_gateway') | null;
+    /**
+     * গেটওয়ের SMS পাঠানোর ঠিকানা, যেমন https://bulksmsbd.net/api/smsapi
+     */
+    apiUrl?: string | null;
+    /**
+     * গেটওয়ের প্যানেল থেকে। সংরক্ষণের পর আর দেখা যায় না।
+     */
+    apiKey?: string | null;
+    apiKeyEnc?: string | null;
+    apiKeyHint?: string | null;
+    /**
+     * গেটওয়েতে অনুমোদিত প্রেরকের নাম বা নম্বর।
+     */
+    senderId?: string | null;
+  };
+  email?: {
+    /**
+     * resend.com > API Keys থেকে। সংরক্ষণের পর আর দেখা যায় না।
+     */
+    resendApiKey?: string | null;
+    resendApiKeyEnc?: string | null;
+    resendApiKeyHint?: string | null;
+    /**
+     * Resend-এ যাচাই করা ডোমেইনের ঠিকানা, যেমন: Ruhama <noreply@আপনার-ডোমেইন>
+     */
+    from?: string | null;
+    replyTo?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -3694,6 +3667,11 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   defaultTitle?: T;
   defaultDescription?: T;
   ogImage?: T;
+  auth?:
+    | T
+    | {
+        requireEmailVerification?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -3823,6 +3801,52 @@ export interface ModerationSettingsSelect<T extends boolean = true> {
   maxLinks?: T;
   blockedTerms?: T;
   postsPerHour?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integrations_select".
+ */
+export interface IntegrationsSelect<T extends boolean = true> {
+  google?:
+    | T
+    | {
+        enabled?: T;
+        clientId?: T;
+        clientSecret?: T;
+        clientSecretEnc?: T;
+        clientSecretHint?: T;
+      };
+  facebook?:
+    | T
+    | {
+        enabled?: T;
+        clientId?: T;
+        clientSecret?: T;
+        clientSecretEnc?: T;
+        clientSecretHint?: T;
+      };
+  sms?:
+    | T
+    | {
+        provider?: T;
+        apiUrl?: T;
+        apiKey?: T;
+        apiKeyEnc?: T;
+        apiKeyHint?: T;
+        senderId?: T;
+      };
+  email?:
+    | T
+    | {
+        resendApiKey?: T;
+        resendApiKeyEnc?: T;
+        resendApiKeyHint?: T;
+        from?: T;
+        replyTo?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

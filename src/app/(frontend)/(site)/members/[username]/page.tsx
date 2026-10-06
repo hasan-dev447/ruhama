@@ -66,7 +66,7 @@ export default async function MemberProfilePage({ params }: Props) {
       <div className="cover-band" aria-hidden="true" style={{ height: 160 }}>
         <div className="rh-pattern" />
       </div>
-      <div className="rh-container" style={{ maxWidth: 1008, paddingBottom: 96 }}>
+      <div className="rh-container" style={{ paddingBottom: 96 }}>
         <div className="profile-head">
           <span
             className={cn('avatar-hero', member.avatarColor === 'teal' && 'avatar-hero--teal')}

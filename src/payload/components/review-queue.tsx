@@ -5,8 +5,8 @@ import { REVIEW_STATUS_LABELS } from '@/payload/workflow/constants'
 import { reviewQueue } from '@/server/services/review'
 
 const LABEL = {
-  articles: 'প্রবন্ধ',
-  'ikhtilaf-topics': 'মতপার্থক্য',
+  articles: 'আর্টিকেল',
+  'ikhtilaf-topics': 'ইখতিলাফ',
   questions: 'প্রশ্নোত্তর',
 } as const
 
@@ -20,39 +20,26 @@ export async function ReviewQueue({ payload, user }: { payload: Payload; user?: 
     return null
   }
   return (
-    <section
-      style={{
-        marginBottom: 32,
-        padding: 20,
-        border: '1px solid var(--theme-elevation-150)',
-        borderRadius: 12,
-      }}
-    >
-      <h2 style={{ margin: '0 0 6px', fontSize: 18 }}>আপনার অপেক্ষায়</h2>
-      <p style={{ margin: '0 0 14px', fontSize: 13, opacity: 0.8 }}>
-        রিভিউ, পরিবর্তন বা প্রকাশের অপেক্ষায় থাকা কনটেন্ট।
-      </p>
+    <section className="rh-queue" aria-labelledby="rh-queue-h">
+      <div className="rh-queue__head">
+        <h2 id="rh-queue-h" className="rh-dash__h2">
+          আপনার কাজ বাকি
+        </h2>
+        <p>যেসব কনটেন্টে review, সংশোধন বা publish বাকি আছে।</p>
+      </div>
       {items.length === 0 ? (
-        <p style={{ fontSize: 14 }}>এখন কোনো কাজ বাকি নেই। আলহামদুলিল্লাহ।</p>
+        <p className="rh-queue__empty">এখন কোনো কাজ বাকি নেই। আলহামদুলিল্লাহ।</p>
       ) : (
-        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+        <ul className="rh-queue__list">
           {items.map((i) => (
-            <li
-              key={`${i.collection}-${i.id}`}
-              style={{
-                padding: '10px 0',
-                borderTop: '1px solid var(--theme-elevation-100)',
-                display: 'flex',
-                gap: 12,
-                justifyContent: 'space-between',
-              }}
-            >
-              <a href={`/admin/collections/${i.collection}/${i.id}`} style={{ fontWeight: 600 }}>
-                {i.title || 'শিরোনামহীন'}
+            <li key={`${i.collection}-${i.id}`}>
+              <a href={`/admin/collections/${i.collection}/${i.id}`} className="rh-queue__item">
+                <span className="rh-queue__title">{i.title || 'শিরোনামহীন'}</span>
+                <span className="rh-queue__meta">{LABEL[i.collection]}</span>
+                <span className={`rh-badge rh-badge--${i.reviewStatus}`}>
+                  {REVIEW_STATUS_LABELS[i.reviewStatus]}
+                </span>
               </a>
-              <span style={{ fontSize: 13, opacity: 0.85, whiteSpace: 'nowrap' }}>
-                {LABEL[i.collection]} · {REVIEW_STATUS_LABELS[i.reviewStatus]}
-              </span>
             </li>
           ))}
         </ul>

@@ -195,7 +195,10 @@ export default async function EventPage({ params }: Props) {
                       <strong>কাদের জন্য</strong>
                       <span className="t-muted" style={{ whiteSpace: 'pre-line' }}>
                         {doc.audience || 'সবার জন্য উন্মুক্ত'}
-                        {doc.separateSeating ? '\nবোনদের জন্য আলাদা বসার ব্যবস্থা' : ''}
+                        {/* only add the seating note when the audience text does not already say it */}
+                        {doc.separateSeating && !(doc.audience ?? '').includes('আলাদা বসার')
+                          ? '\nবোনদের জন্য আলাদা বসার ব্যবস্থা'
+                          : ''}
                       </span>
                     </div>
                   </div>

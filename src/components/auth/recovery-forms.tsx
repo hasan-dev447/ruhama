@@ -4,7 +4,7 @@ import { CircleCheck } from 'lucide-react'
 import { useState, useTransition } from 'react'
 
 import { Button, ButtonLink } from '@/components/ui/button'
-import { Field, FormAlert, Input } from '@/components/ui/form'
+import { Field, FormAlert, Input, PasswordInput } from '@/components/ui/form'
 import { authClient } from '@/lib/auth/client'
 import { authErrorMessage } from '@/lib/auth/errors'
 
@@ -128,18 +128,16 @@ export function ResetPasswordForm({ token }: { token: string }) {
         htmlFor="r-pass"
         hint="কমপক্ষে ৮ অক্ষর; সংখ্যা ও চিহ্ন মেশালে আরও নিরাপদ।"
       >
-        <Input
+        <PasswordInput
           id="r-pass"
-          type="password"
           autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </Field>
       <Field label="আবার লিখুন" htmlFor="r-pass2">
-        <Input
+        <PasswordInput
           id="r-pass2"
-          type="password"
           autoComplete="new-password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}

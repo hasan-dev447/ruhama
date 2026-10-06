@@ -1,0 +1,22 @@
+diff --git a/node_modules/payload-auth/dist/better-auth/adapter/index.js b/node_modules/payload-auth/dist/better-auth/adapter/index.js
+index f3e5e89..b660c08 100644
+--- a/node_modules/payload-auth/dist/better-auth/adapter/index.js
++++ b/node_modules/payload-auth/dist/better-auth/adapter/index.js
+@@ -163,12 +163,15 @@ const CREATE_QUERY_DEPTH = 0;
+                 const schemaFieldNames = getForwardRelationFieldNames(model, joinSlug);
+                 let relField;
+                 if (schemaFieldNames.length > 0) {
+-                    if (schemaFieldNames.length > 1) {
++                    // A field named exactly like the join key is the intended one (session.user rather
++                    // than session.impersonatedBy), so that case is not ambiguous and needs no warning.
++                    const exactField = schemaFieldNames.includes(joinModelKey) ? joinModelKey : null;
++                    if (!exactField && schemaFieldNames.length > 1) {
+                         errorLog([
+                             `forward join field selection ambiguous for '${joinModelKey}' on ${collectionSlug}: schema has multiple candidate fields [${schemaFieldNames.join(", ")}] targeting '${joinSlug}' — using '${schemaFieldNames[0]}'`
+                         ]);
+                     }
+-                    relField = allFields.find((f)=>f.name === schemaFieldNames[0]);
++                    relField = allFields.find((f)=>f.name === (exactField ?? schemaFieldNames[0]));
+                 }
+                 // Fallback: first Payload relationship/upload field whose
+                 // relationTo matches the joined collection. Used when the BA

@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 
+import { loadIntegrations, type EmailSettings } from '../integrations'
 import { writeOutbox } from '../outbox'
 
 export type EmailMessage = {
@@ -13,22 +14,26 @@ export type EmailMessage = {
 
 export type EmailResult = { ok: true; id?: string } | { ok: false; error: string }
 
-let resend: Resend | null = null
+// one client per API key, so a key changed in the admin takes effect without a restart
+let resend: { key: string; client: Resend } | null = null
 
-function client(): Resend | null {
-  const key = process.env.RESEND_API_KEY
+function client(key: string): Resend | null {
   if (!key) return null
-  if (!resend) resend = new Resend(key)
-  return resend
+  if (resend?.key !== key) resend = { key, client: new Resend(key) }
+  return resend.client
 }
 
 /**
- * Send a transactional email through Resend.
- * Without RESEND_API_KEY (local development and tests) the message is logged instead.
+ * Send a transactional email through Resend, using the key from the admin (Integrations) or .env.
+ * Without a key (local development and tests) the message is logged instead.
  */
-export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
-  const from = process.env.EMAIL_FROM || 'Ruhama <noreply@ruhama.org>'
-  const api = client()
+export async function sendEmail(
+  message: EmailMessage,
+  settings?: EmailSettings,
+): Promise<EmailResult> {
+  const config = settings ?? (await loadIntegrations()).email
+  const from = config.from
+  const api = client(config.resendApiKey)
   if (!api) {
     const captured = await writeOutbox('email', {
       to: message.to,
@@ -52,7 +57,7 @@ export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
       subject: message.subject,
       html: message.html,
       text: message.text,
-      replyTo: message.replyTo ?? process.env.EMAIL_REPLY_TO,
+      replyTo: message.replyTo ?? (config.replyTo || undefined),
       tags: message.tags,
     })
     if (error) return { ok: false, error: error.message }

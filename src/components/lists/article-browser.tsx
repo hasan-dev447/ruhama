@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { ArticleCard } from '@/components/content/cards'
 import { Button, ButtonLink } from '@/components/ui/button'
 import { SearchInput, Select } from '@/components/ui/form'
+import { MobileFilters } from '@/components/ui/mobile-filters'
 import { Chip, EmptyState, Pager, Skeleton } from '@/components/ui/primitives'
 import { useDebouncedValue } from '@/hooks/use-debounced'
 import { usePublicList } from '@/hooks/use-public-list'
@@ -112,53 +113,58 @@ export function ArticleBrowser({
   return (
     <div className="layout-side">
       <aside className="layout-side__aside" aria-label="ফিল্টার">
-        <div className="filter-group">
-          <h3>বিষয়</h3>
-          {categories.map((c) => (
-            <label key={c.id} className="check">
-              <input
-                type="checkbox"
-                checked={state.category.includes(c.slug)}
-                onChange={() => toggleCategory(c.slug)}
-              />
-              <span>{c.name}</span>
-              <span className="filter-count">{bn(c.articleCount)}</span>
-            </label>
-          ))}
-        </div>
-        <div className="filter-group">
-          <h3>স্তর</h3>
-          <div className="chip-row">
-            {LEVELS.map((l) => (
-              <Chip
-                key={l.value}
-                active={state.level === l.value}
-                onClick={() =>
-                  void setState({ level: l.value === 'all' ? null : l.value, page: null })
-                }
-              >
-                {l.label}
-              </Chip>
+        <MobileFilters
+          label="বিষয় ও স্তর বেছে নিন"
+          activeCount={state.category.length + (state.level !== 'all' ? 1 : 0)}
+        >
+          <div className="filter-group">
+            <h3>বিষয়</h3>
+            {categories.map((c) => (
+              <label key={c.id} className="check">
+                <input
+                  type="checkbox"
+                  checked={state.category.includes(c.slug)}
+                  onChange={() => toggleCategory(c.slug)}
+                />
+                <span>{c.name}</span>
+                <span className="filter-count">{bn(c.articleCount)}</span>
+              </label>
             ))}
           </div>
-        </div>
-        <div
-          className="card"
-          style={{
-            padding: 20,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10,
-            background: 'var(--rh-accent-soft)',
-            borderColor: 'color-mix(in srgb, var(--rh-accent) 30%, transparent)',
-          }}
-        >
-          <strong style={{ fontFamily: 'var(--rh-font-heading)' }}>কোথা থেকে শুরু করব?</strong>
-          <p className="t-small t-muted">নতুন হলে “শেখার পথ”-এর সাজানো কোর্স দিয়ে শুরু করুন।</p>
-          <Link href="/courses" className="link-arrow">
-            শেখার পথ <ArrowRight className="ic" aria-hidden="true" />
-          </Link>
-        </div>
+          <div className="filter-group">
+            <h3>স্তর</h3>
+            <div className="chip-row">
+              {LEVELS.map((l) => (
+                <Chip
+                  key={l.value}
+                  active={state.level === l.value}
+                  onClick={() =>
+                    void setState({ level: l.value === 'all' ? null : l.value, page: null })
+                  }
+                >
+                  {l.label}
+                </Chip>
+              ))}
+            </div>
+          </div>
+          <div
+            className="card"
+            style={{
+              padding: 20,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+              background: 'var(--rh-accent-soft)',
+              borderColor: 'color-mix(in srgb, var(--rh-accent) 30%, transparent)',
+            }}
+          >
+            <strong style={{ fontFamily: 'var(--rh-font-heading)' }}>কোথা থেকে শুরু করব?</strong>
+            <p className="t-small t-muted">নতুন হলে “শেখার পথ”-এর সাজানো কোর্স দিয়ে শুরু করুন।</p>
+            <Link href="/courses" className="link-arrow">
+              শেখার পথ <ArrowRight className="ic" aria-hidden="true" />
+            </Link>
+          </div>
+        </MobileFilters>
       </aside>
       <div className="layout-side__main">
         <div className="toolbar">

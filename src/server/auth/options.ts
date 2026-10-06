@@ -11,6 +11,7 @@ import { ROLES } from '@/lib/roles'
 
 import { emailTemplates } from '../email/templates'
 import { sendEmail } from '../email'
+import { cachedIntegrations, loadIntegrations } from '../integrations'
 import { sendSms } from '../sms'
 import { trustedIpHeaders } from '@/lib/client-ip'
 
@@ -20,20 +21,42 @@ import { turnstileSecret } from '../services/turnstile'
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
 const appScheme = process.env.MOBILE_APP_SCHEME || 'ruhama'
 
-const google =
-  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-    ? {
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        prompt: 'select_account' as const,
-      }
-    : undefined
+/**
+ * Google and Facebook credentials come from admin > Integrations (falling back to .env). Better Auth keeps
+ * these objects and reads clientId/clientSecret when a sign-in starts, so the getters pick up saved changes
+ * without a redeploy; `warmIntegrations` below loads the latest values before every OAuth request.
+ */
+const oauthCredentials = <T extends object>(provider: 'google' | 'facebook', extra: T) =>
+  Object.defineProperties(extra, {
+    clientId: { enumerable: true, get: () => cachedIntegrations()[provider].clientId },
+    clientSecret: { enumerable: true, get: () => cachedIntegrations()[provider].clientSecret },
+  }) as T & { clientId: string; clientSecret: string }
+const google = oauthCredentials('google', { prompt: 'select_account' as const })
+const facebook = oauthCredentials('facebook', {})
 
-// Facebook is fully wired but only switched on when its credentials exist
-const facebook =
-  process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET
-    ? { clientId: process.env.FACEBOOK_CLIENT_ID, clientSecret: process.env.FACEBOOK_CLIENT_SECRET }
-    : undefined
+const OAUTH_PROVIDERS = new Set(['google', 'facebook'])
+
+/** Loads current integration settings and refuses providers that are switched off or not configured. */
+const warmIntegrations = createAuthMiddleware(async (ctx) => {
+  const settings = await loadIntegrations()
+  const body = (ctx.body ?? {}) as { provider?: string }
+  const provider = ctx.path.startsWith('/callback/')
+    ? ctx.path.slice('/callback/'.length)
+    : body.provider
+  if (
+    provider &&
+    OAUTH_PROVIDERS.has(provider) &&
+    !settings[provider as 'google' | 'facebook'].enabled
+  ) {
+    throw new APIError('BAD_REQUEST', {
+      message: 'এই পদ্ধতিতে লগইন এখন বন্ধ আছে।',
+      code: 'PROVIDER_DISABLED',
+    })
+  }
+})
+
+const isOAuthPath = (path = '') =>
+  path === '/sign-in/social' || path === '/link-social' || path.startsWith('/callback/')
 
 const captchaSecret = turnstileSecret()
 
@@ -165,13 +188,55 @@ const GUARDED_PATHS = new Set([
  * Registered as a plugin (not options.hooks) so Better Auth runs it through its
  * hook pipeline; payload-auth wraps options.hooks and would short-circuit responses.
  */
+/** Site settings > Registration and login: must a password sign-in come from a verified address? */
+export async function emailVerificationRequired(): Promise<boolean> {
+  try {
+    const payload = await payloadInstance()
+    const settings = (await payload.findGlobal({
+      slug: 'site-settings',
+      depth: 0,
+      overrideAccess: true,
+    })) as {
+      auth?: { requireEmailVerification?: boolean | null } | null
+    }
+    return settings.auth?.requireEmailVerification ?? true
+  } catch {
+    return true // when in doubt, the safer behaviour
+  }
+}
+
+/**
+ * Runs after the password was checked (so it never reveals whether an address has an account):
+ * an unverified address is refused while verification is switched on, and the new session is dropped.
+ */
+const enforceVerification = createAuthMiddleware(async (ctx) => {
+  const created = ctx.context.newSession
+  if (!created || created.user.emailVerified) return
+  if (!(await emailVerificationRequired())) return
+  await ctx.context.internalAdapter.deleteSession(created.session.token)
+  throw new APIError('FORBIDDEN', {
+    message: 'ইমেইল ঠিকানাটি এখনো যাচাই করা হয়নি। ইনবক্সে পাঠানো লিংকে ক্লিক করুন।',
+    code: 'EMAIL_NOT_VERIFIED',
+  })
+})
+
 const ruhamaGuards = {
   id: 'ruhama-guards',
   hooks: {
     before: [
       {
+        matcher: (ctx: { path?: string }) => isOAuthPath(ctx.path),
+        handler: warmIntegrations,
+      },
+      {
         matcher: (ctx: { path?: string }) => GUARDED_PATHS.has(ctx.path ?? ''),
         handler: limitIdentifiers,
+      },
+    ],
+    after: [
+      {
+        matcher: (ctx: { path?: string }) => ctx.path === '/sign-in/email',
+        handler: enforceVerification,
       },
     ],
   },
@@ -193,7 +258,8 @@ export const betterAuthOptions = {
   ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    // enforced by `enforceVerification` below instead, so admins can switch it in Site settings
+    requireEmailVerification: false,
     minPasswordLength: 8,
     maxPasswordLength: 128,
     autoSignIn: false,
@@ -208,16 +274,20 @@ export const betterAuthOptions = {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     expiresIn: 60 * 60 * 24,
-    async sendVerificationEmail({ user, url }) {
+    async sendVerificationEmail({ user, url }, request) {
       if (user.email.endsWith('.phone.ruhama.local')) return
+      // with verification switched off, sign-up sends nothing (a member asking to verify later still can)
+      if (
+        request &&
+        new URL(request.url).pathname.endsWith('/sign-up/email') &&
+        !(await emailVerificationRequired())
+      )
+        return
       const { html, text } = emailTemplates.verifyEmail(user.name, url)
       await sendEmail({ to: user.email, subject: 'ইমেইল যাচাই করুন · Ruhama', html, text })
     },
   },
-  socialProviders: {
-    ...(google ? { google } : {}),
-    ...(facebook ? { facebook } : {}),
-  },
+  socialProviders: { google, facebook },
   account: {
     // one person, one account: providers with a verified matching email link to the same user
     accountLinking: {
@@ -364,6 +434,9 @@ export const payloadAuthOptions = {
   verifications: { hidden: true },
   accounts: { hidden: true },
   adminInvitations: {
+    // the plugin's invite flow relies on its own sign-up pages, which this site does not use: staff
+    // register normally and an admin assigns the role under Users
+    hidden: true,
     // payload-auth creates the first-admin invitation without an expiry; default it to 7 days
     collectionOverrides: ({ collection }) => ({
       ...collection,
@@ -393,8 +466,13 @@ export const payloadAuthOptions = {
     loginMethods: [
       'emailPassword',
       'magicLink',
-      ...(google ? (['google'] as const) : []),
-      ...(facebook ? (['facebook'] as const) : []),
+      // the staff login page is built once at startup, so its social buttons follow .env only
+      ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+        ? (['google'] as const)
+        : []),
+      ...(process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET
+        ? (['facebook'] as const)
+        : []),
     ],
   },
   betterAuthOptions,

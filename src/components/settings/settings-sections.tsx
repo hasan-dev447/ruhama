@@ -16,7 +16,16 @@ import { OtpInput } from '@/components/auth/otp-input'
 import { FacebookLogo, GoogleLogo } from '@/components/icons/social'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { CheckCard, Field, FormAlert, Input, Select, Switch, Textarea } from '@/components/ui/form'
+import {
+  CheckCard,
+  Field,
+  FormAlert,
+  Input,
+  PasswordInput,
+  Select,
+  Switch,
+  Textarea,
+} from '@/components/ui/form'
 import { Modal } from '@/components/ui/modal'
 import { Skeleton } from '@/components/ui/primitives'
 import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
@@ -472,18 +481,16 @@ function PasswordModal({
     >
       {error ? <FormAlert>{error}</FormAlert> : null}
       <Field label="বর্তমান পাসওয়ার্ড" htmlFor="cp-current">
-        <Input
+        <PasswordInput
           id="cp-current"
-          type="password"
           autoComplete="current-password"
           value={current}
           onChange={(e) => setCurrent(e.target.value)}
         />
       </Field>
       <Field label="নতুন পাসওয়ার্ড" htmlFor="cp-next" hint="কমপক্ষে ৮ অক্ষর।">
-        <Input
+        <PasswordInput
           id="cp-next"
-          type="password"
           autoComplete="new-password"
           value={next}
           onChange={(e) => setNext(e.target.value)}

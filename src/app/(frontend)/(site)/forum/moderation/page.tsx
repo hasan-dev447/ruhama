@@ -27,7 +27,7 @@ export default async function ModerationPage() {
         style={{ padding: '40px 0' }}
       />
       <section className="section-sm" style={{ paddingBottom: 96 }}>
-        <div className="rh-container" style={{ maxWidth: 920 }}>
+        <div className="rh-container">
           <ModerationQueue />
         </div>
       </section>

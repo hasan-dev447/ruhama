@@ -611,3 +611,102 @@ html.rh body {
   border-radius: 14px;
   background: var(--rh-sage);
 }
+
+/* breadcrumbs sitting on a dark band (surah, circle headers): the current page stays readable */
+.crumbs--band,
+.crumbs--band a,
+.crumbs--band .ic {
+  color: var(--rh-band-muted);
+}
+.crumbs--band [aria-current] {
+  color: #fff;
+}
+
+/* collapsible sidebar filters (MobileFilters): open on desktop, behind one button on phones */
+.m-filters__toggle {
+  display: none;
+}
+.m-filters__body {
+  display: contents;
+}
+
+@media (max-width: 767px) {
+  /* a sidebar that stacks above the content uses the full width instead of its desktop 300px */
+  .layout-side__aside {
+    max-width: none !important;
+    flex-basis: 100% !important;
+  }
+
+  .layout-side {
+    gap: 24px;
+  }
+
+  .m-filters__toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 16px;
+    border: 1px solid var(--rh-border);
+    border-radius: 12px;
+    background: var(--rh-surface);
+    color: var(--rh-ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .m-filters__count {
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--rh-primary-soft);
+    color: var(--rh-primary);
+    font-size: 13px;
+  }
+
+  .m-filters__chev--open {
+    transform: rotate(180deg);
+  }
+
+  .m-filters__body {
+    display: none;
+  }
+
+  .m-filters__body.is-open {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 16px;
+    border: 1px solid var(--rh-border);
+    border-radius: 12px;
+    background: var(--rh-surface);
+  }
+
+  /* home hero: Arabic marks rise above the line box, so give the motto room below the buttons */
+  .hero__ctas + .hero__support {
+    margin-top: 44px;
+    line-height: 2;
+  }
+
+  /* small labels stay readable on a phone */
+  .dalil-type,
+  .lesson-state,
+  .vthumb__dur,
+  .tag,
+  .badge,
+  .t-caption {
+    font-size: 13px !important;
+  }
+}
+
+/* very small phones: Cloudflare's security check is a fixed 300px wide, so the auth card gives it room */
+@media (max-width: 380px) {
+  .auth-wrap {
+    padding-inline: 8px;
+  }
+  .auth-card,
+  .card-pad {
+    padding-inline: 14px;
+  }
+}

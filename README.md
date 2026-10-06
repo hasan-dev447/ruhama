@@ -95,10 +95,10 @@ Every variable is listed and explained in [`.env.example`](.env.example). In sho
 | Site          | `NEXT_PUBLIC_SITE_URL`                                                                                                          | always                                        |
 | Database      | `DATABASE_URL`, `DATABASE_URL_DIRECT`, `DATABASE_POOL_MAX`                                                                      | always (direct URL for production migrations) |
 | Secrets       | `PAYLOAD_SECRET`, `BETTER_AUTH_SECRET`, `CRON_SECRET`                                                                           | always (cron in production)                   |
-| OAuth         | `GOOGLE_CLIENT_ID/SECRET`, `FACEBOOK_CLIENT_ID/SECRET`, `BETTER_AUTH_TRUSTED_ORIGINS`                                           | optional; buttons appear only when set        |
+| OAuth         | `GOOGLE_CLIENT_ID/SECRET`, `FACEBOOK_CLIENT_ID/SECRET`, `BETTER_AUTH_TRUSTED_ORIGINS`                                           | optional; or set in admin > Integrations      |
 | Turnstile     | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`                                                                        | required in production                        |
-| SMS           | `SMS_PROVIDER`, `SMS_API_URL`, `SMS_API_KEY`, `SMS_SENDER_ID`                                                                   | required in production for phone login        |
-| Email         | `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`                                                                                | required in production                        |
+| SMS           | `SMS_PROVIDER`, `SMS_API_URL`, `SMS_API_KEY`, `SMS_SENDER_ID`                                                                   | for phone login; or admin > Integrations      |
+| Email         | `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`                                                                                | in production; or admin > Integrations        |
 | Media         | `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `NEXT_PUBLIC_MEDIA_URL`, `NEXT_PUBLIC_IMAGE_TRANSFORMS` | required in production                        |
 | Realtime      | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`                                        | optional (falls back to polling)              |
 | Network       | `TRUSTED_IP_HEADER`                                                                                                             | only behind a proxy other than Vercel         |
@@ -106,7 +106,17 @@ Every variable is listed and explained in [`.env.example`](.env.example). In sho
 
 Production fails closed where safety matters: without a Turnstile secret, registration and OTP requests are refused; without an SMS gateway, login codes are neither sent nor logged; without Resend, emails report an error instead of pretending to send.
 
-Secrets live only in environment variables. Nothing secret is committed, and only `NEXT_PUBLIC_*` values reach the browser.
+Secrets live in environment variables, except the third-party credentials below. Nothing secret is committed, and only `NEXT_PUBLIC_*` values reach the browser.
+
+### Integrations (admin)
+
+Google and Facebook login, the SMS gateway and Resend can also be configured by admins at **admin > সাইট > ইন্টিগ্রেশন** (`src/payload/globals/integrations.ts`), without touching `.env` or redeploying:
+
+- Values saved there take priority over the matching environment variables; empty fields fall back to `.env`. Changes apply within a minute (each server instance caches them for 60 seconds).
+- Secrets (client secrets, API keys) are encrypted with AES-256-GCM using a key derived from `PAYLOAD_SECRET` (`src/server/crypto/secrets.ts`). They are never sent back to the browser: the admin shows only the last four characters. Changing `PAYLOAD_SECRET` makes saved secrets unreadable, so they must be entered again.
+- Each tab has a **সংযোগ পরীক্ষা করুন** button that checks the typed (or saved) values without saving: Google and Facebook credentials are checked against the provider, SMS sends a test message to a number you enter, and email sends a test message to your own address.
+- A provider can be switched off there; its sign-in button disappears and the auth API refuses it.
+- Only admins can read or change the page. The staff login page at `/admin/login` still shows social buttons only when they are set in `.env`.
 
 ## Database, migrations and seed data
 
@@ -171,7 +181,7 @@ Sign-in is rate limited (8 attempts per account per 15 minutes, plus per-IP limi
 
 **Roles and access.** `super_admin`, `shura`, `reviewer`, `editor`, `author`, `moderator`, `member`. Access is enforced at collection and field level in Payload, and checked again in every Server Action and route handler (`src/server/services/*`). Members cannot open `/admin`.
 
-**Auth.** Better Auth handles sessions for both the site and the admin. Accounts link by verified email. Registration and OTP requests require Turnstile. Sign-in, OTP sending and verification are rate limited per identifier and per IP. Members can list their sessions and end one or all of them, which takes effect immediately (no session cookie cache).
+**Auth.** Better Auth handles sessions for both the site and the admin. Accounts link by verified email. Whether a password sign-in needs a verified address is a switch in the admin (Site settings > নিবন্ধন ও লগইন, on by default; turn it off while no email service is configured). Registration and OTP requests require Turnstile. Sign-in, OTP sending and verification are rate limited per identifier and per IP. Members can list their sessions and end one or all of them, which takes effect immediately (no session cookie cache).
 
 **API.** A versioned REST API lives at `/api/v1/*`, with consistent error shapes. Its OpenAPI document is at `/api/v1/openapi.json`. The site's client components use the same API.
 
@@ -218,22 +228,46 @@ Then create the first super admin. Either run the seed against a staging databas
 ### 2. Cloudflare R2 (media)
 
 1. In the Cloudflare dashboard go to **R2 > Create bucket** (for example `ruhama-media`).
-2. Under **Settings > Custom Domains**, connect a subdomain such as `media.your-domain`. Put it in `NEXT_PUBLIC_MEDIA_URL`.
-3. Under **R2 > Manage R2 API tokens**, create a token with Object Read & Write on that bucket. Put the Access Key ID and Secret in `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`, the bucket name in `R2_BUCKET` and `https://<account-id>.r2.cloudflarestorage.com` in `R2_ENDPOINT`.
-4. Optional but recommended: in your domain's Cloudflare dashboard open **Images > Transformations** and enable it for the zone, then set `NEXT_PUBLIC_IMAGE_TRANSFORMS=cloudflare`. Images in articles are then resized and converted (WebP/AVIF) at the edge for each screen size, instead of by Vercel's image optimizer, whose free plan has a monthly limit. `next/image` is configured with the same loader (`src/lib/image-loader.ts`), so it never uses the Vercel optimizer.
+2. Public address, in `NEXT_PUBLIC_MEDIA_URL`:
+   - with a domain: **Settings > Custom Domains**, connect a subdomain such as `media.your-domain`;
+   - without one yet: **Settings > Public Development URL > Enable** and use the `https://pub-….r2.dev` address. It is rate limited and does not support image transformations, so switch to a custom domain before real traffic (only `NEXT_PUBLIC_MEDIA_URL` changes; stored files keep working).
+3. Under **R2 > Manage API tokens**, create an Account API token with **Object Read & Write** on that bucket only. Put the Access Key ID and Secret in `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`, the bucket name in `R2_BUCKET` and `https://<account-id>.r2.cloudflarestorage.com` in `R2_ENDPOINT` (the dashboard's value with `/<bucket>` at the end works too).
+4. **CORS** (required): the admin uploads files straight from the browser to R2 with a short-lived signed URL, so large files (lecture audio) are not stopped by Vercel's 4.5 MB request limit. In the bucket's **Settings > CORS policy**, add:
+
+   ```json
+   [
+     {
+       "AllowedOrigins": ["http://localhost:3000", "https://your-site.vercel.app"],
+       "AllowedMethods": ["PUT"],
+       "AllowedHeaders": ["content-type", "if-none-match"],
+       "MaxAgeSeconds": 3600
+     }
+   ]
+   ```
+
+   List every address the admin is opened from (your domain later). Without this rule uploads fail with a CORS error in the browser console.
+
+5. Optional, needs a domain on Cloudflare: open **Images > Transformations** for the zone, enable it and set `NEXT_PUBLIC_IMAGE_TRANSFORMS=cloudflare`. Images in articles are then resized and converted (WebP/AVIF) at the edge for each screen size, instead of by Vercel's image optimizer, whose free plan has a monthly limit. `next/image` is configured with the same loader (`src/lib/image-loader.ts`), so it never uses the Vercel optimizer.
+
+How files are kept (`src/payload/collections/Media.ts`):
+
+- Each upload goes to `media/<folder>/<year>/<month>/`. The folder is picked in the media sidebar (articles, events, courses, people, circles, site) or, by default, chosen from the file type (`images`, `audio`, `documents`). The resized copies (`thumb`, `card`, `og`) sit next to the original.
+- Deleting a media item removes the original and every resized copy from R2 permanently. Replacing the file of an item removes the old copies.
+- A file that is still used, by published content or only by a draft (rich-text images included), cannot be deleted; the error names where it is used, and the sidebar lists it too. Older versions do not count.
+- The media list shows how many files nothing uses, with a link to review and delete them together.
 
 ### 3. Sign-in providers (optional)
 
 - **Google:** Google Cloud Console > APIs & Services > Credentials > Create OAuth client ID (Web application). Authorised JavaScript origin: your site URL. Redirect URI: `https://your-domain/api/auth/callback/google`.
 - **Facebook:** developers.facebook.com > Create app > Facebook Login > Settings. Valid OAuth redirect URI: `https://your-domain/api/auth/callback/facebook`. Switch the app to Live mode.
 
-Set the client ID and secret. The buttons appear automatically.
+Enter the client ID and secret in admin > Integrations (or set them in `.env`), and use the test button. The buttons appear automatically.
 
 ### 4. Turnstile, Resend and SMS
 
 - **Turnstile:** Cloudflare > Turnstile > Add site (Managed) for your domain. Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
-- **Resend:** verify your sending domain (DNS records), create an API key and set `RESEND_API_KEY` and `EMAIL_FROM` (an address on that domain).
-- **SMS:** with an account at a Bangladeshi bulk-SMS provider whose HTTP API matches `src/server/sms/index.ts` (BulkSMSBD-style), set `SMS_PROVIDER=bd_gateway`, `SMS_API_URL`, `SMS_API_KEY` and an approved `SMS_SENDER_ID`. Any other gateway can be added by implementing the small `SmsProvider` interface.
+- **Resend:** verify your sending domain (DNS records), create an API key and enter it with the sender address (on that domain) in admin > Integrations > ইমেইল, or set `RESEND_API_KEY` and `EMAIL_FROM`.
+- **SMS:** with an account at a Bangladeshi bulk-SMS provider whose HTTP API matches `src/server/sms/index.ts` (BulkSMSBD-style), choose the gateway in admin > Integrations > SMS and enter the API URL, key and approved sender ID (or set `SMS_PROVIDER=bd_gateway`, `SMS_API_URL`, `SMS_API_KEY`, `SMS_SENDER_ID`). Any other gateway can be added by implementing the small `SmsProvider` interface.
 
 ### 5. Vercel
 

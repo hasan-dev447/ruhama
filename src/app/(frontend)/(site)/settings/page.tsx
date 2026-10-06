@@ -14,7 +14,7 @@ import {
 } from '@/components/settings/settings-sections'
 import { ButtonLink } from '@/components/ui/button'
 import { PageHero } from '@/components/ui/primitives'
-import { features } from '@/lib/env'
+import { oauthAvailability } from '@/server/integrations'
 import { buildMetadata } from '@/lib/seo'
 import { actionContext } from '@/server/action-context'
 
@@ -42,6 +42,7 @@ const pref = (
 export default async function SettingsPage() {
   const { user } = await actionContext()
   if (!user) redirect('/login?next=/settings')
+  const oauth = await oauthAvailability()
 
   const np = user.notificationPrefs
   const view: SettingsUser = {
@@ -102,15 +103,11 @@ export default async function SettingsPage() {
             </aside>
             <div
               className="layout-side__main"
-              style={{ maxWidth: 820, display: 'flex', flexDirection: 'column', gap: 24 }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
             >
               <ProfileSection user={view} />
               <PrivacySection initial={view.privacy} />
-              <LoginsSection
-                user={view}
-                google={features.google()}
-                facebook={features.facebook()}
-              />
+              <LoginsSection user={view} google={oauth.google} facebook={oauth.facebook} />
               <SessionsSection />
               <NotificationsSection initial={view.notificationPrefs} />
               <DeleteSection />

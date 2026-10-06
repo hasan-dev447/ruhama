@@ -160,7 +160,7 @@ export default async function LessonPage({ params }: Props) {
               </div>
             </aside>
 
-            <article className="layout-side__main" style={{ maxWidth: 800 }}>
+            <article className="layout-side__main">
               <span className="eyebrow">
                 মডিউল {bn(lesson.module)} · পাঠ {bn(lesson.order)}
               </span>

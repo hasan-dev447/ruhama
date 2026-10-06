@@ -75,8 +75,8 @@
   --rh-space-8: 64px;
   --rh-space-10: 80px;
   --rh-space-12: 96px;
-  --rh-container: 1200px;
-  --rh-reading: 70ch;
+  --rh-container: 1280px;
+  --rh-reading: 100%; /* reading text follows the container (was 70ch) */
 
   /* radius */
   --rh-radius-sm: 8px;
@@ -170,7 +170,7 @@
 
 /* ---------- layout ---------- */
 .rh-container { width: 100%; max-width: calc(var(--rh-container) + 48px); margin-inline: auto; padding-inline: 24px; }
-.rh-container-narrow { width: 100%; max-width: calc(760px + 48px); margin-inline: auto; padding-inline: 24px; }
+.rh-container-narrow { width: 100%; max-width: calc(var(--rh-container) + 48px); margin-inline: auto; padding-inline: 24px; }
 .section { position: relative; padding-block: 104px; }
 .section-sm { position: relative; padding-block: 64px; }
 .section-alt { background: var(--rh-sage); }

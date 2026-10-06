@@ -1,7 +1,7 @@
 'use client'
 
-import { ChevronDown, CircleAlert, Search } from 'lucide-react'
-import { forwardRef, useId } from 'react'
+import { ChevronDown, CircleAlert, Eye, EyeOff, Search } from 'lucide-react'
+import { forwardRef, useId, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -76,6 +76,38 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     />
   )
 })
+
+/** Password field with a show/hide (eye) button; works with react-hook-form's register. */
+export const PasswordInput = forwardRef<HTMLInputElement, Omit<InputProps, 'type'>>(
+  function PasswordInput({ style, ...props }, ref) {
+    const [visible, setVisible] = useState(false)
+    return (
+      <div style={{ position: 'relative' }}>
+        <Input
+          ref={ref}
+          type={visible ? 'text' : 'password'}
+          style={{ paddingRight: 52, ...style }}
+          {...props}
+        />
+        <button
+          type="button"
+          className="btn-icon"
+          aria-label={visible ? 'পাসওয়ার্ড লুকান' : 'পাসওয়ার্ড দেখুন'}
+          aria-pressed={visible}
+          aria-controls={props.id}
+          onClick={() => setVisible((v) => !v)}
+          style={{ position: 'absolute', right: 3, top: 3 }}
+        >
+          {visible ? (
+            <EyeOff className="ic" aria-hidden="true" />
+          ) : (
+            <Eye className="ic" aria-hidden="true" />
+          )}
+        </button>
+      </div>
+    )
+  },
+)
 
 export const Textarea = forwardRef<
   HTMLTextAreaElement,

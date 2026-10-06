@@ -1,0 +1,385 @@
+/*
+ * Ruhama admin: a light, standard admin palette (white surfaces, slate greys, green for primary
+ * actions, red / amber / blue for danger / warning / info). Pure CSS on top of Payload's variables,
+ * so it adds no weight. Payload's own styles live in `@layer payload-default`, which these override.
+ */
+
+:root,
+html[data-theme='light'] {
+  /* neutrals (slate) */
+  --color-base-0: #ffffff;
+  --color-base-50: #f4f8f6;
+  --color-base-100: #ecf3ef;
+  --color-base-150: #e2ebe6;
+  --color-base-200: #d9e4de;
+  --color-base-250: #cbd9d1;
+  --color-base-300: #bccdc4;
+  --color-base-350: #b3bfcd;
+  --color-base-400: #94a3b8;
+  --color-base-450: #7c8ba1;
+  --color-base-500: #64748b;
+  --color-base-550: #566479;
+  --color-base-600: #475569;
+  --color-base-650: #3d4a5c;
+  --color-base-700: #334155;
+  --color-base-750: #283548;
+  --color-base-800: #1e293b;
+  --color-base-850: #172033;
+  --color-base-900: #0f172a;
+  --color-base-950: #0a1120;
+  --color-base-1000: #020617;
+
+  /* success = green (Payload's default "success" is blue) */
+  --color-success-50: #ecfdf3;
+  --color-success-100: #dcfce7;
+  --color-success-150: #c7f5d8;
+  --color-success-200: #bbf7d0;
+  --color-success-250: #a0eebc;
+  --color-success-300: #86efac;
+  --color-success-350: #62e08b;
+  --color-success-400: #4ade80;
+  --color-success-450: #2fc96a;
+  --color-success-500: #16a34a;
+  --color-success-550: #15913f;
+  --color-success-600: #15803d;
+  --color-success-650: #146f36;
+  --color-success-700: #166534;
+  --color-success-750: #14552d;
+  --color-success-800: #14532d;
+  --color-success-850: #10401f;
+  --color-success-900: #0c3118;
+  --color-success-950: #052e16;
+
+  /* error = red */
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-150: #fdd0d0;
+  --color-error-200: #fecaca;
+  --color-error-250: #fcb0b0;
+  --color-error-300: #fca5a5;
+  --color-error-350: #f98989;
+  --color-error-400: #f87171;
+  --color-error-450: #f05555;
+  --color-error-500: #ef4444;
+  --color-error-550: #e43535;
+  --color-error-600: #dc2626;
+  --color-error-650: #c81f1f;
+  --color-error-700: #b91c1c;
+  --color-error-750: #a11a1a;
+  --color-error-800: #991b1b;
+  --color-error-850: #7f1d1d;
+  --color-error-900: #651717;
+  --color-error-950: #450a0a;
+
+  /* warning = amber */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-150: #fdecad;
+  --color-warning-200: #fde68a;
+  --color-warning-250: #fcda66;
+  --color-warning-300: #fcd34d;
+  --color-warning-350: #fbc72f;
+  --color-warning-400: #fbbf24;
+  --color-warning-450: #f3a915;
+  --color-warning-500: #f59e0b;
+  --color-warning-550: #e58908;
+  --color-warning-600: #d97706;
+  --color-warning-650: #c26605;
+  --color-warning-700: #b45309;
+  --color-warning-750: #9c4709;
+  --color-warning-800: #92400e;
+  --color-warning-850: #7c360f;
+  --color-warning-900: #78350f;
+  --color-warning-950: #451a03;
+
+  /* info = blue */
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-150: #cbe1fd;
+  --color-blue-200: #bfdbfe;
+  --color-blue-250: #a8cdfc;
+  --color-blue-300: #93c5fd;
+  --color-blue-350: #78b3fb;
+  --color-blue-400: #60a5fa;
+  --color-blue-450: #4891f7;
+  --color-blue-500: #3b82f6;
+  --color-blue-550: #2f73ec;
+  --color-blue-600: #2563eb;
+  --color-blue-650: #2156d8;
+  --color-blue-700: #1d4ed8;
+  --color-blue-750: #1e43b8;
+  --color-blue-800: #1e40af;
+  --color-blue-850: #1e3a8a;
+  --color-blue-900: #1c3172;
+  --color-blue-950: #172554;
+
+  --theme-bg: #f5f8f7;
+  --theme-input-bg: #ffffff;
+  --theme-text: #0f172a;
+  --theme-border-color: #dde7e1;
+
+  /* a little larger than Payload's 13px: Bangla script reads better at 15px (spacing stays the same) */
+  --base-body-size: 15;
+
+  --style-radius-s: 6px;
+  --style-radius-m: 10px;
+  --style-radius-l: 14px;
+
+  /* admin brand tokens used by the custom components */
+  --rh-admin-primary: #15803d;
+  --rh-admin-primary-hover: #166534;
+  --rh-admin-primary-soft: #ecfdf3;
+  --rh-admin-primary-ring: rgba(22, 163, 74, 0.25);
+  --rh-admin-hover: #eefaf2;
+  --rh-admin-hover-border: #a7e3bd;
+  --rh-admin-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --rh-admin-card-shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.05);
+  --rh-admin-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+html[data-theme='light'] body,
+html[data-theme='light'] .template-default,
+html[data-theme='light'] .template-default__wrap {
+  background: var(--theme-bg);
+}
+
+/* ---------------- buttons ---------------- */
+
+.btn--style-primary {
+  background-color: var(--rh-admin-primary) !important;
+  color: #fff !important;
+  border-color: var(--rh-admin-primary) !important;
+  box-shadow: 0 1px 2px rgba(21, 128, 61, 0.25);
+  transition:
+    background-color 0.15s var(--rh-admin-ease),
+    box-shadow 0.15s var(--rh-admin-ease),
+    transform 0.15s var(--rh-admin-ease);
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background-color: var(--rh-admin-primary-hover) !important;
+    box-shadow: 0 4px 10px rgba(21, 128, 61, 0.25);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+  }
+}
+
+.btn--style-secondary {
+  background: #fff !important;
+  border: 1px solid var(--theme-elevation-200) !important;
+  color: var(--theme-elevation-800) !important;
+  box-shadow: none !important;
+  transition:
+    background-color 0.15s var(--rh-admin-ease),
+    border-color 0.15s var(--rh-admin-ease);
+
+  &:hover:not(:disabled) {
+    background: var(--rh-admin-hover) !important;
+    border-color: var(--rh-admin-hover-border) !important;
+    color: var(--rh-admin-primary-hover) !important;
+  }
+}
+
+.btn {
+  border-radius: var(--style-radius-m);
+}
+
+/* focus rings: visible and on-brand */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--rh-admin-primary);
+  outline-offset: 2px;
+}
+
+/* ---------------- sidebar navigation ---------------- */
+
+.nav {
+  background: #fff;
+  border-right: 1px solid var(--theme-border-color);
+}
+
+.nav__link,
+.nav a.nav__link {
+  border-radius: 8px;
+  margin: 1px 0;
+  padding: 6px 10px;
+  color: var(--theme-elevation-700);
+  transition:
+    background-color 0.12s var(--rh-admin-ease),
+    color 0.12s var(--rh-admin-ease);
+
+  &:hover {
+    background: var(--rh-admin-hover);
+    color: var(--rh-admin-primary-hover);
+    text-decoration: none;
+  }
+}
+
+.nav__link:not(a) {
+  /* the current page: Payload renders it as a <div> with an indicator bar */
+  background: var(--rh-admin-primary-soft);
+  color: var(--rh-admin-primary-hover);
+  font-weight: 600;
+}
+
+.nav__link-indicator {
+  background: var(--rh-admin-primary) !important;
+  border-radius: 999px;
+}
+
+.nav-group__toggle {
+  color: var(--theme-elevation-450);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+/* ---------------- header ---------------- */
+
+.app-header {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--theme-border-color);
+}
+
+/* ---------------- cards, lists and tables ---------------- */
+
+.card,
+.collections__card,
+.dashboard__card {
+  background: #fff !important;
+  border: 1px solid var(--theme-border-color) !important;
+  border-radius: var(--style-radius-l) !important;
+  box-shadow: var(--rh-admin-card-shadow);
+  transition:
+    box-shadow 0.18s var(--rh-admin-ease),
+    transform 0.18s var(--rh-admin-ease),
+    border-color 0.18s var(--rh-admin-ease);
+
+  &:hover {
+    box-shadow: var(--rh-admin-card-shadow-hover);
+    border-color: var(--rh-admin-hover-border) !important;
+  }
+}
+
+.table {
+  background: #fff;
+  border: 1px solid var(--theme-border-color);
+  border-radius: var(--style-radius-l);
+  overflow: hidden;
+  box-shadow: var(--rh-admin-card-shadow);
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  thead th {
+    background: #f1f7f3;
+    color: var(--theme-elevation-600);
+    font-weight: 600;
+    font-size: 13px;
+    border-bottom: 1px solid var(--theme-border-color);
+  }
+
+  tbody tr {
+    transition: background-color 0.12s var(--rh-admin-ease);
+  }
+
+  tbody tr:hover {
+    background: var(--rh-admin-hover);
+  }
+
+  tbody td {
+    border-bottom: 1px solid var(--theme-elevation-100);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+}
+
+/* inputs: white, soft border, green focus */
+.field-type input,
+.field-type textarea,
+.rs__control,
+.react-select .rs__control {
+  border-radius: var(--style-radius-m) !important;
+  border-color: var(--theme-elevation-200) !important;
+  transition:
+    border-color 0.12s var(--rh-admin-ease),
+    box-shadow 0.12s var(--rh-admin-ease);
+}
+
+.field-type input:hover,
+.field-type textarea:hover,
+.rs__control:hover {
+  border-color: var(--rh-admin-hover-border) !important;
+}
+
+.field-type input:focus,
+.field-type textarea:focus,
+.rs__control--is-focused {
+  border-color: var(--rh-admin-primary) !important;
+  box-shadow: 0 0 0 3px var(--rh-admin-primary-ring) !important;
+}
+
+/* pills / status badges */
+.pill {
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+/* toast notifications: rounded, light, with a coloured edge per type */
+.payload-toast-container .toast-success,
+.payload-toast-container [data-type='success'] {
+  border-left: 4px solid var(--color-success-500);
+}
+
+.payload-toast-container .toast-error,
+.payload-toast-container [data-type='error'] {
+  border-left: 4px solid var(--color-error-500);
+}
+
+.payload-toast-container .toast-warning,
+.payload-toast-container [data-type='warning'] {
+  border-left: 4px solid var(--color-warning-500);
+}
+
+.payload-toast-container .toast-info,
+.payload-toast-container [data-type='info'] {
+  border-left: 4px solid var(--color-blue-500);
+}
+
+.payload-toast-item,
+.payload-toast-container li {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@import './admin-components.scss';
+
+/* SEO plugin: it prints the label, a hard-coded dash and the generate button; hide that text node, keep the parts */
+.plugin-seo__field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0;
+
+  > * {
+    font-size: calc(var(--base-body-size) * 1px);
+  }
+}

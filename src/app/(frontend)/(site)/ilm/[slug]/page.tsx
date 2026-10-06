@@ -159,7 +159,7 @@ export default async function ArticlePage({ params }: Props) {
                 </aside>
               ) : null}
 
-              <article className="layout-side__main" id="rh-article" style={{ maxWidth: 760 }}>
+              <article className="layout-side__main" id="rh-article">
                 <RichText data={doc.content} className="prose-first" />
                 {references.length ? (
                   <div className="prose">

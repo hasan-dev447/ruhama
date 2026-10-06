@@ -83,6 +83,7 @@ export default async function SurahPage({ params }: Props) {
           }}
         >
           <Breadcrumbs
+            className="crumbs--band"
             items={[{ label: 'আল-কুরআন', href: '/quran' }, { label: `সূরা ${surah.nameBangla}` }]}
             style={{ color: 'var(--rh-band-muted)', justifyContent: 'center' }}
             linkStyle={{ color: 'var(--rh-band-muted)' }}

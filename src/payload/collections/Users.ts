@@ -158,6 +158,24 @@ export function usersCollectionOverride({
     labels: { singular: 'ব্যবহারকারী', plural: 'ব্যবহারকারী' },
     admin: {
       ...collection.admin,
+      components: {
+        ...collection.admin?.components,
+        // the plugin's "Invite User" flow needs sign-up pages this site does not use
+        Description: undefined,
+        views: {
+          ...collection.admin?.components?.views,
+          // Bangla ban / unban / sign-out-everywhere instead of the plugin's English buttons
+          // (and no "impersonate": staff never need to sign in as someone else)
+          edit: {
+            ...collection.admin?.components?.views?.edit,
+            adminButtons: {
+              tab: { Component: '@/payload/components/user-admin-actions#UserAdminActions' },
+            },
+          } as NonNullable<
+            NonNullable<NonNullable<CollectionConfig['admin']>['components']>['views']
+          >['edit'],
+        },
+      },
       useAsTitle: 'name',
       defaultColumns: ['name', 'email', 'role', 'createdAt'],
       listSearchableFields: ['name', 'email', 'username', 'phoneNumber'],
