@@ -61,3 +61,6 @@ node_modules/
 
 # Playwright sessions saved by global setup
 /tests/e2e/.auth/
+
+# admin DOM dumps written while debugging
+/.dom*.txt
