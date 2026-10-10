@@ -407,6 +407,8 @@ function MobileDrawer({
 }) {
   const logout = useLogout()
   const close = () => onOpenChange(false)
+  // the same links as the desktop account menu, by the রোল ও অনুমতি page
+  const { admin: isStaff, moderate: isModerator } = useAbilities(user)
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Trigger asChild>
@@ -485,6 +487,16 @@ function MobileDrawer({
                 <Link href="/settings" className="menu-item" onClick={close}>
                   সেটিংস
                 </Link>
+                {isModerator ? (
+                  <Link href="/forum/moderation" className="menu-item" onClick={close}>
+                    মডারেশন কিউ
+                  </Link>
+                ) : null}
+                {isStaff ? (
+                  <Link href="/admin" prefetch={false} className="menu-item" onClick={close}>
+                    অ্যাডমিন প্যানেল
+                  </Link>
+                ) : null}
                 <button type="button" className="menu-item menu-item--danger" onClick={logout}>
                   লগআউট
                 </button>
