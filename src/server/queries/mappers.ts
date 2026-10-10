@@ -10,6 +10,7 @@ import type {
   QuestionCardView,
   VideoCardView,
 } from './types'
+import { eventEnded } from '@/lib/events'
 
 /* Payload docs arrive with relationships populated to depth 1 (or as ids). */
 type Doc = Record<string, unknown>
@@ -60,7 +61,7 @@ export function toArticleCard(d: Doc): ArticleCardView {
   }
 }
 
-export function toEventCard(d: Doc): EventCardView {
+export function toEventCard(d: Doc, hasRecap = false): EventCardView {
   return {
     id: d.id as number,
     slug: str(d.slug),
@@ -75,6 +76,8 @@ export function toEventCard(d: Doc): EventCardView {
     capacity: num(d.capacity, 1),
     seatsTaken: num(d.seatsTaken),
     category: toCategory(d.category),
+    ended: eventEnded({ startsAt: str(d.startsAt), endsAt: (d.endsAt as string) ?? null }),
+    hasRecap,
   }
 }
 

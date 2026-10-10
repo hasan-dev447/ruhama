@@ -16,7 +16,13 @@ export const eventRegistrationSchema = z.object({
     ])
     .optional(),
   seating: z.enum(['brothers', 'sisters']).optional(),
-  guests: z.coerce.number().int().min(0).max(3).default(0),
+  // the event's own limit (maxGuests) and the seats left are checked by the events service
+  guests: z.coerce
+    .number({ message: 'সঙ্গীর সংখ্যা লিখুন।' })
+    .int('পূর্ণ সংখ্যা লিখুন।')
+    .min(0, 'সংখ্যা ০ বা তার বেশি হবে।')
+    .max(5000, 'সংখ্যাটি অনেক বড়।')
+    .default(0),
   turnstileToken: z.string().max(4096).optional(),
 })
 

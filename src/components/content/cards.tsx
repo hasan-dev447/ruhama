@@ -11,6 +11,7 @@ import {
   IconLocation,
   IconMorning,
   IconNext,
+  IconPlay,
   IconSpeaker,
   IconUsers,
   IconVideo,
@@ -30,6 +31,7 @@ import {
   formatMonth,
   formatTime,
   formatWeekday,
+  formatYear,
   readingTimeLabel,
 } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -162,12 +164,30 @@ export function ArticleCard({
           </span>
         </div>
         <h3 className="article-card__title" style={titleSize ? { fontSize: titleSize } : undefined}>
-          <Link href={href}>{article.title}</Link>
+          {/* stretched over the whole card (ruhama.css), so a click anywhere opens the article */}
+          <Link href={href} className="article-card__link">
+            {article.title}
+          </Link>
         </h3>
         {article.author ? (
           <div className="article-card__author">
-            <PersonAvatar person={article.author} size="sm" />
-            <span style={{ flex: 1 }}>{article.author.name}</span>
+            {article.author.slug ? (
+              <Link
+                href={personHref(article.author)}
+                target="_blank"
+                rel="noopener"
+                className="article-card__person"
+                aria-label={`${article.author.name}: প্রোফাইল (নতুন ট্যাবে)`}
+              >
+                <PersonAvatar person={article.author} size="sm" />
+                <span>{article.author.name}</span>
+              </Link>
+            ) : (
+              <span className="article-card__person">
+                <PersonAvatar person={article.author} size="sm" />
+                <span>{article.author.name}</span>
+              </span>
+            )}
             {article.reviewed ? <ReviewedBadge /> : null}
           </div>
         ) : null}
@@ -211,8 +231,10 @@ export function CategoryTile({
 
 /* ---------------- events ---------------- */
 
-export function eventPlace(e: Pick<EventCardView, 'mode' | 'venueName' | 'district'>): string {
-  if (e.mode === 'online') return 'লাইভ সেশন, লিংক রেজিস্ট্রেশনের পর'
+export function eventPlace(
+  e: Pick<EventCardView, 'mode' | 'venueName' | 'district'> & { ended?: boolean },
+): string {
+  if (e.mode === 'online') return e.ended ? 'অনলাইন লাইভ সেশন' : 'লাইভ সেশন, লিংক রেজিস্ট্রেশনের পর'
   return [e.venueName, districtLabel(e.district)].filter(Boolean).join(', ')
 }
 
@@ -224,11 +246,17 @@ export function eventWhen(e: Pick<EventCardView, 'startsAt' | 'timeLabel'>): str
 export function EventRow({ event }: { event: EventCardView }) {
   const href = `/events/${event.slug}`
   return (
-    <article className="card card-hover event-row">
-      <DateTile size="auto" day={formatDay(event.startsAt)} month={formatMonth(event.startsAt)} />
+    <article className={cn('card card-hover event-row', event.ended && 'event-row--ended')}>
+      <DateTile
+        size="auto"
+        day={formatDay(event.startsAt)}
+        month={formatMonth(event.startsAt)}
+        weekday={event.ended ? formatYear(event.startsAt) : undefined}
+      />
       <div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
           <ModeBadge mode={event.mode} />
+          {event.ended ? <EndedBadge recap={event.hasRecap} /> : null}
         </div>
         <h3>
           <Link href={href} style={{ color: 'inherit', textDecoration: 'none' }}>
@@ -250,10 +278,31 @@ export function EventRow({ event }: { event: EventCardView }) {
           </span>
         </div>
       </div>
-      <ButtonLink href={href} variant="secondary">
-        রেজিস্টার করুন
-      </ButtonLink>
+      {event.ended ? (
+        <ButtonLink href={event.hasRecap ? `${href}#recap` : href} variant="ghost">
+          {event.hasRecap ? 'কী হয়েছিল দেখুন' : 'বিস্তারিত'}
+        </ButtonLink>
+      ) : (
+        <ButtonLink href={href} variant="secondary">
+          রেজিস্টার করুন
+        </ButtonLink>
+      )}
     </article>
+  )
+}
+
+/** "Over" on a মজলিস card, and whether photos and recordings were added. */
+export function EndedBadge({ recap }: { recap?: boolean }) {
+  return (
+    <>
+      <Badge variant="neutral">শেষ হয়েছে</Badge>
+      {recap ? (
+        <Badge variant="cat">
+          <IconPlay className="ic" aria-hidden="true" />
+          ছবি ও ভিডিও
+        </Badge>
+      ) : null}
+    </>
   )
 }
 

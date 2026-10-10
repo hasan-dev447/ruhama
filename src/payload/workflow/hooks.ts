@@ -1,5 +1,6 @@
 import { APIError, type CollectionAfterChangeHook, type CollectionBeforeChangeHook } from 'payload'
 
+import { getWorkflowRules } from '@/server/rules'
 import { notifyReviewTransition } from '@/server/services/review-notifications'
 
 import type { Approval, ReviewStatus, WorkflowAction } from './constants'
@@ -22,13 +23,14 @@ const idOf = (v: unknown) =>
  * Enforces the editorial workflow on every write:
  * - workflow fields are owned by the server and never taken from client input
  * - edits after approval send the document back for review
- * - publishing requires a publisher role and two approvals of this exact content
+ * - publishing requires a publisher role and the approvals the menu's rules ask for
  * - unpublishing requires a publisher role
  */
 export const workflowBeforeChange =
   (hashFields: string[]): CollectionBeforeChangeHook =>
-  async ({ data, originalDoc, operation, req, context }) => {
+  async ({ data, originalDoc, operation, req, context, collection }) => {
     const ctx = context as WorkflowContext
+    const rules = await getWorkflowRules(collection.slug)
     const merged = { ...(originalDoc ?? {}), ...data } as Record<string, unknown>
     const hash = computeContentHash(merged, hashFields)
 
@@ -54,7 +56,11 @@ export const workflowBeforeChange =
     if (ctx.workflowAction && ctx.workflowState) {
       status = ctx.workflowState.status
       approvals = ctx.workflowState.approvals
-    } else if (operation === 'update' && originalDoc?.contentHash !== hash) {
+    } else if (
+      operation === 'update' &&
+      originalDoc?.contentHash !== hash &&
+      rules.resetApprovalsOnEdit
+    ) {
       // content edited: approvals no longer cover it
       if (status === 'approved') status = 'in_review'
       if (status === 'published') status = 'draft'
@@ -76,6 +82,7 @@ export const workflowBeforeChange =
         authorId,
         approvals,
         contentHash: hash,
+        rules,
       })
       if (!check.ok) throw new APIError(check.message, 403, null, true)
       status = 'published'
@@ -91,9 +98,10 @@ export const workflowBeforeChange =
         authorId,
         approvals,
         contentHash: hash,
+        rules,
       })
       if (!check.ok) throw new APIError(check.message, 403, null, true)
-      status = hasEnoughApprovals(approvals, hash, authorId) ? 'approved' : 'draft'
+      status = hasEnoughApprovals(approvals, hash, authorId, rules) ? 'approved' : 'draft'
     }
 
     data.reviewStatus = status

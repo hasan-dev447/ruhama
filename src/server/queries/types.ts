@@ -59,6 +59,10 @@ export type EventCardView = {
   capacity: number
   seatsTaken: number
   category: CategoryRef | null
+  /** over (lib/events.ts): no registration, shown with what happened instead */
+  ended: boolean
+  /** a published recap (text, photos, videos) exists */
+  hasRecap: boolean
 }
 
 export type CourseCardView = {

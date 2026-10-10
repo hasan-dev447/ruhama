@@ -1,9 +1,9 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconMobile, IconSuccess } from '@/components/icons'
+import { IconSuccess } from '@/components/icons'
 import Link from 'next/link'
-import { useRef, useState, useTransition } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -12,6 +12,8 @@ import { Button, ButtonLink } from '@/components/ui/button'
 import { Field, FormAlert, Input, PasswordInput } from '@/components/ui/form'
 import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
 import { authClient } from '@/lib/auth/client'
+import { normalizeBdPhone } from '@/lib/phone'
+import { takeRegisterPrefill } from '@/lib/register-prefill'
 
 import { GenderPicker } from './gender-picker'
 import { authErrorMessage } from '@/lib/auth/errors'
@@ -21,6 +23,13 @@ import { SocialButtons } from './social-buttons'
 const schema = z.object({
   name: z.string().trim().min(2, 'পূর্ণ নাম লিখুন।').max(80),
   email: z.string().trim().toLowerCase().email('সঠিক ইমেইল ঠিকানা দিন।'),
+  // optional; a Bangladeshi mobile number when given
+  phone: z
+    .string()
+    .trim()
+    .refine((v) => v === '' || normalizeBdPhone(v) !== null, {
+      message: 'সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন ০১৭১২৩৪৫৬৭৮), অথবা ঘরটি খালি রাখুন।',
+    }),
   password: z.string().min(8, 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।').max(128),
   gender: z.enum(['male', 'female'], { message: 'ভাই অথবা বোন বেছে নিন।' }),
   agree: z.literal(true, { message: 'আদব নীতি ও শর্তাবলিতে সম্মতি দিন।' }),
@@ -74,6 +83,7 @@ export function RegisterForm({
     defaultValues: {
       name: '',
       email: '',
+      phone: '',
       password: '',
       gender: undefined as never,
       agree: false as never,
@@ -81,6 +91,17 @@ export function RegisterForm({
     },
   })
   const { errors } = form.formState
+
+  // details already typed on the join form (lib/register-prefill.ts), used once
+  useEffect(() => {
+    const p = takeRegisterPrefill()
+    if (!p) return
+    for (const key of ['name', 'email', 'phone'] as const) {
+      const v = p[key]
+      if (v && !form.getValues(key)) form.setValue(key, v, { shouldDirty: true })
+    }
+  }, [form])
+
   const password = useWatch({ control: form.control, name: 'password' }) ?? ''
   const gender = useWatch({ control: form.control, name: 'gender' }) ?? null
   const score = passwordScore(password)
@@ -99,6 +120,7 @@ export function RegisterForm({
           email: values.email,
           password: values.password,
           gender: values.gender,
+          ...(values.phone ? { phoneNumber: normalizeBdPhone(values.phone)! } : {}),
           callbackURL,
         },
         { headers: { 'x-captcha-response': token } },
@@ -109,6 +131,8 @@ export function RegisterForm({
         setServerError(authErrorMessage(error))
         if (error.code?.startsWith('USER_ALREADY_EXISTS'))
           form.setError('email', { message: 'এই ইমেইলে আগেই অ্যাকাউন্ট আছে।' })
+        if (error.code === 'PHONE_TAKEN' || error.code === 'INVALID_PHONE')
+          form.setError('phone', { message: error.message ?? 'মোবাইল নম্বরটি ঠিক নেই।' })
         return
       }
       if (values.newsletter) {
@@ -177,6 +201,22 @@ export function RegisterForm({
             placeholder="you@example.com"
             invalid={Boolean(errors.email)}
             {...form.register('email')}
+          />
+        </Field>
+        <Field
+          label="মোবাইল নম্বর (ঐচ্ছিক)"
+          htmlFor="g-phone"
+          error={errors.phone?.message}
+          hint="না দিলেও চলবে। পরে সেটিংস থেকে যোগ বা যাচাই করতে পারবেন।"
+        >
+          <Input
+            id="g-phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel-national"
+            placeholder="01XXXXXXXXX"
+            invalid={Boolean(errors.phone)}
+            {...form.register('phone')}
           />
         </Field>
         <div className="field">
@@ -258,20 +298,17 @@ export function RegisterForm({
           অ্যাকাউন্ট খুলুন
         </Button>
       </form>
-      <div className="auth-sep" style={{ margin: '22px 0' }}>
-        অথবা
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <SocialButtons google={google} facebook={facebook} next={next} />
-        <ButtonLink
-          href={`/login?mode=phone&next=${encodeURIComponent(next)}`}
-          variant="ghost"
-          block
-        >
-          <IconMobile className="ic" aria-hidden="true" />
-          মোবাইল নম্বর দিয়ে অ্যাকাউন্ট খুলুন
-        </ButtonLink>
-      </div>
+      {/* accounts always have an email: password, Google or Facebook (phone is an extra login) */}
+      {google || facebook ? (
+        <>
+          <div className="auth-sep" style={{ margin: '22px 0' }}>
+            অথবা
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <SocialButtons google={google} facebook={facebook} next={next} />
+          </div>
+        </>
+      ) : null}
     </>
   )
 }

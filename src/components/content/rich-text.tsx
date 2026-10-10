@@ -3,13 +3,16 @@ import {
   type JSXConvertersFunction,
 } from '@payloadcms/richtext-lexical/react'
 import { IconIdea, IconInfo, IconWarning } from '@/components/icons'
-import Image from 'next/image'
 import type { ReactNode } from 'react'
 
 import { imageSrcSet, imageUrl, transformable } from '@/lib/image-url'
 import { headingId } from '@/lib/lexical'
+import { DISPLAY_WIDTH, focusPosition, type ImageSize, pickImageUrl } from '@/lib/rich-image'
+import { isTextSize } from '@/lib/text-sizes'
 import { ayahReference } from '@/lib/quran-meta'
 import { cn } from '@/lib/utils'
+
+import { RecapGallery } from '@/components/events/recap-gallery'
 
 import { AyahCard, DalilBox, HadithCard, type DalilItem } from './scripture'
 import { YouTubeFacade, youtubeIdFrom } from './youtube-facade'
@@ -28,6 +31,12 @@ type HadithDoc = {
 }
 
 type MediaDoc = {
+  sizes?: {
+    w480?: { url?: string | null; width?: number | null } | null
+    w960?: { url?: string | null; width?: number | null } | null
+  } | null
+  focalX?: number | null
+  focalY?: number | null
   url?: string | null
   alt?: string | null
   credit?: string | null
@@ -41,6 +50,15 @@ const asDoc = <T,>(v: Rel<T>): T | null => (v && typeof v === 'object' ? (v as T
 
 type BlockNode = { fields: Record<string, unknown> }
 
+/** Per-use settings of an image in the text (payload/fields/rich-image.ts). */
+type RichImageFields = {
+  size?: ImageSize
+  align?: 'center' | 'left' | 'right'
+  aspect?: string
+  focus?: string
+  caption?: string
+}
+
 /** Lexical heading/text nodes we need to inspect for anchors */
 type Node = { type?: string; tag?: string; children?: Node[] }
 
@@ -53,6 +71,13 @@ const makeConverters =
   (idFor: HeadingIdFn): JSXConvertersFunction =>
   ({ defaultConverters }) => ({
     ...defaultConverters,
+    // a size the editor chose (lib/text-sizes.ts) arrives as a name in the node's state: a class here
+    text: (args) => {
+      const base = defaultConverters.text
+      const rendered = typeof base === 'function' ? base(args) : base
+      const size = (args.node as { $?: { size?: unknown } }).$?.size
+      return isTextSize(size) ? <span className={`rt-size-${size}`}>{rendered}</span> : rendered
+    },
     heading: ({ node, nodesToJSX, parent }) => {
       const n = node as Node
       const children = nodesToJSX({ nodes: (n.children ?? []) as never })
@@ -79,30 +104,39 @@ const makeConverters =
           </a>
         )
       }
+      const f = ((node as { fields?: RichImageFields }).fields ?? {}) as RichImageFields
+      const size: ImageSize = f.size ?? 'full'
+      const align = size === 'full' ? 'center' : (f.align ?? 'center')
+      const cropped = f.aspect && f.aspect !== 'original'
+      // resized at the edge when that is on; otherwise the lightest stored version wide enough
+      const edge = transformable(doc.url)
+      const src = edge
+        ? imageUrl(doc.url, { width: DISPLAY_WIDTH[size] * 2 })
+        : pickImageUrl(doc, size)
+      const caption = [f.caption, doc.credit].filter(Boolean).join(' · ')
       return (
-        <figure className="rt-figure">
-          {doc.width && doc.height ? (
-            <Image
-              unoptimized={!transformable(doc.url)}
-              src={doc.url}
-              width={doc.width}
-              height={doc.height}
-              sizes="(max-width: 760px) 100vw, 720px"
-              alt={doc.alt ?? ''}
-            />
-          ) : (
-            // dimensions unknown (very old upload): plain image, still resized at the edge when enabled
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={imageUrl(doc.url, { width: 1080 })}
-              srcSet={imageSrcSet(doc.url)}
-              sizes="(max-width: 760px) 100vw, 720px"
-              alt={doc.alt ?? ''}
-              loading="lazy"
-              decoding="async"
-            />
-          )}
-          {doc.credit ? <figcaption className="t-caption t-muted">{doc.credit}</figcaption> : null}
+        <figure className={cn('rt-figure', `rt-figure--${size}`, `rt-figure--${align}`)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src ?? doc.url}
+            srcSet={edge ? imageSrcSet(doc.url) : undefined}
+            sizes={`(max-width: 760px) 100vw, ${DISPLAY_WIDTH[size]}px`}
+            width={doc.width ?? undefined}
+            height={doc.height ?? undefined}
+            alt={doc.alt ?? ''}
+            loading="lazy"
+            decoding="async"
+            style={
+              cropped
+                ? {
+                    aspectRatio: f.aspect!,
+                    objectFit: 'cover',
+                    objectPosition: focusPosition(f.focus, doc),
+                  }
+                : undefined
+            }
+          />
+          {caption ? <figcaption className="t-caption t-muted">{caption}</figcaption> : null}
         </figure>
       )
     },
@@ -152,6 +186,36 @@ const makeConverters =
             grade={f.grade || doc?.grade}
             gradeNote={f.gradeNote}
           />
+        )
+      },
+      gallery: ({ node }: { node: BlockNode }) => {
+        const f = node.fields as {
+          images?: Rel<MediaDoc>[]
+          columns?: string
+          aspect?: string
+          caption?: string
+        }
+        const photos = (f.images ?? [])
+          .map((m) => asDoc(m))
+          .filter((m): m is MediaDoc => Boolean(m?.url && m.mimeType?.startsWith('image/')))
+          .map((m) => ({
+            url: m.url!,
+            thumb: pickImageUrl(m, Number(f.columns) >= 3 ? 'small' : 'medium') ?? m.url!,
+            alt: m.alt ?? '',
+            width: m.width,
+            height: m.height,
+          }))
+        if (!photos.length) return null
+        return (
+          <figure className="rt-gallery">
+            <RecapGallery
+              photos={photos}
+              title={f.caption || 'ছবি'}
+              columns={Number(f.columns) || 3}
+              aspect={f.aspect || '4/3'}
+            />
+            {f.caption ? <figcaption className="t-caption t-muted">{f.caption}</figcaption> : null}
+          </figure>
         )
       },
       dalil: ({ node }: { node: BlockNode }) => {

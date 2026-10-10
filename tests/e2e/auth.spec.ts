@@ -36,6 +36,7 @@ test.describe('registration', () => {
     await page.getByLabel('পূর্ণ নাম').fill('পরীক্ষা সদস্য')
     await page.getByLabel('ইমেইল', { exact: true }).fill(email)
     await page.getByLabel('পাসওয়ার্ড', { exact: true }).fill('Sabr-Shukr-2026')
+    await page.getByRole('radio', { name: /ভাই/ }).check({ force: true })
     await page.getByRole('checkbox', { name: /আদব ও ইনসাফ নীতি/ }).check()
     await turnstileReady(page)
     await page.getByRole('button', { name: 'অ্যাকাউন্ট খুলুন' }).click()
@@ -90,7 +91,10 @@ test.describe('sign in', () => {
   test('with a magic link', async ({ page }) => {
     const since = Date.now()
     await page.goto('/login')
-    await page.getByRole('button', { name: 'ইমেইলে লগইন লিংক নিন' }).click()
+    const option = page.getByRole('button', { name: 'ইমেইলে লগইন লিংক নিন' })
+    // offered only when an email service (Resend) is set up
+    test.skip((await option.count()) === 0, 'email delivery is not configured')
+    await option.click()
     await page.getByLabel('ইমেইল', { exact: true }).fill(ACCOUNTS.member2)
     await page.getByRole('button', { name: 'লগইন লিংক পাঠান' }).click()
 
@@ -99,32 +103,24 @@ test.describe('sign in', () => {
     await expect.poll(() => sessionEmail(page)).toBe(ACCOUNTS.member2)
   })
 
-  test('with a phone OTP, which also creates the account for a new number @mobile', async ({
+  test('a phone code is refused for a number without a confirmed account @mobile', async ({
     page,
   }) => {
+    // accounts are opened with an email only; a phone number is an extra way in once confirmed
     const phone = freshPhone()
-    const e164 = `+88${phone}`
     const since = Date.now()
 
     await page.goto('/login?mode=phone')
+    // offered only when an SMS gateway is set up
+    test.skip((await page.getByLabel('মোবাইল নম্বর').count()) === 0, 'SMS is not configured')
     await page.getByLabel('মোবাইল নম্বর').fill(phone)
     await turnstileReady(page)
     await page.getByRole('button', { name: 'কোড পাঠান' }).click()
-    await expect(page.getByRole('group', { name: /অঙ্কের কোড/ })).toBeVisible()
-
-    const sms = await waitForOutbox('sms', e164, since)
-    const code = sms.message?.match(/\d{6}/)?.[0]
-    expect(code, 'OTP in the SMS').toBeTruthy()
-
-    // a wrong code first: refused, the account stays signed out
-    await page.getByLabel('অঙ্ক ১').fill(code === '000000' ? '111111' : '000000')
-    await page.getByRole('button', { name: 'যাচাই করে লগইন করুন' }).click()
-    await expect(page.getByRole('alert').first()).toBeVisible()
-
-    await page.getByLabel('অঙ্ক ১').fill(code!)
-    await page.getByRole('button', { name: 'যাচাই করে লগইন করুন' }).click()
-    await expect(page).toHaveURL(/\/dashboard/)
-    expect((await currentUser(page))?.phoneNumber).toBe(e164)
+    await expect(page.getByRole('alert').first()).toContainText('যাচাই করা কোনো অ্যাকাউন্ট নেই')
+    await expect(page.getByRole('group', { name: /অঙ্কের কোড/ })).toHaveCount(0)
+    // nothing was sent and nobody is signed in
+    await expect(waitForOutbox('sms', `+88${phone}`, since, { timeout: 2500 })).rejects.toThrow()
+    expect(await currentUser(page)).toBeNull()
   })
 
   test('with Google or Facebook when configured', async ({ page }) => {

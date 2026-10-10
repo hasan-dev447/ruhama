@@ -32,10 +32,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         lang="ar"
         dir="rtl"
         style={{
-          position: 'absolute',
-          bottom: 20,
-          left: 0,
-          right: 0,
+          marginTop: 24,
           textAlign: 'center',
           fontSize: 22,
           color: 'var(--rh-muted)',

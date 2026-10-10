@@ -1,7 +1,6 @@
 import { districtLabel } from '@/lib/districts'
 import { CONTACT_TOPICS } from '@/lib/options'
 import { isPlaceholderEmail, normalizeBdPhone } from '@/lib/phone'
-import { EDITOR_ROLES, MODERATOR_ROLES } from '@/lib/roles'
 import {
   contactSchema,
   volunteerSchema,
@@ -16,6 +15,7 @@ import { errors } from './errors'
 import { notify, usersWithRoles } from './notifications'
 import { consumeRateLimit } from './rate-limit'
 import { verifyTurnstile } from './turnstile'
+import { rolesAt } from '@/server/permissions'
 
 async function guard(ctx: ServiceContext, key: string, token: string | undefined) {
   const limit = await consumeRateLimit(ctx.payload, `${key}:ip:${ctx.ip ?? 'unknown'}`, 5, 60 * 60)
@@ -55,7 +55,7 @@ export async function submitVolunteer(ctx: ServiceContext, input: VolunteerInput
     const { html, text } = emailTemplates.volunteerReceived(data.name)
     await sendEmail({ to: email, subject: 'আপনার আবেদন পেয়েছি · Ruhama', html, text })
   }
-  const staff = await usersWithRoles(ctx.payload, [...MODERATOR_ROLES])
+  const staff = await usersWithRoles(ctx.payload, await rolesAt('volunteers', 'edit'))
   await notify(ctx.payload, {
     recipients: staff,
     kind: 'system',
@@ -93,7 +93,9 @@ export async function submitContact(ctx: ServiceContext, input: ContactInput) {
   const topicLabel = CONTACT_TOPICS.find((t) => t.value === data.topic)?.label ?? 'সাধারণ'
   const staff = await usersWithRoles(
     ctx.payload,
-    data.topic === 'correction' ? [...EDITOR_ROLES] : ['super_admin', 'shura', ...MODERATOR_ROLES],
+    data.topic === 'correction'
+      ? await rolesAt('articles', 'edit')
+      : await rolesAt('contact-messages', 'edit'),
   )
   await notify(ctx.payload, {
     recipients: staff,

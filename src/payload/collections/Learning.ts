@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { hasRole, STAFF_ROLES } from '@/lib/roles'
 
-import { adminsOnly, ownOrRoles } from '../access'
+import { menuAccess, menuRead } from '../access/permissions'
 
 const staffHidden = ({ user }: { user: unknown }) =>
   !hasRole(user as { role?: unknown }, ...STAFF_ROLES)
@@ -20,10 +20,8 @@ export const Enrollments: CollectionConfig = {
     hidden: staffHidden,
   },
   access: {
-    read: ownOrRoles('user', 'super_admin', 'shura', 'editor'),
-    create: adminsOnly,
-    update: adminsOnly,
-    delete: adminsOnly,
+    read: menuRead('enrollments', { ownField: 'user' }),
+    ...menuAccess('enrollments'),
   },
   fields: [
     { name: 'user', type: 'relationship', relationTo: 'users', required: true, index: true },
@@ -46,10 +44,8 @@ export const LessonProgress: CollectionConfig = {
     hidden: staffHidden,
   },
   access: {
-    read: ownOrRoles('user', 'super_admin', 'shura', 'editor'),
-    create: adminsOnly,
-    update: adminsOnly,
-    delete: adminsOnly,
+    read: menuRead('lesson-progress', { ownField: 'user' }),
+    ...menuAccess('lesson-progress'),
   },
   fields: [
     { name: 'user', type: 'relationship', relationTo: 'users', required: true, index: true },

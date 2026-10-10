@@ -27,6 +27,7 @@ export type SitemapType = (typeof SITEMAP_TYPES)[number]
 const STATIC_PAGES: SitemapEntry[] = [
   { path: '/', priority: 1, changeFrequency: 'daily' },
   { path: '/about', priority: 0.8, changeFrequency: 'monthly' },
+  { path: '/about/shura', priority: 0.5, changeFrequency: 'monthly' },
   { path: '/adab', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/ilm', priority: 0.9, changeFrequency: 'daily' },
   { path: '/ikhtilaf', priority: 0.8, changeFrequency: 'weekly' },

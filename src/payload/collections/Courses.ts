@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { JOURNEY_STAGES } from '@/lib/journey'
 import { hasRole, STAFF_ROLES } from '@/lib/roles'
 
-import { contentTeam, editorsOnly, statusPublishedOrStaff } from '../access'
+import { menuAccess, menuRead } from '../access/permissions'
 import { levelField, searchTextField, slugField } from '../fields'
 import { revalidateCollection } from '../hooks/revalidate'
 import { previewUrl } from '../preview'
@@ -28,10 +28,8 @@ export const Courses: CollectionConfig = {
   defaultSort: 'order',
   versions: { maxPerDoc: 20 },
   access: {
-    read: statusPublishedOrStaff(),
-    create: contentTeam,
-    update: contentTeam,
-    delete: editorsOnly,
+    read: menuRead('courses', { publicWhere: { status: { equals: 'published' } } }),
+    ...menuAccess('courses'),
   },
   hooks: {
     beforeChange: [

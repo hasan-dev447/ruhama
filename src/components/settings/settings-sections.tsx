@@ -1,9 +1,9 @@
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { IconKey, IconLaptop, IconMail, IconMobile } from '@/components/icons'
+import { IconKey, IconLaptop, IconMobile } from '@/components/icons'
 import { useRouter } from 'next/navigation'
-import { useRef, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
 import {
@@ -11,10 +11,10 @@ import {
   updateNotificationPrefsAction,
   updateProfileAction,
 } from '@/actions/settings'
-import { OtpInput } from '@/components/auth/otp-input'
 import { FacebookLogo, GoogleLogo } from '@/components/icons/social'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { DistrictSelect } from '@/components/ui/district-select'
 import {
   CheckCard,
   Field,
@@ -27,16 +27,13 @@ import {
 } from '@/components/ui/form'
 import { Modal } from '@/components/ui/modal'
 import { Skeleton } from '@/components/ui/primitives'
-import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
 
 import { GenderNote, PhotoField } from './profile-settings'
 import { authClient } from '@/lib/auth/client'
 import { authErrorMessage } from '@/lib/auth/errors'
-import { DIVISIONS } from '@/lib/districts'
 import { bn, formatRelative } from '@/lib/format'
 import { JOURNEY_STAGES } from '@/lib/journey'
 import { INTEREST_OPTIONS } from '@/lib/options'
-import { isPlaceholderEmail, normalizeBdPhone } from '@/lib/phone'
 
 export type SettingsUser = {
   name: string
@@ -64,7 +61,7 @@ const SWATCHES = [
   { value: 'deep', label: 'গাঢ় টিল', bg: 'var(--rh-primary)', ink: 'var(--rh-on-primary)' },
 ] as const
 
-function Card({
+export function Card({
   id,
   title,
   children,
@@ -200,18 +197,7 @@ export function ProfileSection({ user }: { user: SettingsUser }) {
             />
           </Field>
           <Field label="জেলা" htmlFor="p-district">
-            <Select id="p-district" value={district} onChange={(e) => setDistrict(e.target.value)}>
-              <option value="">নির্বাচন করুন</option>
-              {DIVISIONS.map((d) => (
-                <optgroup key={d.value} label={d.label}>
-                  {d.districts.map((x) => (
-                    <option key={x.value} value={x.value}>
-                      {x.label}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </Select>
+            <DistrictSelect id="p-district" value={district} onChange={setDistrict} />
           </Field>
         </div>
         <Field
@@ -292,98 +278,6 @@ export function ProfileSection({ user }: { user: SettingsUser }) {
 
 type Account = { providerId: string; accountId: string }
 
-function PhoneLinkModal({
-  open,
-  onOpenChange,
-  onLinked,
-}: {
-  open: boolean
-  onOpenChange: (o: boolean) => void
-  onLinked: () => void
-}) {
-  const [phone, setPhone] = useState('')
-  const [sentTo, setSentTo] = useState<string | null>(null)
-  const [code, setCode] = useState('')
-  const [token, setToken] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const turnstile = useRef<TurnstileHandle>(null)
-  const [pending, start] = useTransition()
-
-  function send(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
-    const e164 = normalizeBdPhone(phone)
-    if (!e164) return setError('সঠিক বাংলাদেশি মোবাইল নম্বর দিন।')
-    if (!token) return setError('নিরাপত্তা যাচাই সম্পন্ন করুন।')
-    start(async () => {
-      const { error } = await authClient.phoneNumber.sendOtp(
-        { phoneNumber: e164 },
-        { headers: { 'x-captcha-response': token } },
-      )
-      turnstile.current?.reset()
-      setToken(null)
-      if (error) setError(authErrorMessage(error))
-      else setSentTo(e164)
-    })
-  }
-  function verify(e: React.FormEvent) {
-    e.preventDefault()
-    if (!sentTo) return
-    setError(null)
-    start(async () => {
-      const { error } = await authClient.phoneNumber.verify({
-        phoneNumber: sentTo,
-        code,
-        updatePhoneNumber: true,
-      })
-      if (error) return setError(authErrorMessage(error))
-      toast.success('মোবাইল নম্বর সংযুক্ত হয়েছে')
-      onLinked()
-      onOpenChange(false)
-    })
-  }
-  return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title="মোবাইল নম্বর সংযুক্ত করুন"
-      description="যাচাইয়ের পর এই নম্বরে কোড নিয়েও লগইন করতে পারবেন।"
-      width={440}
-      onSubmit={sentTo ? verify : send}
-    >
-      {error ? <FormAlert>{error}</FormAlert> : null}
-      {sentTo ? (
-        <>
-          <p className="t-small t-muted">
-            {bn(sentTo.replace(/^\+88/, ''))} নম্বরে পাঠানো ৬ অঙ্কের কোড লিখুন।
-          </p>
-          <OtpInput value={code} onChange={setCode} autoFocus />
-          <Button type="submit" block pending={pending} disabled={code.length !== 6}>
-            যাচাই করুন
-          </Button>
-        </>
-      ) : (
-        <>
-          <Field label="মোবাইল নম্বর" htmlFor="link-phone">
-            <Input
-              id="link-phone"
-              type="tel"
-              inputMode="tel"
-              placeholder="০১XXXXXXXXX"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </Field>
-          <Turnstile ref={turnstile} onToken={setToken} action="otp" />
-          <Button type="submit" block pending={pending} disabled={!phone}>
-            কোড পাঠান
-          </Button>
-        </>
-      )}
-    </Modal>
-  )
-}
-
 function PasswordModal({
   open,
   onOpenChange,
@@ -447,64 +341,7 @@ function PasswordModal({
   )
 }
 
-function EmailModal({
-  open,
-  onOpenChange,
-  current,
-}: {
-  open: boolean
-  onOpenChange: (o: boolean) => void
-  current: string
-}) {
-  const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [pending, start] = useTransition()
-  function submit(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
-    start(async () => {
-      const { error } = await authClient.changeEmail({
-        newEmail: email.trim(),
-        callbackURL: '/settings#logins',
-      })
-      if (error) setError(authErrorMessage(error))
-      else setSent(true)
-    })
-  }
-  return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title="ইমেইল পরিবর্তন"
-      width={440}
-      onSubmit={submit}
-    >
-      {error ? <FormAlert>{error}</FormAlert> : null}
-      {sent ? (
-        <p className="t-small">
-          নিশ্চিত করতে {isPlaceholderEmail(current) ? 'নতুন' : 'বর্তমান'} ইমেইলে একটি লিংক পাঠানো
-          হয়েছে। লিংকে ক্লিক করলেই পরিবর্তন সম্পন্ন হবে।
-        </p>
-      ) : (
-        <>
-          <Field label="নতুন ইমেইল" htmlFor="ce-email">
-            <Input
-              id="ce-email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Field>
-          <Button type="submit" block pending={pending} disabled={!email}>
-            নিশ্চিতকরণ লিংক পাঠান
-          </Button>
-        </>
-      )}
-    </Modal>
-  )
-}
+/* ---------------- login methods ---------------- */
 
 export function LoginsSection({
   user,
@@ -515,7 +352,6 @@ export function LoginsSection({
   google: boolean
   facebook: boolean
 }) {
-  const router = useRouter()
   const qc = useQueryClient()
   const accounts = useQuery({
     queryKey: ['me', 'accounts'],
@@ -525,11 +361,10 @@ export function LoginsSection({
       return (data ?? []) as Account[]
     },
   })
-  const [modal, setModal] = useState<'phone' | 'password' | 'email' | null>(null)
+  const [modal, setModal] = useState<'password' | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const has = (p: string) => Boolean(accounts.data?.some((a) => a.providerId === p))
-  const methodCount = (accounts.data?.length ?? 0) + (user.phoneNumberVerified ? 1 : 0)
-  const realEmail = !isPlaceholderEmail(user.email)
+  const methodCount = accounts.data?.length ?? 0
 
   async function unlink(providerId: string, label: string) {
     if (methodCount <= 1) return toast.error('অন্তত একটি লগইন পদ্ধতি সংযুক্ত থাকতে হবে।')
@@ -551,7 +386,6 @@ export function LoginsSection({
     }
   }
   async function setPassword() {
-    if (!realEmail) return toast.error('আগে একটি ইমেইল যুক্ত করুন।')
     const { error } = await authClient.requestPasswordReset({
       email: user.email,
       redirectTo: '/reset-password',
@@ -566,7 +400,7 @@ export function LoginsSection({
           key: 'google',
           logo: <GoogleLogo className="ic" />,
           name: 'Google',
-          detail: has('google') ? (realEmail ? user.email : 'সংযুক্ত') : 'সংযুক্ত নয়',
+          detail: has('google') ? 'সংযুক্ত' : 'সংযুক্ত নয়',
           on: has('google'),
           connect: () => link('google'),
           disconnect: () => unlink('google', 'Google'),
@@ -588,10 +422,10 @@ export function LoginsSection({
   return (
     <Card id="logins" title="লগইন পদ্ধতি">
       <p className="t-small t-muted" style={{ marginTop: 6 }}>
-        অন্তত একটি পদ্ধতি সংযুক্ত থাকতে হবে।
+        অন্তত একটি পদ্ধতি সংযুক্ত থাকতে হবে। ইমেইল ও মোবাইল নম্বর উপরের অংশ থেকে সামলান।
       </p>
       {accounts.isPending ? (
-        <Skeleton style={{ height: 200, marginTop: 12 }} />
+        <Skeleton style={{ height: 160, marginTop: 12 }} />
       ) : (
         <div style={{ marginTop: 8 }}>
           {rows.map((r) => (
@@ -632,65 +466,32 @@ export function LoginsSection({
           <div className="setting-row">
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
               <span className="provider-logo" aria-hidden="true">
-                <IconMail className="ic" />
+                <IconKey className="ic" />
               </span>
               <div style={{ minWidth: 0 }}>
-                <strong>ইমেইল ও পাসওয়ার্ড</strong>
+                <strong>পাসওয়ার্ড</strong>
                 <p>
-                  {realEmail ? user.email : 'ইমেইল যুক্ত নেই'}
-                  {realEmail ? (user.emailVerified ? ' · যাচাইকৃত' : ' · যাচাই বাকি') : ''}
-                  {has('credential') ? '' : ' · পাসওয়ার্ড সেট করা নেই'}
+                  {has('credential')
+                    ? 'যেকোনো যাচাই করা ইমেইলের সাথে পাসওয়ার্ড দিয়ে লগইন করা যায়'
+                    : 'পাসওয়ার্ড সেট করা নেই'}
                 </p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-              <Button variant="ghost" size="sm" onClick={() => setModal('email')}>
-                {realEmail ? 'ইমেইল বদলান' : 'ইমেইল যুক্ত করুন'}
+            {has('credential') ? (
+              <Button variant="secondary" size="sm" onClick={() => setModal('password')}>
+                পাসওয়ার্ড বদলান
               </Button>
-              {has('credential') ? (
-                <Button variant="secondary" size="sm" onClick={() => setModal('password')}>
-                  <IconKey className="ic" aria-hidden="true" /> পাসওয়ার্ড বদলান
-                </Button>
-              ) : (
-                <Button variant="secondary" size="sm" onClick={setPassword}>
-                  পাসওয়ার্ড সেট করুন
-                </Button>
-              )}
-            </div>
-          </div>
-          <div className="setting-row">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-              <span className="provider-logo" aria-hidden="true">
-                <IconMobile className="ic" />
-              </span>
-              <div style={{ minWidth: 0 }}>
-                <strong>ফোন (ওটিপি)</strong>
-                <p>
-                  {user.phoneNumber && user.phoneNumberVerified
-                    ? `${bn(user.phoneNumber.replace(/^\+88/, ''))} · শুধু মজলিসের রিমাইন্ডার ও লগইনে ব্যবহৃত, কখনো পাবলিক নয়`
-                    : 'সংযুক্ত নয়'}
-                </p>
-              </div>
-            </div>
-            <Button variant="secondary" size="sm" onClick={() => setModal('phone')}>
-              {user.phoneNumberVerified ? 'নম্বর বদলান' : 'সংযুক্ত করুন'}
-            </Button>
+            ) : (
+              <Button variant="secondary" size="sm" onClick={setPassword}>
+                পাসওয়ার্ড সেট করুন
+              </Button>
+            )}
           </div>
         </div>
       )}
-      <PhoneLinkModal
-        open={modal === 'phone'}
-        onOpenChange={(o) => setModal(o ? 'phone' : null)}
-        onLinked={() => router.refresh()}
-      />
       <PasswordModal
         open={modal === 'password'}
         onOpenChange={(o) => setModal(o ? 'password' : null)}
-      />
-      <EmailModal
-        open={modal === 'email'}
-        onOpenChange={(o) => setModal(o ? 'email' : null)}
-        current={user.email}
       />
     </Card>
   )

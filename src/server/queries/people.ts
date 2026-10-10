@@ -108,7 +108,8 @@ export async function listShura(payload: Payload) {
     select: { name: true, slug: true, avatarTone: true, shuraRole: true, kinds: true },
     depth: 0,
     sort: 'shuraOrder',
-    limit: 30,
+    limit: 500,
+    pagination: false,
   })
   return res.docs
 }

@@ -14,11 +14,17 @@ export type SmsSettings = {
   senderId: string
 }
 export type EmailSettings = { resendApiKey: string; from: string; replyTo: string }
+/** The site's Google OAuth app for connecting YouTube channels (separate from Google sign-in). */
+export type YouTubeSettings = OAuthSettings & {
+  /** who may connect a channel: staff today, any member later */
+  audience: 'staff' | 'members'
+}
 export type IntegrationSettings = {
   google: OAuthSettings
   facebook: OAuthSettings
   sms: SmsSettings
   email: EmailSettings
+  youtube: YouTubeSettings
 }
 
 type StoredGroup = Record<string, string | boolean | null | undefined>
@@ -46,6 +52,9 @@ export function resolveIntegrations(stored: Stored | null, secret?: string): Int
   }
   const s = stored?.sms ?? {}
   const e = stored?.email ?? {}
+  const y = stored?.youtube ?? {}
+  const ytId = text(y.clientId) || env('YOUTUBE_CLIENT_ID')
+  const ytSecret = decryptSecret(text(y.clientSecretEnc), secret) || env('YOUTUBE_CLIENT_SECRET')
   const smsProvider = text(s.provider) || env('SMS_PROVIDER')
   return {
     google: oauth('google', 'GOOGLE'),
@@ -60,6 +69,13 @@ export function resolveIntegrations(stored: Stored | null, secret?: string): Int
       resendApiKey: decryptSecret(text(e.resendApiKeyEnc), secret) || env('RESEND_API_KEY'),
       from: text(e.from) || env('EMAIL_FROM') || 'Ruhama <noreply@ruhama.org>',
       replyTo: text(e.replyTo) || env('EMAIL_REPLY_TO'),
+    },
+    youtube: {
+      // off until the admin turns it on, even when the keys are in .env
+      enabled: y.enabled === true && Boolean(ytId && ytSecret),
+      clientId: ytId,
+      clientSecret: ytSecret,
+      audience: y.audience === 'members' ? 'members' : 'staff',
     },
   }
 }
@@ -102,6 +118,18 @@ export function cachedIntegrations(): IntegrationSettings {
 
 export function invalidateIntegrations() {
   cache = null
+}
+
+/**
+ * Whether email and SMS can really be sent (Resend key, SMS gateway), so login, registration and
+ * settings offer only the methods that work. The local test outbox (OUTBOX_DIR) does not count.
+ */
+export async function deliveryAvailability() {
+  const s = await loadIntegrations()
+  return {
+    email: Boolean(s.email.resendApiKey),
+    sms: s.sms.provider === 'bd_gateway' && Boolean(s.sms.apiUrl && s.sms.apiKey && s.sms.senderId),
+  }
 }
 
 /** Which sign-in buttons to show. */

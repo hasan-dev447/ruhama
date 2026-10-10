@@ -3,9 +3,9 @@ import { notFound, redirect } from 'next/navigation'
 
 import { ModerationQueue } from '@/components/forum/moderation-queue'
 import { PageHero } from '@/components/ui/primitives'
-import { hasRole, MODERATOR_ROLES } from '@/lib/roles'
 import { buildMetadata } from '@/lib/seo'
 import { actionContext } from '@/server/action-context'
+import { can } from '@/server/permissions'
 
 export const metadata: Metadata = buildMetadata({
   title: 'মডারেশন কিউ',
@@ -17,7 +17,7 @@ export const metadata: Metadata = buildMetadata({
 export default async function ModerationPage() {
   const { user } = await actionContext()
   if (!user) redirect('/login?next=/forum/moderation')
-  if (!hasRole(user, ...MODERATOR_ROLES)) notFound()
+  if (!(await can(user, 'forum.moderate'))) notFound()
   return (
     <main id="main">
       <PageHero

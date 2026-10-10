@@ -35,7 +35,7 @@ export function renderEmail(content: EmailContent): { html: string; text: string
 
   const html = `<!doctype html>
 <html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(heading)}</title></head>
-<body style="margin:0;padding:0;background:#FAF7F0;font-family:'Hind Siliguri','Noto Sans Bengali',Arial,sans-serif">
+<body style="margin:0;padding:0;background:#FAF7F0;font-family:'Noto Sans Bengali','Hind Siliguri',Arial,sans-serif">
 <span style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(preheader)}</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAF7F0;padding:32px 12px">
 <tr><td align="center">
@@ -45,7 +45,7 @@ export function renderEmail(content: EmailContent): { html: string; text: string
 <div style="width:40px;height:1px;background:#B88A3E;margin:14px 0 0"></div>
 </td></tr>
 <tr><td style="padding:16px 32px 28px">
-<h1 style="margin:0 0 16px;font-family:'Noto Serif Bengali',Georgia,serif;font-size:22px;line-height:1.5;color:#1A2421">${esc(heading)}</h1>
+<h1 style="margin:0 0 16px;font-family:'Noto Sans Bengali',Arial,sans-serif;font-size:22px;line-height:1.5;color:#1A2421">${esc(heading)}</h1>
 ${body}${button}${noteHtml}
 </td></tr>
 <tr><td style="padding:18px 32px;border-top:1px solid #E4DED2;font-size:13px;color:#5B6763;line-height:1.6">

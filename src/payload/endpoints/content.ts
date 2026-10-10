@@ -98,6 +98,7 @@ export const contentEndpoints = [
           .parse(q.get('mode') ?? undefined),
         district: slugish.parse(q.get('district') ?? undefined),
         page: page.parse(q.get('page')),
+        when: q.get('when') === 'past' ? 'past' : 'upcoming',
       })
     },
     { cache: PUBLIC },

@@ -16,7 +16,7 @@ export const PERSON_POPULATE = {
 } as const
 export const CATEGORY_POPULATE = { name: true, slug: true, icon: true } as const
 
-const CARD_SELECT = {
+export const CARD_SELECT = {
   title: true,
   slug: true,
   excerpt: true,
@@ -197,7 +197,7 @@ export async function countPublishedArticles(payload: Payload) {
 
 /* ---------------- ikhtilaf ---------------- */
 
-const IKH_SELECT = {
+export const IKH_SELECT = {
   title: true,
   slug: true,
   lead: true,

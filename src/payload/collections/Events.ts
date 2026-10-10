@@ -5,11 +5,12 @@ import { hasRole, STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
 import { recountEvent, recountPerson } from '@/server/services/counters'
 
-import { adminsOnly, editorsOnly, ownOrRoles, roles, statusPublishedOrStaff } from '../access'
+import { fieldAtLevel, menuAccess, menuRead } from '../access/permissions'
 import { searchTextField, slugField } from '../fields'
 import { revalidateCollection, safeRevalidate } from '../hooks/revalidate'
 import { previewUrl } from '../preview'
 import { PUBLISH_STATUS } from './Courses'
+import { eventRules } from '@/server/rules'
 
 const idOf = (v: unknown) =>
   v && typeof v === 'object' && 'id' in v
@@ -23,8 +24,6 @@ const revalidate = revalidateCollection('events', {
     ...((doc.speakers as unknown[]) ?? []).map((s) => TAGS.doc('people', idOf(s)!)),
   ],
 })
-
-const eventStaff = roles('super_admin', 'shura', 'editor', 'moderator')
 
 /** মজলিস: online or in-person gatherings with capacity-limited registration. */
 export const Events: CollectionConfig = {
@@ -40,10 +39,8 @@ export const Events: CollectionConfig = {
   defaultSort: 'startsAt',
   versions: { maxPerDoc: 20 },
   access: {
-    read: statusPublishedOrStaff(),
-    create: eventStaff,
-    update: eventStaff,
-    delete: editorsOnly,
+    read: menuRead('events', { publicWhere: { status: { equals: 'published' } } }),
+    ...menuAccess('events'),
   },
   hooks: {
     beforeChange: [
@@ -165,7 +162,7 @@ export const Events: CollectionConfig = {
         condition: (d) => d?.mode === 'online',
         description: 'শুধু রেজিস্টার করা ব্যক্তিরা ইমেইলে পাবেন; পাবলিক পাতায় দেখানো হয় না।',
       },
-      access: { read: ({ req }) => hasRole(req.user, ...STAFF_ROLES) },
+      access: { read: fieldAtLevel('events', 'view') },
     },
     { name: 'audience', label: 'কাদের জন্য', type: 'textarea', defaultValue: 'সবার জন্য উন্মুক্ত' },
     {
@@ -175,6 +172,18 @@ export const Events: CollectionConfig = {
       defaultValue: false,
     },
     { name: 'allowGuests', label: 'সঙ্গী আনার সুযোগ', type: 'checkbox', defaultValue: true },
+    {
+      name: 'maxGuests',
+      label: 'একজন সর্বোচ্চ কতজন সঙ্গী আনতে পারবেন (ঐচ্ছিক)',
+      type: 'number',
+      min: 1,
+      admin: {
+        step: 1,
+        condition: (d) => Boolean(d?.allowGuests),
+        description:
+          'খালি রাখলে কোনো আলাদা সীমা নেই, শুধু বাকি আসন পর্যন্ত (যেমন কোনো প্রতিষ্ঠান ১০০+ জন নিয়ে আসতে পারে)।',
+      },
+    },
     { name: 'description', label: 'মজলিস সম্পর্কে', type: 'richText' },
     {
       name: 'agenda',
@@ -212,7 +221,8 @@ export const Events: CollectionConfig = {
       type: 'number',
       required: true,
       min: 1,
-      defaultValue: 100,
+      // the মজলিস menu's rule (নিয়ম panel), 100 unless changed
+      defaultValue: async () => (await eventRules()).defaultCapacity,
       admin: { position: 'sidebar' },
     },
     {
@@ -329,10 +339,8 @@ export const EventRegistrations: CollectionConfig = {
     ],
   },
   access: {
-    read: ownOrRoles('user', 'super_admin', 'shura', 'editor', 'moderator'),
-    create: adminsOnly,
-    update: roles('super_admin', 'shura', 'editor', 'moderator'),
-    delete: adminsOnly,
+    read: menuRead('event-registrations', { ownField: 'user' }),
+    ...menuAccess('event-registrations'),
   },
   fields: [
     { name: 'event', type: 'relationship', relationTo: 'events', required: true, index: true },
@@ -357,7 +365,7 @@ export const EventRegistrations: CollectionConfig = {
         { label: 'বোনদের অংশ', value: 'sisters' },
       ],
     },
-    { name: 'guests', label: 'সঙ্গী', type: 'number', defaultValue: 0, min: 0, max: 3 },
+    { name: 'guests', label: 'সঙ্গী', type: 'number', defaultValue: 0, min: 0 },
     {
       name: 'status',
       label: 'অবস্থা',

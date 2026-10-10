@@ -19,7 +19,11 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default async function EventsPage() {
-  const [initial, districts] = await Promise.all([data.events({}), data.eventDistricts()])
+  const [initial, upcomingDistricts, pastDistricts] = await Promise.all([
+    data.events({}),
+    data.eventDistricts('upcoming'),
+    data.eventDistricts('past'),
+  ])
   return (
     <main id="main">
       <PageHero
@@ -31,7 +35,10 @@ export default async function EventsPage() {
       <section className="section-sm">
         <div className="rh-container">
           <Suspense fallback={<EventGridSkeleton />}>
-            <EventBrowser initial={initial} districts={districts} />
+            <EventBrowser
+              initial={initial}
+              districts={{ upcoming: upcomingDistricts, past: pastDistricts }}
+            />
           </Suspense>
         </div>
       </section>

@@ -11,6 +11,8 @@ import {
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+
+import { isProfileIncomplete } from '@/lib/profile-complete'
 import { Suspense } from 'react'
 
 import { JourneyProgress } from '@/components/dashboard/journey-progress'
@@ -418,7 +420,7 @@ export default async function DashboardPage() {
   const ctx = await actionContext()
   const user = ctx.user
   if (!user) redirect('/login?next=/dashboard')
-  if (!user.gender) redirect('/onboarding?next=/dashboard')
+  if (isProfileIncomplete(user)) redirect('/onboarding?next=/dashboard')
   const interests = (user.interests ?? [])
     .map((v) => INTEREST_OPTIONS.find((o) => o.value === v)?.label)
     .filter(Boolean)

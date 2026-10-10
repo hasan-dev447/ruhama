@@ -10,10 +10,11 @@ import type { z } from 'zod'
 import { submitVolunteerAction } from '@/actions/outreach'
 import { BrandMark } from '@/components/icons/brand-mark'
 import { Button, ButtonLink } from '@/components/ui/button'
-import { CheckCard, Field, FormAlert, Input, Select, Textarea } from '@/components/ui/form'
+import { DistrictSelect } from '@/components/ui/district-select'
+import { CheckCard, Field, FormAlert, Input, Textarea } from '@/components/ui/form'
 import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
 import { useSession } from '@/lib/auth/client'
-import { DIVISIONS } from '@/lib/districts'
+import { saveRegisterPrefill } from '@/lib/register-prefill'
 import { INTEREST_OPTIONS } from '@/lib/options'
 import { volunteerSchema } from '@/lib/validation/forms'
 
@@ -46,6 +47,7 @@ export function VolunteerForm({ initialInterest }: { initialInterest?: string | 
   })
   const { errors } = form.formState
   const interests = useWatch({ control: form.control, name: 'interests' }) ?? []
+  const district = (useWatch({ control: form.control, name: 'district' }) as string) ?? ''
 
   const onValid = (values: z.output<typeof volunteerSchema>) => {
     setServerError(null)
@@ -61,6 +63,8 @@ export function VolunteerForm({ initialInterest }: { initialInterest?: string | 
         setToken(null)
         return
       }
+      if (!user)
+        saveRegisterPrefill({ name: values.name, email: values.email || '', phone: values.phone })
       setSent(true)
     })
   }
@@ -75,11 +79,23 @@ export function VolunteerForm({ initialInterest }: { initialInterest?: string | 
           আপনার আবেদন পেয়েছি। আপনার জেলার সমন্বয়ক আগামী কয়েক দিনের মধ্যে যোগাযোগ করবেন,
           ইনশাআল্লাহ।
         </p>
+        {user ? null : (
+          <div className="join-account" style={{ maxWidth: 420 }}>
+            <strong>সাইটে অ্যাকাউন্টও খুলে নিন</strong>
+            <p className="t-small t-muted" style={{ margin: '6px 0 0' }}>
+              আবেদন জমা দিলে অ্যাকাউন্ট তৈরি হয় না। অ্যাকাউন্ট থাকলে মজলিসে এক ক্লিকে রেজিস্ট্রেশন,
+              কোর্সের অগ্রগতি আর সংরক্ষিত লেখা এক জায়গায় পাবেন। আপনার নাম, ইমেইল ও মোবাইল আগে
+              থেকেই বসানো থাকবে, শুধু পাসওয়ার্ড দিন।
+            </p>
+          </div>
+        )}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>
           {user ? (
             <ButtonLink href="/dashboard">ড্যাশবোর্ড</ButtonLink>
           ) : (
-            <ButtonLink href="/register">অ্যাকাউন্ট খুলুন</ButtonLink>
+            <ButtonLink href="/register?next=/dashboard" arrow>
+              অ্যাকাউন্ট খুলুন
+            </ButtonLink>
           )}
           <ButtonLink href="/events" variant="secondary">
             আসন্ন মজলিস
@@ -142,20 +158,16 @@ export function VolunteerForm({ initialInterest }: { initialInterest?: string | 
         htmlFor="j-district"
         required
         error={errors.district?.message}
-        hint="বাংলাদেশের ৬৪টি জেলা, বিভাগ অনুযায়ী সাজানো।"
+        hint="বাংলা বা ইংরেজিতে লিখে খুঁজুন, যেমন ঢাকা বা dhaka।"
       >
-        <Select id="j-district" invalid={Boolean(errors.district)} {...form.register('district')}>
-          <option value="">জেলা নির্বাচন করুন</option>
-          {DIVISIONS.map((d) => (
-            <optgroup key={d.value} label={d.label}>
-              {d.districts.map((x) => (
-                <option key={x.value} value={x.value}>
-                  {x.label}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </Select>
+        <DistrictSelect
+          id="j-district"
+          value={district}
+          invalid={Boolean(errors.district)}
+          onChange={(v) =>
+            form.setValue('district', v as never, { shouldValidate: true, shouldDirty: true })
+          }
+        />
       </Field>
       <fieldset className="field" style={{ border: 0, padding: 0, margin: 0 }}>
         <legend className="label" style={{ marginBottom: 8 }}>

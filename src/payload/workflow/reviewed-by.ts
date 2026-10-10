@@ -1,6 +1,8 @@
 import type { CollectionBeforeChangeHook } from 'payload'
 
 import type { Approval } from './constants'
+import { getWorkflowRules } from '@/server/rules'
+
 import { validApprovers } from './logic'
 
 /**
@@ -12,11 +14,17 @@ export const fillReviewedBy: CollectionBeforeChangeHook = async ({
   originalDoc,
   req,
   context,
+  collection,
 }) => {
   if (context.skipWorkflow) return data
   if (data.reviewStatus !== 'published') return data
   const approvals = (data.approvals ?? originalDoc?.approvals ?? []) as Approval[]
-  const reviewerUserIds = validApprovers(approvals, String(data.contentHash ?? ''), data.createdBy)
+  const reviewerUserIds = validApprovers(
+    approvals,
+    String(data.contentHash ?? ''),
+    data.createdBy,
+    await getWorkflowRules(collection.slug),
+  )
   if (reviewerUserIds.length === 0) return data
   const people = await req.payload.find({
     collection: 'people',

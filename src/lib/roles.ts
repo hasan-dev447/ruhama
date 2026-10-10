@@ -9,6 +9,9 @@ export const ROLES = [
   'editor',
   'author',
   'moderator',
+  // public profile roles: a page under আলিম, লেখক ও বক্তা, no admin panel access
+  'scholar',
+  'speaker',
   'member',
 ] as const
 export type Role = (typeof ROLES)[number]
@@ -35,8 +38,22 @@ export const ROLE_LABELS: Record<Role, string> = {
   editor: 'সম্পাদক',
   author: 'লেখক',
   moderator: 'মডারেটর',
+  scholar: 'আলিম',
+  speaker: 'বক্তা',
   member: 'সদস্য',
 }
+
+/**
+ * The roles that come with a public profile (আলিম, লেখক ও বক্তা) and the "ভূমিকা" each one shows
+ * there. Which of them actually create a profile is the people menu's rule (lib/collection-rules).
+ */
+export const PROFILE_KIND_OF: Partial<Record<Role, 'scholar' | 'author' | 'reviewer' | 'speaker'>> =
+  {
+    scholar: 'scholar',
+    speaker: 'speaker',
+    author: 'author',
+    reviewer: 'reviewer',
+  }
 
 type WithRole = unknown
 

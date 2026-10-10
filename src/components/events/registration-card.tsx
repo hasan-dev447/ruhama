@@ -11,7 +11,7 @@ import type { z } from 'zod'
 
 import { cancelRegistrationAction, registerForEventAction } from '@/actions/events'
 import { Button, ButtonLink } from '@/components/ui/button'
-import { CheckCard, Field, FormAlert, Input, Select } from '@/components/ui/form'
+import { CheckCard, Field, FormAlert, Input } from '@/components/ui/form'
 import { Progress, Skeleton } from '@/components/ui/primitives'
 import { Turnstile, type TurnstileHandle } from '@/components/ui/turnstile'
 import { apiFetch } from '@/lib/api-client'
@@ -41,6 +41,8 @@ export function RegistrationCard({
     ended: boolean
     separateSeating: boolean
     allowGuests: boolean
+    /** per-person companion limit; none means only the seats left */
+    maxGuests?: number | null
     mode: string
   }
 }) {
@@ -73,7 +75,10 @@ export function RegistrationCard({
   })
   const { errors } = form.formState
   const seating = useWatch({ control: form.control, name: 'seating' })
+  const guests = useWatch({ control: form.control, name: 'guests' })
   const left = Math.max(0, event.capacity - seats)
+  // the registrant takes one seat; companions can fill the rest, up to the event's own limit
+  const maxGuests = Math.max(0, Math.min(event.maxGuests ?? Infinity, left - 1))
   const fill = event.capacity
     ? Math.round((Math.min(seats, event.capacity) / event.capacity) * 100)
     : 0
@@ -94,7 +99,13 @@ export function RegistrationCard({
         turnstile.current?.reset()
         setToken(null)
         for (const [path, message] of Object.entries(res.fieldErrors ?? {})) {
-          if (path === 'name' || path === 'phone' || path === 'email' || path === 'seating')
+          if (
+            path === 'name' ||
+            path === 'phone' ||
+            path === 'email' ||
+            path === 'seating' ||
+            path === 'guests'
+          )
             form.setError(path, { message })
         }
         return
@@ -295,18 +306,25 @@ export function RegistrationCard({
           </div>
         </fieldset>
       ) : null}
-      {event.allowGuests ? (
-        <Field label="সঙ্গে আরও কতজন আসবেন" htmlFor="r-plus">
-          <Select id="r-plus" {...form.register('guests')}>
-            <option value={0}>কেউ নয়</option>
-            {[1, 2, 3]
-              .filter((n) => n < left)
-              .map((n) => (
-                <option key={n} value={n}>
-                  {bn(n)} জন
-                </option>
-              ))}
-          </Select>
+      {event.allowGuests && maxGuests > 0 ? (
+        <Field
+          label="সঙ্গে আরও কতজন আসবেন"
+          htmlFor="r-plus"
+          error={errors.guests?.message}
+          hint={
+            event.maxGuests && event.maxGuests < left
+              ? `সর্বোচ্চ ${bn(maxGuests)} জন।`
+              : `বাকি আসন অনুযায়ী সর্বোচ্চ ${bn(maxGuests)} জন। দল বা প্রতিষ্ঠান নিয়ে এলে মোট সংখ্যা লিখুন।`
+          }
+        >
+          <GuestStepper
+            id="r-plus"
+            max={maxGuests}
+            value={Number(guests) || 0}
+            onChange={(n) =>
+              form.setValue('guests', n, { shouldValidate: true, shouldDirty: true })
+            }
+          />
         </Field>
       ) : null}
       {!user ? <Turnstile ref={turnstile} onToken={setToken} action="event-register" /> : null}
@@ -315,5 +333,54 @@ export function RegistrationCard({
       </Button>
       <p className="t-caption t-muted">আপনার তথ্য শুধু এই মজলিসের ব্যবস্থাপনায় ব্যবহৃত হবে।</p>
     </form>
+  )
+}
+
+/** − [ n ] + : any number of companions from 0 up to `max`, typed or stepped. */
+function GuestStepper({
+  id,
+  value,
+  max,
+  onChange,
+}: {
+  id: string
+  value: number
+  max: number
+  onChange: (n: number) => void
+}) {
+  const set = (n: number) => onChange(Math.max(0, Math.min(max, Math.round(n) || 0)))
+  return (
+    <div className="guest-stepper">
+      <button
+        type="button"
+        onClick={() => set(value - 1)}
+        disabled={value <= 0}
+        aria-label="একজন কম"
+      >
+        −
+      </button>
+      <Input
+        id={id}
+        type="number"
+        inputMode="numeric"
+        min={0}
+        max={max}
+        step={1}
+        value={value}
+        onChange={(e) => set(Number(e.target.value))}
+        aria-describedby={`${id}-unit`}
+      />
+      <span id={`${id}-unit`} className="guest-stepper__unit">
+        {value ? 'জন' : 'কেউ নয়'}
+      </span>
+      <button
+        type="button"
+        onClick={() => set(value + 1)}
+        disabled={value >= max}
+        aria-label="একজন বেশি"
+      >
+        +
+      </button>
+    </div>
   )
 }

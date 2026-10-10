@@ -1,4 +1,5 @@
 import type { Payload, Where } from 'payload'
+import { EVENT_GRACE_MS, eventEnded } from '@/lib/events'
 import type { User } from '@/payload-types'
 
 import { CATEGORY_POPULATE, PERSON_POPULATE } from './articles'
@@ -20,14 +21,83 @@ const EVENT_SELECT = {
   category: true,
 } as const
 
-/** Events still to come (an event stays listed until it ends). */
-function upcomingWhere(now = new Date()): Where {
-  const cutoff = new Date(now.getTime() - 3 * 3600 * 1000).toISOString()
-  return { and: [{ status: { equals: 'published' } }, { startsAt: { greater_than: cutoff } }] }
+const nowIso = (now: number) => new Date(now).toISOString()
+
+/** Published মজলিস still to come or under way (lib/events.ts: until the end time, else 3 hours). */
+export function upcomingWhere(now = Date.now()): Where {
+  return {
+    and: [
+      { status: { equals: 'published' } },
+      {
+        or: [
+          { endsAt: { greater_than_equal: nowIso(now) } },
+          {
+            and: [
+              { endsAt: { exists: false } },
+              { startsAt: { greater_than_equal: nowIso(now - EVENT_GRACE_MS) } },
+            ],
+          },
+        ],
+      },
+    ],
+  }
 }
 
-export async function listUpcomingEvents(payload: Payload, limit = 3): Promise<EventCardView[]> {
+/** Published মজলিস that are over. */
+export function endedWhere(now = Date.now()): Where {
+  return {
+    and: [
+      { status: { equals: 'published' } },
+      {
+        or: [
+          { endsAt: { less_than: nowIso(now) } },
+          {
+            and: [
+              { endsAt: { exists: false } },
+              { startsAt: { less_than: nowIso(now - EVENT_GRACE_MS) } },
+            ],
+          },
+        ],
+      },
+    ],
+  }
+}
+
+/** Which of these মজলিস have a published recap. */
+async function withRecaps(payload: Payload, ids: (number | string)[]): Promise<Set<number>> {
+  if (!ids.length) return new Set()
   const res = await payload.find({
+    collection: 'event-recaps',
+    where: { and: [{ event: { in: ids } }, { _status: { equals: 'published' } }] },
+    select: { event: true },
+    depth: 0,
+    limit: ids.length,
+    pagination: false,
+  })
+  return new Set(res.docs.map((r) => r.event as number))
+}
+
+async function toCards(payload: Payload, docs: unknown[]): Promise<EventCardView[]> {
+  const list = docs as { id: number; [k: string]: unknown }[]
+  const ended = list.filter((d) =>
+    eventEnded({ startsAt: d.startsAt as string, endsAt: d.endsAt as string | null }),
+  )
+  const recaps = await withRecaps(
+    payload,
+    ended.map((d) => d.id),
+  )
+  return list.map((d) => toEventCard(d as never, recaps.has(d.id)))
+}
+
+/**
+ * The home page's মজলিস: the next ones to come; when fewer than `limit` are coming, the most
+ * recent ones that are over fill the rest (they show as over, with what happened).
+ */
+export async function listUpcomingEvents(
+  payload: Payload,
+  limit = 3,
+): Promise<{ docs: EventCardView[]; upcoming: number }> {
+  const upcoming = await payload.find({
     collection: 'events',
     where: upcomingWhere(),
     select: EVENT_SELECT,
@@ -36,7 +106,23 @@ export async function listUpcomingEvents(payload: Payload, limit = 3): Promise<E
     sort: 'startsAt',
     limit,
   })
-  return res.docs.map((d) => toEventCard(d as never))
+  let past: unknown[] = []
+  if (upcoming.docs.length < limit) {
+    const res = await payload.find({
+      collection: 'events',
+      where: endedWhere(),
+      select: EVENT_SELECT,
+      populate: { categories: CATEGORY_POPULATE },
+      depth: 1,
+      sort: '-startsAt',
+      limit: limit - upcoming.docs.length,
+    })
+    past = res.docs
+  }
+  return {
+    docs: await toCards(payload, [...upcoming.docs, ...past]),
+    upcoming: upcoming.docs.length,
+  }
 }
 
 export async function listEvents(
@@ -47,9 +133,12 @@ export async function listEvents(
     page?: number
     limit?: number
     speakerId?: number | string
+    /** the "upcoming" tab (default) or the "over" tab, newest first */
+    when?: 'upcoming' | 'past'
   } = {},
 ) {
-  const and: Where[] = [upcomingWhere()]
+  const past = params.when === 'past'
+  const and: Where[] = [past ? endedWhere() : upcomingWhere()]
   if (params.mode === 'online' || params.mode === 'in_person')
     and.push({ mode: { equals: params.mode } })
   if (params.district && params.district !== 'all')
@@ -61,12 +150,12 @@ export async function listEvents(
     select: EVENT_SELECT,
     populate: { categories: CATEGORY_POPULATE },
     depth: 1,
-    sort: 'startsAt',
+    sort: past ? '-startsAt' : 'startsAt',
     page: params.page ?? 1,
     limit: params.limit ?? 12,
   })
   return {
-    docs: res.docs.map((d) => toEventCard(d as never)),
+    docs: await toCards(payload, res.docs),
     totalDocs: res.totalDocs,
     totalPages: res.totalPages,
     page: res.page ?? 1,
@@ -74,11 +163,16 @@ export async function listEvents(
   }
 }
 
-/** Districts that currently have upcoming in-person events (for the filter). */
-export async function eventDistricts(payload: Payload): Promise<string[]> {
+/** Districts with in-person events in that tab (for the filter). */
+export async function eventDistricts(
+  payload: Payload,
+  when: 'upcoming' | 'past' = 'upcoming',
+): Promise<string[]> {
   const res = await payload.find({
     collection: 'events',
-    where: { and: [upcomingWhere(), { mode: { equals: 'in_person' } }] },
+    where: {
+      and: [when === 'past' ? endedWhere() : upcomingWhere(), { mode: { equals: 'in_person' } }],
+    },
     select: { district: true },
     depth: 0,
     limit: 200,
@@ -108,6 +202,35 @@ export async function getEvent(
   const doc = res.docs[0]
   if (!doc || (!opts.draft && doc.status !== 'published')) return null
   return doc
+}
+
+/** What happened at a মজলিস that is over (published; a draft too when previewing). */
+export async function getEventRecap(
+  payload: Payload,
+  eventId: number,
+  opts: { draft?: boolean; user?: User | null } = {},
+) {
+  const res = await payload.find({
+    collection: 'event-recaps',
+    where: { event: { equals: eventId } },
+    depth: 1,
+    limit: 1,
+    draft: opts.draft,
+    overrideAccess: false,
+    user: opts.user ?? undefined,
+    select: {
+      summary: true,
+      attendance: true,
+      content: true,
+      gallery: true,
+      videos: true,
+      _status: true,
+    },
+    populate: { media: { url: true, alt: true, width: true, height: true, sizes: true } },
+  })
+  const recap = res.docs[0]
+  if (!recap || (!opts.draft && recap._status !== 'published')) return null
+  return recap
 }
 
 /* ---------------- circles ---------------- */

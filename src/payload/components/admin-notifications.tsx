@@ -102,11 +102,7 @@ export function AdminNotifications() {
         }}
       >
         <IconBell size={18} aria-hidden="true" />
-        {unread ? (
-          <span className="rh-bell__count">
-            {unread > 9 ? '৯+' : unread.toLocaleString('bn-BD')}
-          </span>
-        ) : null}
+        {unread ? <span className="rh-bell__count">{unread > 9 ? '9+' : unread}</span> : null}
       </button>
       {open ? (
         <div className="rh-bell__panel" role="dialog" aria-label="নোটিফিকেশন">

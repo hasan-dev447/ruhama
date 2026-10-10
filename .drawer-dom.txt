@@ -1,0 +1,21 @@
+dialog.payload__modal-item.payload__modal-item--slug-doc-drawer_users_0_14__r_0_.doc-drawer#doc-drawer_users_0_14__r_0_
+  div.drawer__blur-bg
+  button.drawer__close#close-drawer__doc-drawer_users_0_14__r_0_
+  div.drawer__content
+    div.drawer__blur-bg-content
+    div.gutter.drawer__content-children
+      main.collection-edit.collection-edit--is-editing.collection-edit--users
+        form.collection-edit__form.form#[object RadioNodeList]
+          div.gutter.gutter--left.gutter--right
+            div.doc-drawer__header-content
+            div.id-label
+          div.gutter.gutter--left.gutter--right
+            div.doc-controls__wrapper
+            div.doc-controls__divider
+          div.collection-edit__main-wrapper
+            div.collection-edit__main
+      div#_r_1_
+      div#DndLiveRegion-4
+
+SCROLLERS: gutter drawer__content-children | document-fields__sidebar
+SAVE BUTTONS: action-save:সংরক্ষণ করুন

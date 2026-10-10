@@ -1,7 +1,5 @@
 import type { CollectionConfig } from 'payload'
 
-import { ADMIN_ROLES, hasRole } from '@/lib/roles'
-
 import { adminsOnly, anyone } from '../access'
 
 /**
@@ -15,7 +13,8 @@ export const Avatars: CollectionConfig = {
   admin: {
     group: 'অ্যাকাউন্ট',
     defaultColumns: ['filename', 'user', 'updatedAt'],
-    hidden: ({ user }) => !hasRole(user, ...ADMIN_ROLES),
+    // managed from each user's panel (users list > a user), not as a menu of its own
+    hidden: true,
   },
   access: { read: anyone, create: () => false, update: () => false, delete: adminsOnly },
   upload: {

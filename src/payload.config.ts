@@ -3,14 +3,19 @@ import { fileURLToPath } from 'url'
 
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { seoPlugin } from '@payloadcms/plugin-seo'
-import { BlocksFeature, FixedToolbarFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
+import {
+  BlocksFeature,
+  FixedToolbarFeature,
+  lexicalEditor,
+  TextStateFeature,
+  UploadFeature,
+} from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { bnBd } from '@payloadcms/translations/languages/bnBd'
 import { buildConfig } from 'payload'
 import { betterAuthPlugin } from 'payload-auth/better-auth'
 import sharp from 'sharp'
 
-import { CONTENT_ROLES, hasRole } from './lib/roles'
 import { r2Endpoint } from './lib/r2'
 import { CONTENT_BLOCKS } from './payload/blocks'
 import { Articles } from './payload/collections/Articles'
@@ -23,6 +28,7 @@ import {
   MeetupRsvps,
 } from './payload/collections/Circles'
 import { Courses } from './payload/collections/Courses'
+import { EventRecaps } from './payload/collections/EventRecaps'
 import { EventRegistrations, Events } from './payload/collections/Events'
 import {
   ForumCategories,
@@ -35,6 +41,8 @@ import { IkhtilafTopics } from './payload/collections/IkhtilafTopics'
 import { Enrollments, LessonProgress } from './payload/collections/Learning'
 import { Lessons } from './payload/collections/Lessons'
 import { Avatars } from './payload/collections/Avatars'
+import { UserContacts } from './payload/collections/UserContacts'
+import { YouTubeConnections } from './payload/collections/YouTubeConnections'
 import { Media } from './payload/collections/Media'
 import {
   AnswerVotes,
@@ -62,9 +70,14 @@ import { Playlists, Videos } from './payload/collections/Videos'
 import { apiV1Endpoints } from './payload/endpoints'
 import { GLOBALS } from './payload/globals'
 import { searchSchemaHook } from './payload/search-schema'
+import { adminLists } from './payload/plugins/admin-lists'
 import { banglaLabels } from './payload/plugins/bangla-labels'
+import { menuVisibility } from './payload/plugins/menu-visibility'
 import { payloadAuthOptions } from './server/auth/options'
 import { payloadEmailAdapter } from './server/email/payload-adapter'
+import { RICH_IMAGE_FIELDS } from './payload/fields/rich-image'
+import { TEXT_SIZES } from './lib/text-sizes'
+import { hasLevel } from './server/permissions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -90,6 +103,7 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
   admin: {
     user: 'users',
+    dateFormat: 'MMM d, yyyy, h:mm a',
     importMap: { baseDir: path.resolve(dirname) },
     meta: {
       titleSuffix: ' · Ruhama অ্যাডমিন',
@@ -118,10 +132,13 @@ export default buildConfig({
   },
   // Bangla only: with English enabled, browsers set to English got a half-English admin
   i18n: {
-    supportedLanguages: { 'bn-BD': bnBd },
+    // Bangla words, but dates and times in English ("Oct 7, 2026, 12:34 AM"), which read more easily
+    supportedLanguages: { 'bn-BD': { ...bnBd, dateFNSKey: 'en-US' } },
     fallbackLanguage: 'bn-BD',
     translations: {
       'bn-BD': {
+        // yes/no columns and filters read better than Payload's "সত্য / মিথ্যা"
+        general: { true: 'Yes', false: 'No', noLabel: 'None' },
         // the rich-text editor ships no Bangla either: without these it shows raw keys
         lexical: {
           general: {
@@ -196,6 +213,8 @@ export default buildConfig({
     Lessons,
     Events,
     EventRegistrations,
+    EventRecaps,
+    YouTubeConnections,
     Circles,
     CircleMeetups,
     CircleMemberships,
@@ -223,15 +242,20 @@ export default buildConfig({
     Pages,
     Media,
     Avatars,
+    UserContacts,
     AuditLogs,
     RateLimits,
   ],
   globals: GLOBALS,
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
-      ...defaultFeatures,
+      ...defaultFeatures.filter((f) => f.key !== 'upload'),
+      // each image placed in text gets its own size, place, crop and caption (lib/rich-image.ts)
+      UploadFeature({ collections: { media: { fields: RICH_IMAGE_FIELDS } } }),
       FixedToolbarFeature(),
       BlocksFeature({ blocks: CONTENT_BLOCKS }),
+      // text size, like a word processor; stored as a name (not a style), the site maps it to a class
+      TextStateFeature({ state: { size: TEXT_SIZES } }),
     ],
   }),
   db: postgresAdapter({
@@ -306,7 +330,7 @@ export default buildConfig({
       // the admin uploads straight to R2 with a short-lived signed URL, so files larger than Vercel's
       // 4.5 MB request limit work (needs the bucket CORS rule from the README)
       clientUploads: {
-        access: ({ req }) => hasRole(req.user as never, ...CONTENT_ROLES),
+        access: async ({ req }) => hasLevel(req.user, 'media', 'add'),
       },
       collections: {
         avatars: {
@@ -335,6 +359,10 @@ export default buildConfig({
         },
       },
     }),
+    // inline yes/no and choice edits in lists, and lists that load only their columns
+    adminLists,
+    // each role sees only the menus where it can do something
+    menuVisibility,
     // last: gives every remaining English field label a natural Bangla one
     banglaLabels,
   ],

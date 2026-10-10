@@ -1,7 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
 import { readingMinutes } from '@/lib/lexical'
-import { CONTENT_ROLES, hasRole, STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
 import { recountPerson } from '@/server/services/counters'
 
@@ -19,7 +18,7 @@ import { workflowFields } from '../workflow/fields'
 import { WORKFLOW_HASH_FIELDS } from '../workflow/hash-fields'
 import { workflowAfterChange, workflowBeforeChange } from '../workflow/hooks'
 import { fillReviewedBy } from '../workflow/reviewed-by'
-import { contentDelete, contentRead, contentUpdate } from './Articles'
+import { workflowAccess } from './Articles'
 
 const HASH_FIELDS = WORKFLOW_HASH_FIELDS['ikhtilaf-topics']
 
@@ -50,19 +49,12 @@ export const IkhtilafTopics: CollectionConfig = {
     group: 'ইলম কেন্দ্র',
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'reviewStatus', '_status', 'updatedAt'],
-    hidden: ({ user }) => !hasRole(user, ...STAFF_ROLES),
     livePreview: { url: livePreviewUrl('ikhtilaf-topics') },
     preview: previewUrl('ikhtilaf-topics'),
   },
   defaultSort: '-publishedAt',
   versions: { drafts: { autosave: { interval: 1500 }, validate: false }, maxPerDoc: 50 },
-  access: {
-    read: contentRead,
-    readVersions: ({ req }) => hasRole(req.user, ...STAFF_ROLES),
-    create: ({ req }) => hasRole(req.user, ...CONTENT_ROLES),
-    update: contentUpdate,
-    delete: contentDelete,
-  },
+  access: workflowAccess('ikhtilaf-topics'),
   hooks: {
     beforeChange: [
       workflowBeforeChange(HASH_FIELDS),

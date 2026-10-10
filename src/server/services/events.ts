@@ -13,6 +13,8 @@ import { errors } from './errors'
 import { notify } from './notifications'
 import { consumeRateLimit } from './rate-limit'
 import { verifyTurnstile } from './turnstile'
+import { eventRules } from '../rules'
+import { registrationClosedEarly } from '@/lib/events'
 
 const SITE = () => (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
 
@@ -99,6 +101,24 @@ export async function registerForEvent(
   }
 
   const event = await ctx.payload.findByID({
+    select: {
+      status: true,
+      registrationOpen: true,
+      startsAt: true,
+      endsAt: true,
+      timeLabel: true,
+      separateSeating: true,
+      allowGuests: true,
+      maxGuests: true,
+      seatsTaken: true,
+      capacity: true,
+      slug: true,
+      title: true,
+      mode: true,
+      venueName: true,
+      venueAddress: true,
+      district: true,
+    },
     collection: 'events',
     id: eventId,
     depth: 0,
@@ -113,7 +133,18 @@ export async function registerForEvent(
     throw errors.invalid('বসার ব্যবস্থা বেছে নিন।', [
       { path: 'seating', message: 'বসার ব্যবস্থা বেছে নিন।' },
     ])
+  const rules = await eventRules()
+  if (registrationClosedEarly(event.startsAt, rules.closeRegistrationHoursBefore))
+    throw errors.conflict(
+      `মজলিস শুরুর ${rules.closeRegistrationHoursBefore} ঘণ্টা আগে রেজিস্ট্রেশন বন্ধ হয়ে গেছে।`,
+    )
   const guests = event.allowGuests ? data.guests : 0
+  // the event's own limit, else the মজলিস menu's rule (0: only the seats left)
+  const maxGuests = event.maxGuests || rules.defaultMaxGuests || null
+  if (maxGuests && guests > maxGuests)
+    throw errors.invalid(`এই মজলিসে একজনের সাথে সর্বোচ্চ ${maxGuests} জন সঙ্গী আসতে পারেন।`, [
+      { path: 'guests', message: `সর্বোচ্চ ${maxGuests} জন।` },
+    ])
 
   const result = await withEventLock(ctx.payload, eventId, async () => {
     const existing = await ctx.payload.find({
@@ -275,6 +306,17 @@ export async function eventIcs(
   slug: string,
 ): Promise<{ filename: string; body: string } | null> {
   const res = await payload.find({
+    select: {
+      slug: true,
+      title: true,
+      summary: true,
+      startsAt: true,
+      endsAt: true,
+      mode: true,
+      venueName: true,
+      venueAddress: true,
+      district: true,
+    },
     collection: 'events',
     where: { and: [{ slug: { equals: slug } }, { status: { equals: 'published' } }] },
     depth: 0,
@@ -326,6 +368,17 @@ export async function sendEventReminders(payload: Payload, now = new Date()) {
   const from = new Date(now.getTime() + 12 * 3600 * 1000).toISOString()
   const to = new Date(now.getTime() + 36 * 3600 * 1000).toISOString()
   const events = await payload.find({
+    select: {
+      slug: true,
+      title: true,
+      startsAt: true,
+      timeLabel: true,
+      mode: true,
+      onlineUrl: true,
+      venueName: true,
+      venueAddress: true,
+      district: true,
+    },
     collection: 'events',
     where: {
       and: [
@@ -342,6 +395,7 @@ export async function sendEventReminders(payload: Payload, now = new Date()) {
   let sent = 0
   for (const e of events.docs) {
     const regs = await payload.find({
+      select: { name: true, email: true, user: true },
       collection: 'event-registrations',
       where: {
         and: [

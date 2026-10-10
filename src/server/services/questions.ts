@@ -2,7 +2,6 @@ import { createHash } from 'node:crypto'
 
 import type { z } from 'zod'
 
-import { EDITOR_ROLES, MODERATOR_ROLES } from '@/lib/roles'
 import { askQuestionSchema, voteSchema } from '@/lib/validation/questions'
 
 import type { ServiceContext } from './context'
@@ -10,6 +9,7 @@ import { requireUser } from './context'
 import { errors } from './errors'
 import { notify, usersWithRoles } from './notifications'
 import { consumeRateLimit } from './rate-limit'
+import { rolesAt } from '@/server/permissions'
 
 /** A member submits a question. It stays private (draft, pending moderation) until answered and approved. */
 export async function askQuestion(ctx: ServiceContext, input: z.input<typeof askQuestionSchema>) {
@@ -51,9 +51,7 @@ export async function askQuestion(ctx: ServiceContext, input: z.input<typeof ask
     depth: 0,
   })
 
-  const staff = await usersWithRoles(ctx.payload, [
-    ...new Set([...MODERATOR_ROLES, ...EDITOR_ROLES]),
-  ])
+  const staff = await usersWithRoles(ctx.payload, await rolesAt('questions', 'edit'))
   await notify(ctx.payload, {
     recipients: staff,
     kind: 'review',

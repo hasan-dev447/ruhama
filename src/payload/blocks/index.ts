@@ -2,7 +2,9 @@ import type { Block } from 'payload'
 
 import { DALIL_TYPES, GRADE_OPTIONS } from '../fields'
 
-/** Quran verse card. Either pick a stored ayah or type the text by hand. */
+const PREVIEW = '@/payload/components/scripture-preview#ScripturePreview'
+
+/** Quran verse card. Pick a stored ayah (its text comes from the database) or write it by hand. */
 export const AyahBlock: Block = {
   slug: 'ayah',
   interfaceName: 'AyahBlock',
@@ -10,23 +12,46 @@ export const AyahBlock: Block = {
   fields: [
     {
       name: 'ayah',
-      label: 'ডাটাবেস থেকে আয়াত (ঐচ্ছিক)',
+      label: 'ডাটাবেস থেকে আয়াত বেছে নিন',
       type: 'relationship',
       relationTo: 'ayahs',
       admin: {
+        allowCreate: false,
         description:
-          'বাছাই করলে আরবি, অনুবাদ ও সূত্র স্বয়ংক্রিয়ভাবে আসবে। নিচের ঘরগুলো পূরণ করলে সেগুলো অগ্রাধিকার পাবে।',
+          'খুঁজতে সূরার নাম (যেমন বাকারা), সূরা:আয়াত (যেমন 2:255) বা অনুবাদের কোনো শব্দ লিখুন। বাছাই করলে আরবি, অনুবাদ ও সূত্র ডাটাবেস থেকেই দেখাবে, নিচে আর কিছু লিখতে হবে না।',
       },
     },
-    { name: 'arabic', label: 'আরবি পাঠ', type: 'textarea' },
-    { name: 'translation', label: 'বাংলা অনুবাদ', type: 'textarea' },
     {
-      name: 'reference',
-      label: 'সূত্র',
-      type: 'text',
-      admin: { placeholder: 'সূরা আন-নাহল : ১২৫' },
+      name: 'preview',
+      type: 'ui',
+      admin: { components: { Field: { path: PREVIEW, clientProps: { kind: 'ayah' } } } },
     },
-    { name: 'compact', label: 'ছোট আকারে দেখান', type: 'checkbox', defaultValue: false },
+    {
+      type: 'collapsible',
+      label: 'নিজের মতো লিখতে চাইলে (ঐচ্ছিক)',
+      admin: {
+        initCollapsed: true,
+        description:
+          'ডাটাবেস থেকে না বেছে নিজে লিখতে, অথবা বাছাই করা আয়াতের অনুবাদ বা সূত্র বদলাতে। এখানে যা লিখবেন সেটিই দেখাবে।',
+      },
+      fields: [
+        { name: 'arabic', label: 'আরবি পাঠ', type: 'textarea' },
+        { name: 'translation', label: 'বাংলা অনুবাদ', type: 'textarea' },
+        {
+          name: 'reference',
+          label: 'সূত্র',
+          type: 'text',
+          admin: { placeholder: 'সূরা আন-নাহল : ১২৫' },
+        },
+      ],
+    },
+    {
+      name: 'compact',
+      label: 'ছোট আকারে দেখান',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: { description: 'লেখার মাঝে ছোট, বাম দিকে সাজানো কার্ড; বড় সাজসজ্জা ছাড়া।' },
+    },
   ],
 }
 
@@ -37,39 +62,60 @@ export const HadithBlock: Block = {
   fields: [
     {
       name: 'hadith',
-      label: 'ডাটাবেস থেকে হাদিস (ঐচ্ছিক)',
+      label: 'ডাটাবেস থেকে হাদিস বেছে নিন',
       type: 'relationship',
       relationTo: 'hadiths',
-    },
-    { name: 'arabic', label: 'আরবি মতন', type: 'textarea' },
-    { name: 'text', label: 'বাংলা অনুবাদ', type: 'textarea' },
-    {
-      type: 'row',
-      fields: [
-        { name: 'narrator', label: 'বর্ণনাকারী', type: 'text', admin: { width: '50%' } },
-        {
-          name: 'source',
-          label: 'গ্রন্থ ও নম্বর',
-          type: 'text',
-          admin: { width: '50%', placeholder: 'সহিহ মুসলিম : ২৫৯৪' },
-        },
-      ],
+      admin: {
+        allowCreate: false,
+        description:
+          'খুঁজতে গ্রন্থ ও নম্বর (যেমন বুখারী 1) বা হাদিসের কোনো শব্দ লিখুন। বাছাই করলে মতন, অনুবাদ, বর্ণনাকারী, সূত্র ও মান ডাটাবেস থেকেই দেখাবে।',
+      },
     },
     {
-      type: 'row',
+      name: 'preview',
+      type: 'ui',
+      admin: { components: { Field: { path: PREVIEW, clientProps: { kind: 'hadith' } } } },
+    },
+    {
+      type: 'collapsible',
+      label: 'নিজের মতো লিখতে চাইলে (ঐচ্ছিক)',
+      admin: {
+        initCollapsed: true,
+        description:
+          'ডাটাবেস থেকে না বেছে নিজে লিখতে, অথবা বাছাই করা হাদিসের কোনো অংশ বদলাতে। এখানে যা লিখবেন সেটিই দেখাবে।',
+      },
       fields: [
+        { name: 'arabic', label: 'আরবি মতন', type: 'textarea' },
+        { name: 'text', label: 'বাংলা অনুবাদ', type: 'textarea' },
         {
-          name: 'grade',
-          label: 'মান',
-          type: 'select',
-          options: GRADE_OPTIONS,
-          admin: { width: '50%' },
+          type: 'row',
+          fields: [
+            { name: 'narrator', label: 'বর্ণনাকারী', type: 'text', admin: { width: '50%' } },
+            {
+              name: 'source',
+              label: 'গ্রন্থ ও নম্বর',
+              type: 'text',
+              admin: { width: '50%', placeholder: 'সহিহ মুসলিম : ২৫৯৪' },
+            },
+          ],
         },
         {
-          name: 'gradeNote',
-          label: 'মানের বিবরণ (ঐচ্ছিক)',
-          type: 'text',
-          admin: { width: '50%', placeholder: 'ইমাম তিরমিযী: হাসান' },
+          type: 'row',
+          fields: [
+            {
+              name: 'grade',
+              label: 'মান',
+              type: 'select',
+              options: GRADE_OPTIONS,
+              admin: { width: '50%' },
+            },
+            {
+              name: 'gradeNote',
+              label: 'মানের বিবরণ (ঐচ্ছিক)',
+              type: 'text',
+              admin: { width: '50%', placeholder: 'ইমাম তিরমিযী: হাসান' },
+            },
+          ],
         },
       ],
     },
@@ -130,6 +176,14 @@ export const YouTubeBlock: Block = {
         typeof value === 'string' && /^([\w-]{11}|https?:\/\/\S+)$/.test(value.trim())
           ? true
           : 'সঠিক ইউটিউব লিংক বা ১১ অক্ষরের আইডি দিন',
+      admin: {
+        components: {
+          Field: {
+            path: '@/payload/components/youtube/youtube-field#YouTubeField',
+            clientProps: { store: 'url', titleField: 'title' },
+          },
+        },
+      },
     },
     { name: 'title', label: 'শিরোনাম', type: 'text', required: true },
     { name: 'start', label: 'শুরুর সময় (সেকেন্ড)', type: 'number', min: 0 },
@@ -164,11 +218,68 @@ export const PullQuoteBlock: Block = {
   fields: [{ name: 'text', label: 'উদ্ধৃতি', type: 'textarea', required: true }],
 }
 
+/** Two to four pictures side by side, enlarged on a tap. */
+export const GalleryBlock: Block = {
+  slug: 'gallery',
+  interfaceName: 'GalleryBlock',
+  labels: { singular: 'ছবির গ্যালারি', plural: 'ছবির গ্যালারি' },
+  fields: [
+    {
+      name: 'images',
+      label: 'ছবি',
+      type: 'upload',
+      relationTo: 'media',
+      hasMany: true,
+      required: true,
+      minRows: 2,
+      maxRows: 12,
+      filterOptions: { mimeType: { contains: 'image' } },
+      admin: { description: 'অন্তত ২টি। যে ক্রমে বাছবেন সেই ক্রমে দেখাবে; টেনে ক্রম বদলানো যায়।' },
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'columns',
+          label: 'এক সারিতে কয়টি',
+          type: 'select',
+          defaultValue: '3',
+          options: [
+            { label: '২টি', value: '2' },
+            { label: '৩টি', value: '3' },
+            { label: '৪টি', value: '4' },
+          ],
+          admin: { width: '50%', isClearable: false, description: 'মোবাইলে সারিতে ২টি করে।' },
+        },
+        {
+          name: 'aspect',
+          label: 'ছবির অনুপাত',
+          type: 'select',
+          defaultValue: '4/3',
+          options: [
+            { label: '4:3', value: '4/3' },
+            { label: 'বর্গ 1:1', value: '1/1' },
+            { label: 'চওড়া 16:9', value: '16/9' },
+            { label: 'লম্বা 3:4', value: '3/4' },
+          ],
+          admin: {
+            width: '50%',
+            isClearable: false,
+            description: 'সব ছবি একই মাপে কেটে সাজানো হয়; বড় করে দেখলে পুরো ছবি।',
+          },
+        },
+      ],
+    },
+    { name: 'caption', label: 'ক্যাপশন (ঐচ্ছিক)', type: 'text' },
+  ],
+}
+
 export const CONTENT_BLOCKS = [
   AyahBlock,
   HadithBlock,
   DalilBlock,
   YouTubeBlock,
+  GalleryBlock,
   CalloutBlock,
   PullQuoteBlock,
 ]

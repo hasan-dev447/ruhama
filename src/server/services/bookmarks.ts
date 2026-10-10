@@ -41,6 +41,7 @@ export async function toggleBookmark(
   const existing = await ctx.payload.find({
     collection: 'bookmarks',
     where: { and: [{ user: { equals: user.id } }, { targetKey: { equals: targetKey } }] },
+    select: { targetKey: true },
     limit: 1,
     depth: 0,
     overrideAccess: true,
@@ -53,10 +54,17 @@ export async function toggleBookmark(
     })
     return { saved: false }
   }
-  const target = (await ctx.payload
-    .findByID({ collection, id, depth: 0, overrideAccess: true })
-    .catch(() => null)) as Record<string, unknown> | null
   const rule = PUBLISHED_FIELD[collection]
+  // only the publish flag is needed, never the whole (often long) document
+  const target = (await ctx.payload
+    .findByID({
+      collection,
+      id,
+      depth: 0,
+      overrideAccess: true,
+      select: (rule ? { [rule.field]: true } : { createdAt: true }) as never,
+    })
+    .catch(() => null)) as Record<string, unknown> | null
   if (!target || (rule && target[rule.field] !== rule.value)) throw errors.notFound()
   const count = await ctx.payload.count({
     collection: 'bookmarks',

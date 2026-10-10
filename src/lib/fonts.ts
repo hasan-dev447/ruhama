@@ -1,27 +1,18 @@
-import {
-  Amiri,
-  Cormorant_Garamond,
-  Hind_Siliguri,
-  Inter,
-  Noto_Serif_Bengali,
-} from 'next/font/google'
+import { Amiri, Cormorant_Garamond, Noto_Sans_Bengali } from 'next/font/google'
 
-/* Self-hosted at build time by next/font. Variables feed the --rh-font-* tokens. */
+/*
+ * Self-hosted at build time by next/font; the variables feed the --rh-font-* tokens. Kept to three
+ * families, each loading only what it needs:
+ * - Noto Sans Bengali: all text, headings included, Bangla and Latin, with clear standard Bangla
+ *   digits. One variable file covers every weight (a separate heading font cost another ~210 KB).
+ * - Amiri: Arabic (ayah, hadith); not preloaded, so pages without Arabic never download it.
+ * - Cormorant Garamond: the "Ruhama" wordmark only, one weight, Latin only.
+ */
 
-// headings only use 600 and 700 (as in the design boards); two static files beat the full variable font
-export const notoSerifBengali = Noto_Serif_Bengali({
+export const notoSansBengali = Noto_Sans_Bengali({
   subsets: ['bengali', 'latin'],
-  weight: ['600', '700'],
   display: 'swap',
-  variable: '--font-noto-serif-bengali',
-  fallback: ['Noto Serif', 'Georgia', 'serif'],
-})
-
-export const hindSiliguri = Hind_Siliguri({
-  subsets: ['bengali', 'latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-hind-siliguri',
+  variable: '--font-noto-sans-bengali',
   fallback: ['system-ui', 'sans-serif'],
 })
 
@@ -42,18 +33,6 @@ export const cormorant = Cormorant_Garamond({
   fallback: ['Garamond', 'Georgia', 'serif'],
 })
 
-export const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-  preload: false,
-  fallback: ['system-ui', 'sans-serif'],
-})
-
-export const fontVariables = [
-  notoSerifBengali.variable,
-  hindSiliguri.variable,
-  amiri.variable,
-  cormorant.variable,
-  inter.variable,
-].join(' ')
+export const fontVariables = [notoSansBengali.variable, amiri.variable, cormorant.variable].join(
+  ' ',
+)

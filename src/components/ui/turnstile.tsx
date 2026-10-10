@@ -58,6 +58,7 @@ export const Turnstile = forwardRef<
   )
 
   useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return
     let cancelled = false
     loadScript()
       .then(() => {
@@ -80,5 +81,13 @@ export const Turnstile = forwardRef<
     }
   }, [action, resolvedTheme])
 
+  if (!TURNSTILE_SITE_KEY) {
+    return (
+      <p className="privacy-note" role="status" style={{ margin: 0 }}>
+        নিরাপত্তা যাচাই (Cloudflare Turnstile) এখনো চালু করা হয়নি, তাই এই ফর্ম এখন জমা দেওয়া যাবে
+        না। সাইট পরিচালককে জানান।
+      </p>
+    )
+  }
   return <div ref={box} role="group" aria-label="নিরাপত্তা যাচাই" style={{ minHeight: 65 }} />
 })

@@ -20,7 +20,11 @@ export const errors = {
     new ServiceError('VALIDATION_ERROR', message, 422, details),
   conflict: (message: string) => new ServiceError('CONFLICT', message, 409),
   profileIncomplete: () =>
-    new ServiceError('PROFILE_INCOMPLETE', 'আগে প্রোফাইলে ভাই বা বোন বেছে নিন।', 403),
+    new ServiceError(
+      'PROFILE_INCOMPLETE',
+      'আগে প্রোফাইল সম্পূর্ণ করুন: ভাই বা বোন বেছে নিন এবং ইমেইল দিন।',
+      403,
+    ),
   rateLimited: (message = 'অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।') =>
     new ServiceError('RATE_LIMITED', message, 429),
 }

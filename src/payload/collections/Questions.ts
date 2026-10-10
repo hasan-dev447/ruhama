@@ -1,12 +1,12 @@
-import type { Access, CollectionConfig, Where } from 'payload'
+import type { CollectionConfig, Where } from 'payload'
 
 import { DISTRICT_OPTIONS } from '@/lib/districts'
 import { lexicalToPlainText, type LexicalState } from '@/lib/lexical'
-import { CONTENT_ROLES, hasRole, STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
+import { can } from '@/server/permissions'
 import { recountCategory, recountPerson } from '@/server/services/counters'
 
-import { fieldRoles } from '../access'
+import { atLevel, fieldAbility, menuAccess, menuRead } from '../access/permissions'
 import { dalilField, publishedAtField, searchTextField, slugField } from '../fields'
 import { revalidateCollection } from '../hooks/revalidate'
 import { livePreviewUrl, previewUrl } from '../preview'
@@ -14,6 +14,7 @@ import { workflowFields } from '../workflow/fields'
 import { WORKFLOW_HASH_FIELDS } from '../workflow/hash-fields'
 import { workflowAfterChange, workflowBeforeChange } from '../workflow/hooks'
 import { fillReviewedBy } from '../workflow/reviewed-by'
+import { ownDraftEdit } from './Articles'
 
 const HASH_FIELDS = WORKFLOW_HASH_FIELDS.questions
 
@@ -22,32 +23,22 @@ const idOf = (v: unknown) =>
     ? (v as { id: number }).id
     : (v as number | null | undefined)
 
-const read: Access = ({ req }) => {
-  if (hasRole(req.user, ...STAFF_ROLES)) return true
-  if (req.user)
-    return {
-      or: [{ _status: { equals: 'published' } }, { askedBy: { equals: req.user.id } }],
-    } as Where
-  return { _status: { equals: 'published' } }
-}
+/**
+ * Members see published answers and their own questions; "নিজের" adds the questions given to them
+ * and their own drafts; "দেখা" or more, everything (রোল ও অনুমতি page).
+ */
+const read = menuRead('questions', {
+  publicWhere: { _status: { equals: 'published' } },
+  ownField: 'askedBy',
+  ownWhere: (id): Where => ({
+    or: [{ assignedTo: { equals: id } }, { createdBy: { equals: id } }],
+  }),
+})
 
-const update: Access = ({ req }) => {
-  if (hasRole(req.user, 'super_admin', 'shura', 'editor', 'moderator')) return true
-  if (hasRole(req.user, 'author', 'reviewer')) {
-    return {
-      or: [
-        { assignedTo: { equals: req.user!.id } },
-        {
-          and: [
-            { createdBy: { equals: req.user!.id } },
-            { reviewStatus: { in: ['draft', 'needs_changes'] } },
-          ],
-        },
-      ],
-    } as Where
-  }
-  return false
-}
+/** "নিজের": a question given to them, or their own draft (or one sent back). */
+const ownEdit = (id: number | string): Where => ({
+  or: [{ assignedTo: { equals: id } }, ownDraftEdit(id)],
+})
 
 const revalidate = revalidateCollection('questions', {
   extraTags: (doc) => [
@@ -75,7 +66,6 @@ export const Questions: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'moderation', 'assignedTo', 'reviewStatus', '_status', 'createdAt'],
     listSearchableFields: ['title'],
-    hidden: ({ user }) => !hasRole(user, ...STAFF_ROLES),
     livePreview: { url: livePreviewUrl('questions') },
     preview: previewUrl('questions'),
   },
@@ -83,24 +73,22 @@ export const Questions: CollectionConfig = {
   versions: { drafts: { autosave: { interval: 1500 }, validate: false }, maxPerDoc: 30 },
   access: {
     read,
-    readVersions: ({ req }) => hasRole(req.user, ...STAFF_ROLES),
+    readVersions: atLevel('questions', 'view'),
     // members ask through the Q&A service (/api/v1/questions), never raw REST
-    create: ({ req }) => hasRole(req.user, ...CONTENT_ROLES),
-    update,
-    delete: ({ req }) => hasRole(req.user, 'super_admin', 'shura', 'editor'),
+    ...menuAccess('questions', { ownUpdate: ownEdit }),
   },
   hooks: {
     beforeChange: [
       workflowBeforeChange(HASH_FIELDS),
-      ({ data, originalDoc, operation, req, context }) => {
+      async ({ data, originalDoc, operation, req, context }) => {
         if (context.questionIntake && operation === 'create') data.createdBy = null
         // the first staff member who works on the answer becomes its author
         if (
           !data.createdBy &&
           !context.questionIntake &&
           req.user &&
-          hasRole(req.user, ...CONTENT_ROLES) &&
-          data.answer
+          data.answer &&
+          (await can(req.user, 'questions.answer'))
         ) {
           data.createdBy = req.user.id
         }
@@ -201,8 +189,8 @@ export const Questions: CollectionConfig = {
               relationTo: 'people',
               index: true,
               access: {
-                update: fieldRoles(...CONTENT_ROLES),
-                create: fieldRoles(...CONTENT_ROLES),
+                update: fieldAbility('questions.answer'),
+                create: fieldAbility('questions.answer'),
               },
             },
             {
@@ -210,8 +198,8 @@ export const Questions: CollectionConfig = {
               label: 'উত্তর',
               type: 'richText',
               access: {
-                update: fieldRoles(...CONTENT_ROLES),
-                create: fieldRoles(...CONTENT_ROLES),
+                update: fieldAbility('questions.answer'),
+                create: fieldAbility('questions.answer'),
               },
             },
             dalilField('references', 'দলিল ও তথ্যসূত্র'),

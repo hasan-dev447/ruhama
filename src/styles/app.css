@@ -207,6 +207,64 @@ html.rh body {
 .form-alert .ic {
   margin-top: 2px;
 }
+.form-alert--success {
+  background: var(--rh-success-soft);
+  color: var(--rh-success);
+}
+
+/* /onboarding */
+.onboarding-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+.onboarding-form__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14.5px;
+
+  button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+  }
+}
+
+/* reminder on every page for an account still without a confirmed email */
+.email-reminder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 16px;
+  padding: 10px 16px;
+  background: var(--rh-accent-soft);
+  color: var(--rh-accent-ink);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+
+  a {
+    font-weight: 700;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  button {
+    padding: 2px 6px;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    opacity: 0.7;
+  }
+}
 .form-success {
   display: flex;
   gap: 10px;
@@ -1024,5 +1082,339 @@ html.rh body {
   .profile-head__info {
     align-self: flex-start;
     padding-top: 76px;
+  }
+}
+
+/* ---------- emails and mobile numbers (settings) ---------- */
+.contact-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.contact-row {
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+.contact-row__value {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.contact-row__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.contact-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.contact-add {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1px dashed var(--rh-border);
+  border-radius: var(--rh-radius-md);
+}
+.contact-add .field {
+  width: 100%;
+}
+.contact-add__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+.contact-add__row .input {
+  flex: 1 1 200px;
+}
+
+/* searchable district picker (components/ui/district-select.tsx) */
+.district-select {
+  position: relative;
+  width: 100%;
+}
+.district-select__input {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 44px 0 42px;
+  border: 1px solid var(--rh-border-strong);
+  border-radius: var(--rh-radius-md);
+  background: var(--rh-surface);
+  color: var(--rh-ink);
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  transition:
+    border-color var(--rh-dur-fast),
+    box-shadow var(--rh-dur-fast);
+}
+.district-select__input::placeholder {
+  color: color-mix(in srgb, var(--rh-muted) 85%, transparent);
+}
+.district-select__input:hover {
+  border-color: color-mix(in srgb, var(--rh-primary) 40%, var(--rh-border-strong));
+}
+.district-select.is-open .district-select__input,
+.district-select__input:focus {
+  outline: none;
+  border-color: var(--rh-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rh-accent) 28%, transparent);
+  cursor: text;
+}
+.district-select.is-invalid .district-select__input {
+  border-color: var(--rh-error);
+}
+.district-select__pin,
+.district-select__icon {
+  position: absolute;
+  top: 25px;
+  transform: translateY(-50%);
+  color: var(--rh-muted);
+  pointer-events: none;
+}
+.district-select__pin {
+  left: 14px;
+  color: var(--rh-accent);
+}
+.district-select__icon {
+  right: 14px;
+}
+.district-select__list {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: min(340px, 50vh);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--rh-border);
+  border-radius: 14px;
+  background: var(--rh-surface);
+  box-shadow: var(--rh-shadow-lg);
+  overscroll-behavior: contain;
+  animation: district-in 160ms var(--rh-ease);
+}
+@keyframes district-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.district-select__group {
+  position: sticky;
+  top: -6px;
+  z-index: 1;
+  margin: 4px -6px 2px;
+  padding: 8px 14px 6px;
+  background: var(--rh-surface);
+  color: var(--rh-accent-ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.district-select__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: var(--rh-ink);
+  font-size: 15.5px;
+  cursor: pointer;
+}
+.district-select__option.is-active {
+  background: var(--rh-sage);
+}
+.district-select__option[aria-selected='true'] {
+  color: var(--rh-primary);
+  font-weight: 700;
+}
+.district-select__empty {
+  padding: 14px 12px;
+  color: var(--rh-muted);
+  font-size: 14.5px;
+  text-align: center;
+}
+
+/*
+ * Dropdowns (.select) with an open list that matches the site: rounded card, soft shadow, roomy
+ * options, a check on the chosen one. Uses the browser's customizable <select> (CSS only, no
+ * script); browsers without it keep their normal dropdown, which works the same.
+ */
+@supports (appearance: base-select) {
+  .select,
+  .select::picker(select) {
+    appearance: base-select;
+  }
+  .select {
+    display: flex;
+    align-items: center;
+  }
+  /* the wrapper already draws the chevron */
+  .select::picker-icon {
+    display: none;
+  }
+  .select::picker(select) {
+    max-height: min(340px, 50vh);
+    margin-top: 6px;
+    padding: 6px;
+    overflow-y: auto;
+    border: 1px solid var(--rh-border);
+    border-radius: 14px;
+    background: var(--rh-surface);
+    color: var(--rh-ink);
+    box-shadow: var(--rh-shadow-lg);
+    overscroll-behavior: contain;
+    opacity: 0;
+    translate: 0 -4px;
+    transition:
+      opacity 160ms var(--rh-ease),
+      translate 160ms var(--rh-ease),
+      overlay 160ms allow-discrete,
+      display 160ms allow-discrete;
+  }
+  .select:open::picker(select) {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @starting-style {
+    .select:open::picker(select) {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+  .select option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 15.5px;
+    line-height: 1.4;
+    cursor: pointer;
+  }
+  .select option:hover,
+  .select option:focus-visible {
+    background: var(--rh-sage);
+    outline: none;
+  }
+  .select option:checked {
+    background: transparent;
+    color: var(--rh-primary);
+    font-weight: 700;
+  }
+  .select option:checked:hover,
+  .select option:checked:focus-visible {
+    background: var(--rh-sage);
+  }
+  .select option::checkmark {
+    order: 2;
+    margin-inline-start: auto;
+    color: var(--rh-primary);
+  }
+  .select option:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  /* group headings (divisions, categories) */
+  .select optgroup {
+    padding-top: 6px;
+    color: var(--rh-accent-ink);
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+  .select optgroup option {
+    color: var(--rh-ink);
+    font-weight: 400;
+  }
+  .select optgroup option:checked {
+    color: var(--rh-primary);
+    font-weight: 700;
+  }
+}
+
+/* settings: public profile (আলিম, লেখক ও বক্তা) */
+.public-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.profile-pending {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--rh-accent-soft);
+  color: var(--rh-accent-ink);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+.pp-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.pp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  > .input,
+  > div {
+    flex: 1;
+    min-width: 0;
+  }
+}
+.pp-remove {
+  display: grid;
+  flex: 0 0 40px;
+  place-items: center;
+  height: 40px;
+  border: 1px solid var(--rh-border);
+  border-radius: 10px;
+  background: var(--rh-surface);
+  color: var(--rh-muted);
+  cursor: pointer;
+}
+.pp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 12px;
+  border-radius: 999px;
+  background: var(--rh-sage);
+  font-size: 14px;
+
+  button {
+    display: grid;
+    place-items: center;
+    padding: 2px;
+    border: 0;
+    background: none;
+    color: var(--rh-muted);
+    cursor: pointer;
   }
 }

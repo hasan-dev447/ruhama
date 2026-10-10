@@ -23,10 +23,11 @@ import { bn, formatDate, formatRelative } from '@/lib/format'
 import { genderLabel } from '@/lib/gender'
 import { journeyIndex, journeyLabel, JOURNEY_STAGES } from '@/lib/journey'
 import { canViewProfile, VISIBILITY, type SectionKey } from '@/lib/profile-privacy'
-import { hasRole, MODERATOR_ROLES, ROLE_LABELS, type Role } from '@/lib/roles'
+import { ROLE_LABELS, type Role } from '@/lib/roles'
 import { buildMetadata } from '@/lib/seo'
 import { actionContext } from '@/server/action-context'
 import { data } from '@/server/data'
+import { can } from '@/server/permissions'
 
 /**
  * Who sees what depends on the viewer (everyone, members only, chosen people, only the owner), so the
@@ -65,7 +66,7 @@ export default async function MemberProfilePage({ params }: Props) {
   const isOwner = viewer?.id === member.id
   const allowed = canViewProfile(
     member.privacy,
-    viewer ? { id: viewer.id, staff: hasRole(viewer, ...MODERATOR_ROLES) } : null,
+    viewer ? { id: viewer.id, staff: await can(viewer, 'forum.moderate') } : null,
     member.id,
   )
   const show = (key: SectionKey) => allowed && member.privacy[key]

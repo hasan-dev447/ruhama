@@ -9,9 +9,13 @@ import { learningEndpoints, questionEndpoints } from './learning'
 import { notificationEndpoints } from './notifications'
 import { openApiEndpoints } from './openapi'
 import { outreachEndpoints } from './outreach'
+import { peopleEndpoints } from './people'
 import { reviewEndpoints } from './review'
+import { rolesEndpoints } from './roles'
+import { rulesEndpoints } from './rules'
 import { scriptureEndpoints } from './scripture'
 import { searchEndpoints } from './search'
+import { youtubeEndpoints } from './youtube'
 
 /** Versioned REST API for web and mobile clients, served at /api/v1/*. */
 export const apiV1Endpoints: Endpoint[] = [
@@ -28,4 +32,8 @@ export const apiV1Endpoints: Endpoint[] = [
   ...notificationEndpoints,
   ...openApiEndpoints,
   ...forumEndpoints,
+  ...youtubeEndpoints,
+  ...rulesEndpoints,
+  ...rolesEndpoints,
+  ...peopleEndpoints,
 ]

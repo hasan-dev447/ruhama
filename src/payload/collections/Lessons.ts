@@ -4,10 +4,11 @@ import { hasRole, STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
 import { recountCourse } from '@/server/services/counters'
 
-import { contentTeam, editorsOnly, statusPublishedOrStaff } from '../access'
+import { menuAccess, menuRead } from '../access/permissions'
 import { slugField } from '../fields'
 import { revalidateCollection } from '../hooks/revalidate'
 import { PUBLISH_STATUS } from './Courses'
+import { YOUTUBE_FIELD } from './Videos'
 
 const idOf = (v: unknown) =>
   v && typeof v === 'object' && 'id' in v
@@ -32,10 +33,8 @@ export const Lessons: CollectionConfig = {
   defaultSort: 'order',
   versions: { maxPerDoc: 20 },
   access: {
-    read: statusPublishedOrStaff(),
-    create: contentTeam,
-    update: contentTeam,
-    delete: editorsOnly,
+    read: menuRead('lessons', { publicWhere: { status: { equals: 'published' } } }),
+    ...menuAccess('lessons'),
   },
   hooks: {
     afterChange: [
@@ -109,7 +108,10 @@ export const Lessons: CollectionConfig = {
           name: 'youtubeId',
           label: 'ইউটিউব আইডি',
           type: 'text',
-          admin: { condition: (_, s) => s?.kind === 'youtube' },
+          admin: {
+            condition: (_, s) => s?.kind === 'youtube',
+            components: { Field: { path: YOUTUBE_FIELD, clientProps: { store: 'id' } } },
+          },
         },
         {
           name: 'audio',

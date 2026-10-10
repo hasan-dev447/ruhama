@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
+import { isProfileIncomplete } from '@/lib/profile-complete'
+
 import { NotificationList } from '@/components/notifications/notification-list'
 import { Breadcrumbs } from '@/components/ui/primitives'
 import { buildMetadata } from '@/lib/seo'
@@ -15,7 +17,7 @@ export const metadata: Metadata = buildMetadata({
 export default async function NotificationsPage() {
   const { user } = await actionContext()
   if (!user) redirect('/login?next=/notifications')
-  if (!user.gender) redirect('/onboarding?next=/notifications')
+  if (isProfileIncomplete(user)) redirect('/onboarding?next=/notifications')
   return (
     <main id="main">
       <section className="section-sm" style={{ paddingTop: 40 }}>

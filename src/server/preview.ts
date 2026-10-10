@@ -2,10 +2,10 @@ import 'server-only'
 
 import { draftMode } from 'next/headers'
 
-import { CONTENT_ROLES, hasRole } from '@/lib/roles'
 import type { User } from '@/payload-types'
 
 import { actionContext } from './action-context'
+import { canEnterAdmin } from '@/server/permissions'
 
 /**
  * The staff member viewing a draft preview, or null for everyone else.
@@ -15,5 +15,6 @@ export async function previewUser(): Promise<User | null> {
   const dm = await draftMode()
   if (!dm.isEnabled) return null
   const { user } = await actionContext()
-  return user && hasRole(user, ...CONTENT_ROLES) ? user : null
+  // anyone in the admin panel; what they may read is decided by each menu's access
+  return user && (await canEnterAdmin(user)) ? user : null
 }

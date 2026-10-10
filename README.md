@@ -19,21 +19,21 @@ This repository holds the complete application: the public site, member area, Pa
 
 ## Stack
 
-| Concern            | Choice                                                                                                                             |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Framework          | Next.js 16 (App Router), React 19, TypeScript strict                                                                               |
-| CMS and admin      | Payload CMS 3 with the Postgres adapter, in the same app (`/admin`)                                                                |
-| Database           | Supabase Postgres (pooled connection for the app, direct for migrations)                                                           |
-| Auth               | Better Auth via `payload-auth`: one users table for members and staff. Google, Facebook, email and password, magic link, phone OTP |
-| Media              | Cloudflare R2 through Payload's S3 adapter, served from a custom domain                                                            |
-| UI                 | Tailwind CSS v4 with the design tokens from `design/ruhama.css`, Radix primitives, Lucide icons, `next/font`                       |
-| Client state       | TanStack Query, nuqs (URL state), react-hook-form + zod, sonner                                                                    |
-| Search             | Postgres full-text search + `pg_trgm` behind a `SearchService` interface (swappable for Meilisearch)                               |
-| Live updates       | Supabase Realtime Broadcast (polling fallback when not configured)                                                                 |
-| Email / SMS / bots | Resend, a Bangladeshi SMS gateway adapter, Cloudflare Turnstile                                                                    |
-| Offline            | Serwist service worker: saved articles readable offline                                                                            |
-| Tests              | Vitest (unit), Playwright + axe (end to end and accessibility)                                                                     |
-| Hosting            | Vercel + Supabase + R2                                                                                                             |
+| Concern            | Choice                                                                                                                                                                                                      |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework          | Next.js 16 (App Router), React 19, TypeScript strict                                                                                                                                                        |
+| CMS and admin      | Payload CMS 3 with the Postgres adapter, in the same app (`/admin`)                                                                                                                                         |
+| Database           | Supabase Postgres (pooled connection for the app, direct for migrations)                                                                                                                                    |
+| Auth               | Better Auth via `payload-auth`: one users table for members and staff. Every account has an email: email and password, Google or Facebook; magic link; phone OTP only for a number the member has confirmed |
+| Media              | Cloudflare R2 through Payload's S3 adapter, served from a custom domain                                                                                                                                     |
+| UI                 | Tailwind CSS v4 with the design tokens from `design/ruhama.css`, Radix primitives, Lucide icons, `next/font`                                                                                                |
+| Client state       | TanStack Query, nuqs (URL state), react-hook-form + zod, sonner                                                                                                                                             |
+| Search             | Postgres full-text search + `pg_trgm` behind a `SearchService` interface (swappable for Meilisearch)                                                                                                        |
+| Live updates       | Supabase Realtime Broadcast (polling fallback when not configured)                                                                                                                                          |
+| Email / SMS / bots | Resend, a Bangladeshi SMS gateway adapter, Cloudflare Turnstile                                                                                                                                             |
+| Offline            | Serwist service worker: saved articles readable offline                                                                                                                                                     |
+| Tests              | Vitest (unit), Playwright + axe (end to end and accessibility)                                                                                                                                              |
+| Hosting            | Vercel + Supabase + R2                                                                                                                                                                                      |
 
 ## Quick start (local)
 
@@ -146,7 +146,7 @@ npm run test:e2e
 
 End-to-end tests run against a seeded database. They reuse a running `npm run dev` (or start one), and need `OUTBOX_DIR` set on the server, because they read verification links, magic links and OTP codes from `.outbox/`. They cover:
 
-- registration with email verification, sign-in by password, magic link and phone OTP, OAuth redirects (when keys are configured), and "sign out of all other devices";
+- registration with email verification, sign-in by password, magic link and phone OTP (refused for a number without a confirmed account), OAuth redirects (when keys are configured), and "sign out of all other devices";
 - an article publishing only after two different reviewers approve, then appearing on cached public pages straight away (on-demand revalidation), and requested changes going back to the author;
 - lesson completion and course progress (persisted, shown on the dashboard, undoable);
 - guest and member event registration (Turnstile, seat counting, duplicate protection, calendar file, cancelling);

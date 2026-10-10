@@ -1,6 +1,13 @@
 'use client'
 
-import { IconChevronDown, IconHide, IconSearch, IconShow, IconWarning } from '@/components/icons'
+import {
+  IconChevronDown,
+  IconHide,
+  IconSearch,
+  IconShow,
+  IconSuccess,
+  IconWarning,
+} from '@/components/icons'
 import { forwardRef, useId, useState } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -233,10 +240,21 @@ export function Switch({
   )
 }
 
-export function FormAlert({ children }: { children: React.ReactNode }) {
+export function FormAlert({
+  children,
+  tone = 'error',
+}: {
+  children: React.ReactNode
+  /** error (default) or a confirmation such as "code sent" */
+  tone?: 'error' | 'success'
+}) {
+  const Icon = tone === 'success' ? IconSuccess : IconWarning
   return (
-    <div className="form-alert" role="alert">
-      <IconWarning className="ic" aria-hidden="true" />
+    <div
+      className={tone === 'success' ? 'form-alert form-alert--success' : 'form-alert'}
+      role={tone === 'success' ? 'status' : 'alert'}
+    >
+      <Icon className="ic" aria-hidden="true" />
       <span>{children}</span>
     </div>
   )

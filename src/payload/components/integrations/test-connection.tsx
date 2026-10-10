@@ -11,6 +11,7 @@ const FIELDS: Record<IntegrationTarget, string[]> = {
   facebook: ['clientId', 'clientSecret'],
   sms: ['provider', 'apiUrl', 'apiKey', 'senderId'],
   email: ['resendApiKey', 'from', 'replyTo'],
+  youtube: ['clientId', 'clientSecret'],
 }
 
 const HELP: Record<IntegrationTarget, string> = {
@@ -18,6 +19,7 @@ const HELP: Record<IntegrationTarget, string> = {
   facebook: 'Facebook-এর সাথে App ID ও secret মিলিয়ে দেখা হবে।',
   sms: 'নিচের নম্বরে একটি টেস্ট SMS যাবে (গেটওয়ের খরচ লাগতে পারে)।',
   email: 'আপনার ইমেইল ঠিকানায় একটি টেস্ট ইমেইল যাবে।',
+  youtube: 'Google-এর সাথে Client ID ও secret মিলিয়ে দেখা হবে। কোনো চ্যানেল যুক্ত হবে না।',
 }
 
 type Result = { ok: boolean; message: string }

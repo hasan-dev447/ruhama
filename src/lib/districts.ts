@@ -127,3 +127,22 @@ export function districtLabel(value: string | null | undefined): string {
 
 /** Options for Payload select fields */
 export const DISTRICT_OPTIONS = DISTRICTS.map((d) => ({ label: d.label, value: d.value }))
+
+/** Older or common English spellings, so a search for "chittagong" or "comilla" still finds them. */
+export const DISTRICT_ALIASES: Record<string, string[]> = {
+  chattogram: ['chittagong', 'ctg'],
+  cumilla: ['comilla'],
+  'coxs-bazar': ["cox's bazar", 'coxsbazar'],
+  barishal: ['barisal'],
+  jashore: ['jessore'],
+  bogura: ['bogra'],
+  chapainawabganj: ['chapai nawabganj', 'nawabganj'],
+  moulvibazar: ['maulvibazar', 'moulvi bazar'],
+  netrokona: ['netrakona'],
+  jhalokati: ['jhalakathi', 'jhalokathi'],
+  brahmanbaria: ['b baria'],
+  khagrachhari: ['khagrachari'],
+  narsingdi: ['narshingdi'],
+  munshiganj: ['munsiganj'],
+  sirajganj: ['serajganj'],
+}

@@ -41,7 +41,7 @@ function SuccessNote({ children }: { children: React.ReactNode }) {
   )
 }
 
-function PasswordLogin({ next }: { next: string }) {
+function PasswordLogin({ next, canReset }: { next: string; canReset: boolean }) {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -112,9 +112,11 @@ function PasswordLogin({ next }: { next: string }) {
           <label className="label" htmlFor="l-pass">
             পাসওয়ার্ড
           </label>
-          <Link href="/forgot-password" className="t-small link">
-            ভুলে গেছেন?
-          </Link>
+          {canReset ? (
+            <Link href="/forgot-password" className="t-small link">
+              ভুলে গেছেন?
+            </Link>
+          ) : null}
         </div>
         <PasswordInput
           id="l-pass"
@@ -308,7 +310,7 @@ function PhoneLogin({ next }: { next: string }) {
       <Field
         label="মোবাইল নম্বর"
         htmlFor="l-phone"
-        hint="নম্বরটি নতুন হলে যাচাইয়ের পর অ্যাকাউন্ট খুলে যাবে।"
+        hint="সেটিংস থেকে যাচাই করা নম্বরেই কোড যাবে। নতুন অ্যাকাউন্ট খুলতে ইমেইল দিয়ে রেজিস্টার করুন।"
       >
         <Input
           id="l-phone"
@@ -373,16 +375,23 @@ export function LoginForm({
   initialMode,
   google,
   facebook,
+  email,
+  sms,
   notice,
 }: {
   next: string
   initialMode: Mode
   google: boolean
   facebook: boolean
+  /** email (login link, password reset) and SMS can be sent: their options show only then */
+  email: boolean
+  sms: boolean
   notice: string | null
 }) {
   const router = useRouter()
-  const [mode, setMode] = useState<Mode>(initialMode)
+  const available = (m: Mode) => m === 'password' || (m === 'link' ? email : sms)
+  const [mode, setMode] = useState<Mode>(available(initialMode) ? initialMode : 'password')
+  const others = OTHER_MODES[mode].filter((m) => available(m.mode))
   const { data: session } = authClient.useSession()
 
   // already signed in (for example in another tab): continue to the destination
@@ -398,18 +407,20 @@ export function LoginForm({
         </div>
       ) : null}
       {mode === 'password' ? (
-        <PasswordLogin next={next} />
+        <PasswordLogin next={next} canReset={email} />
       ) : mode === 'link' ? (
         <MagicLinkLogin next={next} />
       ) : (
         <PhoneLogin next={next} />
       )}
-      <div className="auth-sep" style={{ margin: '22px 0' }}>
-        অথবা
-      </div>
+      {google || facebook || others.length ? (
+        <div className="auth-sep" style={{ margin: '22px 0' }}>
+          অথবা
+        </div>
+      ) : null}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <SocialButtons google={google} facebook={facebook} next={next} />
-        {OTHER_MODES[mode].map((m) => (
+        {others.map((m) => (
           <button
             key={m.mode}
             type="button"

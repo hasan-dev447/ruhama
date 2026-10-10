@@ -5,7 +5,7 @@ import { hasRole, STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
 import { recountCircle, recountMeetup } from '@/server/services/counters'
 
-import { adminsOnly, editorsOnly, roles, statusPublishedOrStaff } from '../access'
+import { menuAccess, menuRead } from '../access/permissions'
 import { slugField } from '../fields'
 import { revalidateCollection, safeRevalidate } from '../hooks/revalidate'
 import { PUBLISH_STATUS } from './Courses'
@@ -14,7 +14,6 @@ const idOf = (v: unknown) =>
   v && typeof v === 'object' && 'id' in v
     ? (v as { id: number }).id
     : (v as number | null | undefined)
-const circleStaff = roles('super_admin', 'shura', 'editor', 'moderator')
 const hiddenForMembers = ({ user }: { user: unknown }) =>
   !hasRole(user as { role?: unknown }, ...STAFF_ROLES)
 
@@ -38,10 +37,8 @@ export const Circles: CollectionConfig = {
   },
   defaultSort: 'name',
   access: {
-    read: statusPublishedOrStaff(),
-    create: circleStaff,
-    update: circleStaff,
-    delete: editorsOnly,
+    read: menuRead('circles', { publicWhere: { status: { equals: 'published' } } }),
+    ...menuAccess('circles'),
   },
   hooks: {
     afterChange: [
@@ -199,7 +196,7 @@ export const CircleMeetups: CollectionConfig = {
     hidden: hiddenForMembers,
   },
   defaultSort: 'startsAt',
-  access: { read: () => true, create: circleStaff, update: circleStaff, delete: circleStaff },
+  access: { read: () => true, ...menuAccess('circle-meetups') },
   hooks: {
     afterChange: [
       ({ doc, context }) => {
@@ -237,12 +234,12 @@ export const CircleMeetups: CollectionConfig = {
   ],
 }
 
-const ownMembership: Access = ({ req }) => {
-  if (!req.user) return false
-  if (hasRole(req.user, 'super_admin', 'shura', 'editor', 'moderator')) return true
-  return {
-    or: [{ user: { equals: req.user.id } }, { 'circle.coordinator': { equals: req.user.id } }],
-  } as Where
+/** Staff with "দেখা" or more see all; a member their own requests, a coordinator their circle's. */
+const ownMembership = menuRead('circle-memberships', { ownField: 'user' })
+const coordinatorRead: Access = async (args) => {
+  const base = await ownMembership(args)
+  if (base === true || base === false || !args.req.user) return base
+  return { or: [base, { 'circle.coordinator': { equals: args.req.user.id } }] } as Where
 }
 
 export const CircleMemberships: CollectionConfig = {
@@ -254,7 +251,7 @@ export const CircleMemberships: CollectionConfig = {
     hidden: hiddenForMembers,
   },
   defaultSort: '-createdAt',
-  access: { read: ownMembership, create: adminsOnly, update: circleStaff, delete: adminsOnly },
+  access: { read: coordinatorRead, ...menuAccess('circle-memberships') },
   hooks: {
     afterChange: [
       async ({ doc, previousDoc, req, context }) => {
@@ -297,15 +294,8 @@ export const MeetupRsvps: CollectionConfig = {
   labels: { singular: 'বৈঠকে উপস্থিতি', plural: 'বৈঠকে উপস্থিতি' },
   admin: { group: 'মজলিস ও সার্কেল', hidden: hiddenForMembers },
   access: {
-    read: ({ req }) =>
-      req.user
-        ? hasRole(req.user, ...STAFF_ROLES)
-          ? true
-          : { user: { equals: req.user.id } }
-        : false,
-    create: adminsOnly,
-    update: adminsOnly,
-    delete: adminsOnly,
+    read: menuRead('meetup-rsvps', { ownField: 'user' }),
+    ...menuAccess('meetup-rsvps'),
   },
   hooks: {
     afterChange: [

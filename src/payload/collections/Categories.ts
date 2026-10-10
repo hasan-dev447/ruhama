@@ -2,7 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 import { TAGS } from '@/server/cache/tags'
 
-import { anyone, editorsOnly } from '../access'
+import { anyone } from '../access'
+import { menuAccess } from '../access/permissions'
 import { slugField } from '../fields'
 import { revalidateCollection } from '../hooks/revalidate'
 
@@ -39,7 +40,7 @@ export const Categories: CollectionConfig = {
     defaultColumns: ['name', 'slug', 'usedFor', 'articleCount', 'order'],
   },
   defaultSort: 'order',
-  access: { read: anyone, create: editorsOnly, update: editorsOnly, delete: editorsOnly },
+  access: { read: anyone, ...menuAccess('categories') },
   hooks: { afterChange: [revalidate.afterChange], afterDelete: [revalidate.afterDelete] },
   fields: [
     { name: 'name', label: 'নাম', type: 'text', required: true },

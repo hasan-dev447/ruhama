@@ -143,6 +143,7 @@ const MEMBER_DATA = [
   'meetup-rsvps',
   'circle-memberships',
   'forum-reactions',
+  'user-contacts',
 ] as const
 
 /**

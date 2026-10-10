@@ -5,8 +5,6 @@ import { IconBan, IconLogout, IconShield } from '@/components/icons'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import { hasRole } from '@/lib/roles'
-
 type Action = 'ban' | 'unban' | 'revoke'
 
 const LABELS: Record<Action, { button: string; confirm: string; done: string }> = {
@@ -39,14 +37,19 @@ const PATHS: Record<Action, string> = {
  */
 export function UserAdminActions() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, permissions } = useAuth()
   const { id } = useDocumentInfo()
   const banned = useFormFields(([fields]) => Boolean(fields.banned?.value))
   const [pending, setPending] = useState<Action | null>(null)
   const [confirming, setConfirming] = useState<Action | null>(null)
   const [reason, setReason] = useState('')
 
-  if (!id || !hasRole(user, 'super_admin', 'shura') || String(user?.id) === String(id)) return null
+  // "এডিট" or more in ইউজার (রোল ও অনুমতি page); never on one's own account
+  const canManage =
+    permissions?.collections?.users?.update === true ||
+    (permissions?.collections?.users?.update as { permission?: boolean } | undefined)
+      ?.permission === true
+  if (!id || !canManage || String(user?.id) === String(id)) return null
 
   async function run(action: Action) {
     setPending(action)

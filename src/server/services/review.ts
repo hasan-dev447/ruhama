@@ -13,11 +13,13 @@ import {
   statusAfterDecision,
   validApprovers,
 } from '@/payload/workflow/logic'
-import { hasRole, REVIEWER_ROLES, STAFF_ROLES } from '@/lib/roles'
+import { hasRole } from '@/lib/roles'
 
 import type { ServiceContext } from './context'
 import { requireUser } from './context'
+import { getWorkflowRules } from '../rules'
 import { errors } from './errors'
+import { canEnterAdmin, hasLevel } from '@/server/permissions'
 
 export function isWorkflowCollection(slug: string): slug is WorkflowCollection {
   return (WORKFLOW_COLLECTIONS as readonly string[]).includes(slug)
@@ -49,7 +51,7 @@ export async function performReviewAction(
   },
 ): Promise<ReviewActionResult> {
   const user = requireUser(ctx)
-  if (!hasRole(user, ...STAFF_ROLES)) throw errors.forbidden()
+  if (!(await canEnterAdmin(user))) throw errors.forbidden()
   const { payload } = ctx
   const { collection, id, action } = input
   const note = input.note?.trim().slice(0, 2000) || null
@@ -66,6 +68,7 @@ export async function performReviewAction(
     reviewer: idOf(a.reviewer) as number,
   }))
   const authorId = idOf(doc.createdBy)
+  const rules = await getWorkflowRules(collection)
 
   const check = checkTransition({
     action,
@@ -74,6 +77,8 @@ export async function performReviewAction(
     authorId,
     approvals,
     contentHash: hash,
+    rules,
+    contentStaff: await hasLevel(user, collection, 'edit'),
   })
   if (!check.ok) throw errors.forbidden(check.message)
 
@@ -94,13 +99,13 @@ export async function performReviewAction(
     if (action === 'submit') nextStatus = 'in_review'
     if (action === 'withdraw') nextStatus = 'draft'
     if (action === 'approve' || action === 'request_changes') {
-      if (!hasRole(user, ...REVIEWER_ROLES)) throw errors.forbidden()
+      if (!hasRole(user, ...rules.reviewerRoles)) throw errors.forbidden()
       const decision = action === 'approve' ? 'approved' : 'changes_requested'
       nextApprovals = [
         ...approvals,
         { reviewer: user.id, decision, note, contentHash: hash, at: new Date().toISOString() },
       ]
-      nextStatus = statusAfterDecision(nextApprovals, hash, authorId, decision)
+      nextStatus = statusAfterDecision(nextApprovals, hash, authorId, decision, rules)
     }
     const context: WorkflowContext = {
       workflowAction: action,
@@ -132,6 +137,13 @@ export async function performReviewAction(
   })
 
   const after = (await payload.findByID({
+    select: {
+      reviewStatus: true,
+      _status: true,
+      approvals: true,
+      contentHash: true,
+      createdBy: true,
+    } as never,
     collection,
     id,
     draft: true,
@@ -146,6 +158,7 @@ export async function performReviewAction(
       after.approvals as Approval[],
       String(after.contentHash ?? ''),
       idOf(after.createdBy),
+      rules,
     ).length,
   }
 }
@@ -153,10 +166,8 @@ export async function performReviewAction(
 /** Items waiting for the current staff member, for the admin dashboard. */
 export async function reviewQueue(ctx: ServiceContext) {
   const user = requireUser(ctx)
-  if (!hasRole(user, ...STAFF_ROLES)) throw errors.forbidden()
+  if (!(await canEnterAdmin(user))) throw errors.forbidden()
   const { payload } = ctx
-  const reviewer = hasRole(user, ...REVIEWER_ROLES)
-  const publisher = hasRole(user, 'super_admin', 'shura')
   const result: {
     collection: WorkflowCollection
     id: number | string
@@ -166,6 +177,10 @@ export async function reviewQueue(ctx: ServiceContext) {
   }[] = []
 
   for (const collection of WORKFLOW_COLLECTIONS) {
+    // who reviews and who publishes is each menu's own rule
+    const rules = await getWorkflowRules(collection)
+    const reviewer = hasRole(user, ...rules.reviewerRoles)
+    const publisher = hasRole(user, ...rules.publisherRoles)
     const statuses: ReviewStatus[] = []
     if (reviewer) statuses.push('in_review')
     if (publisher) statuses.push('approved')

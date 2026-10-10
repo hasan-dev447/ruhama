@@ -18,6 +18,8 @@ import type { CollectionSlug, Payload, SanitizedPermissions, Where } from 'paylo
 import { ROLE_LABELS, rolesOf } from '@/lib/roles'
 import type { User } from '@/payload-types'
 
+import { can as canModerate } from '@/server/permissions'
+
 import { ReviewQueue } from './review-queue'
 
 type NavGroup = { label: string; entities: { label: unknown; slug: string; type: string }[] }
@@ -45,7 +47,8 @@ const allowed = (p: unknown) =>
   p === true ||
   (typeof p === 'object' && p !== null && (p as { permission?: boolean }).permission === true)
 
-const bn = (n: number) => n.toLocaleString('bn-BD')
+// the admin uses English digits, like most dashboards
+const num = (n: number) => n.toLocaleString('en-US')
 
 /** ISO timestamp n days from now (negative for the past); kept outside render for the hooks lint. */
 const isoDaysFromNow = (days: number) => new Date(Date.now() + days * 86_400_000).toISOString()
@@ -84,7 +87,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
       ],
     )
   const roles = rolesOf(user)
-  const isModerator = roles.some((r) => ['super_admin', 'shura', 'moderator'].includes(r))
+  const isModerator = await canModerate(user, 'forum.moderate')
   const weekAgo = isoDaysFromNow(-7)
   const now = isoDaysFromNow(0)
 
@@ -280,7 +283,7 @@ export async function AdminDashboard({ payload, user, permissions, navGroups = [
               <span className="rh-stat__icon">
                 <s.icon size={18} aria-hidden="true" />
               </span>
-              <span className="rh-stat__value">{bn(s.value)}</span>
+              <span className="rh-stat__value">{num(s.value)}</span>
               <span className="rh-stat__label">{s.label}</span>
               <span className="rh-stat__hint">{s.hint}</span>
             </a>

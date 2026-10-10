@@ -4,7 +4,8 @@ import { DISTRICT_OPTIONS } from '@/lib/districts'
 import { CONTACT_TOPICS, INTEREST_OPTIONS } from '@/lib/options'
 import { hasRole, STAFF_ROLES } from '@/lib/roles'
 
-import { adminsOnly, nobody, ownOrRoles, roles } from '../access'
+import { adminsOnly, nobody, ownOrRoles } from '../access'
+import { atLevel, menuAccess, menuRead } from '../access/permissions'
 
 const hidden = ({ user }: { user: unknown }) => !hasRole(user as { role?: unknown }, ...STAFF_ROLES)
 
@@ -58,10 +59,8 @@ export const Notifications: CollectionConfig = {
   },
   defaultSort: '-createdAt',
   access: {
-    read: ownOrRoles('recipient', 'super_admin'),
-    create: adminsOnly,
-    update: adminsOnly,
-    delete: adminsOnly,
+    read: menuRead('notifications', { ownField: 'recipient' }),
+    ...menuAccess('notifications'),
   },
   fields: [
     { name: 'recipient', type: 'relationship', relationTo: 'users', required: true, index: true },
@@ -86,10 +85,10 @@ export const AnswerVotes: CollectionConfig = {
   labels: { singular: 'উত্তরের মূল্যায়ন', plural: 'উত্তরের মূল্যায়ন' },
   admin: { group: 'প্রশ্নোত্তর', hidden },
   access: {
-    read: roles('super_admin', 'shura', 'editor'),
+    read: atLevel('answer-votes', 'view'),
     create: nobody,
     update: nobody,
-    delete: adminsOnly,
+    delete: atLevel('answer-votes', 'full'),
   },
   fields: [
     {
@@ -129,10 +128,8 @@ export const NewsletterSubscribers: CollectionConfig = {
     hidden,
   },
   access: {
-    read: roles('super_admin', 'shura', 'editor'),
-    create: adminsOnly,
-    update: roles('super_admin', 'shura', 'editor'),
-    delete: adminsOnly,
+    read: atLevel('newsletter-subscribers', 'view'),
+    ...menuAccess('newsletter-subscribers'),
   },
   fields: [
     { name: 'email', type: 'email', required: true, unique: true, index: true },
@@ -163,10 +160,8 @@ export const Volunteers: CollectionConfig = {
   },
   defaultSort: '-createdAt',
   access: {
-    read: roles('super_admin', 'shura', 'moderator'),
-    create: adminsOnly,
-    update: roles('super_admin', 'shura', 'moderator'),
-    delete: adminsOnly,
+    read: atLevel('volunteers', 'view'),
+    ...menuAccess('volunteers'),
   },
   fields: [
     { name: 'name', label: 'নাম', type: 'text', required: true },
@@ -223,10 +218,8 @@ export const ContactMessages: CollectionConfig = {
   },
   defaultSort: '-createdAt',
   access: {
-    read: roles('super_admin', 'shura', 'moderator'),
-    create: adminsOnly,
-    update: roles('super_admin', 'shura', 'moderator'),
-    delete: adminsOnly,
+    read: atLevel('contact-messages', 'view'),
+    ...menuAccess('contact-messages'),
   },
   fields: [
     { name: 'name', label: 'নাম', type: 'text', required: true },

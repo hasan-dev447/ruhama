@@ -106,6 +106,9 @@ function log(step: string, n?: number) {
 
 /* ---------------- accounts ---------------- */
 
+/** Demo personas written as sisters; every other demo account is a brother (ভাই / বোন is required). */
+const SISTERS = new Set(['fatima@ruhama.local', 'nusrat@ruhama.local', 'sumaiya@ruhama.local'])
+
 async function ensureUser(input: {
   email: string
   name: string
@@ -124,6 +127,7 @@ async function ensureUser(input: {
       username: input.username,
       journeyStage: 'kalema',
       avatarColor: 'gold',
+      gender: SISTERS.has(input.email) ? 'female' : 'male',
       ...input.extra,
     },
   )
@@ -207,7 +211,7 @@ async function main() {
       phoneNumber: '+8801712345678',
       phoneNumberVerified: true,
       bio: 'খুলনা থেকে। সফটওয়্যার নিয়ে কাজ করি, লেখা ও টেক টিমে সাহায্য করতে চাই।',
-      privacy: { profilePublic: true, showActivity: true, showJourney: true, discoverable: false },
+      privacy: { visibility: 'public', showActivity: true, showJourney: true, discoverable: false },
       forumStats: { approvedPosts: 12, trusted: true },
     },
   })

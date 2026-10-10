@@ -4,22 +4,32 @@ import { toast } from '@payloadcms/ui'
 import { IconCopy } from '@/components/icons'
 import { useSyncExternalStore } from 'react'
 
-const CONSOLE: Record<'google' | 'facebook', string> = {
+type Provider = 'google' | 'facebook' | 'youtube'
+
+const CONSOLE: Record<Provider, string> = {
   google:
     'Google Cloud Console-এ OAuth client-এর "Authorized redirect URIs" অংশে এই ঠিকানাটি যোগ করুন।',
   facebook: 'Facebook Login > Settings-এর "Valid OAuth Redirect URIs" অংশে এই ঠিকানাটি যোগ করুন।',
+  youtube:
+    'YouTube-এর OAuth client-এর "Authorized redirect URIs" অংশে এই ঠিকানাটি যোগ করুন (লোকাল টেস্টের জন্য http://localhost:3000 দিয়েও একটি)।',
+}
+
+const PATH: Record<Provider, string> = {
+  google: '/api/auth/callback/google',
+  facebook: '/api/auth/callback/facebook',
+  youtube: '/api/v1/integrations/youtube/callback',
 }
 
 const noop = () => () => {}
 
 /** The redirect address to paste into the provider's console, with a copy button. */
-export function CallbackUrl({ provider }: { provider: 'google' | 'facebook' }) {
+export function CallbackUrl({ provider }: { provider: Provider }) {
   const origin = useSyncExternalStore(
     noop,
     () => process.env.NEXT_PUBLIC_SITE_URL || window.location.origin,
     () => process.env.NEXT_PUBLIC_SITE_URL ?? '',
   )
-  const url = `${origin.replace(/\/$/, '')}/api/auth/callback/${provider}`
+  const url = `${origin.replace(/\/$/, '')}${PATH[provider]}`
 
   async function copy() {
     try {

@@ -84,6 +84,8 @@ export interface Config {
     lessons: Lesson;
     events: Event;
     'event-registrations': EventRegistration;
+    'event-recaps': EventRecap;
+    'youtube-connections': YoutubeConnection;
     circles: Circle;
     'circle-meetups': CircleMeetup;
     'circle-memberships': CircleMembership;
@@ -111,6 +113,7 @@ export interface Config {
     pages: Page;
     media: Media;
     avatars: Avatar;
+    'user-contacts': UserContact;
     'audit-logs': AuditLog;
     'rate-limits': RateLimit1;
     'payload-kv': PayloadKv;
@@ -142,6 +145,8 @@ export interface Config {
     lessons: LessonsSelect<false> | LessonsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     'event-registrations': EventRegistrationsSelect<false> | EventRegistrationsSelect<true>;
+    'event-recaps': EventRecapsSelect<false> | EventRecapsSelect<true>;
+    'youtube-connections': YoutubeConnectionsSelect<false> | YoutubeConnectionsSelect<true>;
     circles: CirclesSelect<false> | CirclesSelect<true>;
     'circle-meetups': CircleMeetupsSelect<false> | CircleMeetupsSelect<true>;
     'circle-memberships': CircleMembershipsSelect<false> | CircleMembershipsSelect<true>;
@@ -169,6 +174,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     avatars: AvatarsSelect<false> | AvatarsSelect<true>;
+    'user-contacts': UserContactsSelect<false> | UserContactsSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'rate-limits': RateLimitsSelect<false> | RateLimitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -187,6 +193,8 @@ export interface Config {
     'adab-policy': AdabPolicy;
     'moderation-settings': ModerationSetting;
     integrations: Integration;
+    'collection-rules': CollectionRule;
+    'role-permissions': RolePermission;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -195,6 +203,8 @@ export interface Config {
     'adab-policy': AdabPolicySelect<false> | AdabPolicySelect<true>;
     'moderation-settings': ModerationSettingsSelect<false> | ModerationSettingsSelect<true>;
     integrations: IntegrationsSelect<false> | IntegrationsSelect<true>;
+    'collection-rules': CollectionRulesSelect<false> | CollectionRulesSelect<true>;
+    'role-permissions': RolePermissionsSelect<false> | RolePermissionsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -236,16 +246,15 @@ export interface User {
    * ইমেইলের লিংকে ক্লিক করে ঠিকানা নিশ্চিত করেছেন কিনা।
    */
   emailVerified: boolean;
-  /**
-   * প্রোফাইল ছবি থেকে নিজে থেকে বসে।
-   */
   image?: string | null;
   createdAt: string;
   updatedAt: string;
   /**
-   * শুধু শূরা ও সুপার অ্যাডমিন ভূমিকা বদলাতে পারেন।
+   * কার কোন রোল আর প্রতিটি রোল কী পারেন, “রোল ও অনুমতি” মেনু থেকে সহজে দেখা ও বদলানো যায়।
    */
-  role?: ('super_admin' | 'shura' | 'reviewer' | 'editor' | 'author' | 'moderator' | 'member')[] | null;
+  role?:
+    | ('super_admin' | 'shura' | 'reviewer' | 'editor' | 'author' | 'moderator' | 'scholar' | 'speaker' | 'member')[]
+    | null;
   /**
    * ব্যান করা ইউজার লগইন করতে পারবেন না।
    */
@@ -349,10 +358,8 @@ export interface User {
    * স্টাফের লেখা ও রিভিউ যে প্রোফাইলে দেখাবে।
    */
   person?: (number | null) | Person;
-  /**
-   * শুধু ভাইদের জন্য। সদস্য নিজের সেটিংস থেকে বদলান।
-   */
   avatar?: (number | null) | Avatar;
+  contactsIndex?: string | null;
   /**
    * প্রোফাইলের কভারে সদস্যের বেছে নেওয়া আয়াত, হাদিস বা লেখা।
    */
@@ -469,7 +476,20 @@ export interface Person {
    * ডিজাইন নীতি অনুযায়ী সাধারণত আদ্যক্ষর ব্যবহৃত হয়।
    */
   photo?: (number | null) | Media;
+  /**
+   * এই প্রোফাইলের মানুষটি নিজে যে অ্যাকাউন্টে লগইন করেন। শুধু তাঁর নিজের অ্যাকাউন্ট বাছাই করুন; অ্যাকাউন্ট না থাকলে খালি রাখুন। রোল দিলে এটি নিজে থেকেও যুক্ত হয়।
+   */
   user?: (number | null) | User;
+  pendingChanges?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  pendingAt?: string | null;
   bio?: string | null;
   joinedLabel?: string | null;
   location?: string | null;
@@ -513,7 +533,10 @@ export interface Person {
  */
 export interface Media {
   id: number;
-  alt: string;
+  /**
+   * ছবিতে কী আছে এক লাইনে (যাঁরা চোখে দেখেন না তাঁদের জন্য এবং সার্চের জন্য)। খালি রাখলে ফাইলের নাম থেকে নিজে তৈরি হবে, তবে নিজে লিখলে সবচেয়ে ভালো হয়।
+   */
+  alt?: string | null;
   credit?: string | null;
   folder?: ('auto' | 'articles' | 'events' | 'courses' | 'people' | 'circles' | 'site') | null;
   prefix?: string | null;
@@ -547,6 +570,22 @@ export interface Media {
       filename?: string | null;
     };
     og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    w480?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    w960?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -637,7 +676,7 @@ export interface RateLimit {
  */
 export interface AdminInvitation {
   id: number;
-  role: 'super_admin' | 'shura' | 'reviewer' | 'editor' | 'author' | 'moderator' | 'member';
+  role: 'super_admin' | 'shura' | 'reviewer' | 'editor' | 'author' | 'moderator' | 'scholar' | 'speaker' | 'member';
   token: string;
   expiresAt: string;
   url?: string | null;
@@ -1219,6 +1258,10 @@ export interface Event {
   audience?: string | null;
   separateSeating?: boolean | null;
   allowGuests?: boolean | null;
+  /**
+   * খালি রাখলে কোনো আলাদা সীমা নেই, শুধু বাকি আসন পর্যন্ত (যেমন কোনো প্রতিষ্ঠান ১০০+ জন নিয়ে আসতে পারে)।
+   */
+  maxGuests?: number | null;
   description?: {
     root: {
       type: string;
@@ -1417,6 +1460,80 @@ export interface EventRegistration {
   createdAt: string;
 }
 /**
+ * শেষ হয়ে যাওয়া মজলিসে কী হয়েছিল: লেখা, ছবি ও ভিডিও। যাঁরা আসতে পারেননি তাঁরা মজলিসের পেজে দেখবেন। প্রকাশ করলে রেজিস্টার করা সদস্যরা নোটিফিকেশন পান।
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-recaps".
+ */
+export interface EventRecap {
+  id: number;
+  /**
+   * শুধু শেষ হয়ে যাওয়া প্রকাশিত মজলিস দেখাবে। প্রতিটি মজলিসের একটিই সারসংক্ষেপ।
+   */
+  event: number | Event;
+  /**
+   * দুই-তিন লাইনে। মজলিসের পেজে উপরে আর তালিকায় দেখাবে।
+   */
+  summary: string;
+  attendance?: number | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * মজলিসের ছবি। মুখ দেখা যায় এমন ছবিতে সংশ্লিষ্টদের সম্মতি নিন।
+   */
+  gallery?: (number | Media)[] | null;
+  /**
+   * YouTube লিংক দিন। চ্যানেলে না দেখাতে চাইলে ভিডিওটি Unlisted রাখুন, Private ভিডিও সাইটে চলে না।
+   */
+  videos?:
+    | {
+        url: string;
+        title?: string | null;
+        youtubeId?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  title?: string | null;
+  eventDate?: string | null;
+  notifiedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-connections".
+ */
+export interface YoutubeConnection {
+  id: number;
+  user: number | User;
+  channelId: string;
+  channelTitle?: string | null;
+  channelHandle?: string | null;
+  channelThumb?: string | null;
+  uploadsPlaylistId?: string | null;
+  status?: ('active' | 'revoked') | null;
+  scope?: string | null;
+  refreshTokenEnc?: string | null;
+  connectedAt?: string | null;
+  lastUsedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "circle-meetups".
  */
@@ -1560,6 +1677,10 @@ export interface Ayah {
   ayah: number;
   juz?: number | null;
   key?: string | null;
+  /**
+   * ডাটাবেস নিজে তৈরি করে (সূত্র, নাম ও লেখার শুরু), যাতে বাছাইয়ের তালিকায় চেনা যায় ও খোঁজা যায়।
+   */
+  label?: string | null;
   sortKey?: number | null;
   arabic: string;
   arabicPlain?: string | null;
@@ -1591,6 +1712,10 @@ export interface Hadith {
   book: number | HadithCollection;
   number: number;
   numberLabel?: string | null;
+  /**
+   * ডাটাবেস নিজে তৈরি করে (সূত্র, নাম ও লেখার শুরু), যাতে বাছাইয়ের তালিকায় চেনা যায় ও খোঁজা যায়।
+   */
+  label?: string | null;
   /**
    * যেমন bukhari:735
    */
@@ -1995,6 +2120,25 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-contacts".
+ */
+export interface UserContact {
+  id: number;
+  user: number | User;
+  kind: 'email' | 'phone';
+  value: string;
+  verified?: boolean | null;
+  verifiedAt?: string | null;
+  codeHash?: string | null;
+  codeExpiresAt?: string | null;
+  attempts?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * গুরুত্বপূর্ণ কাজের স্থায়ী রেকর্ড: রোল পরিবর্তন, রিভিউ ও প্রকাশ, মডারেশন, অ্যাকাউন্ট মুছে ফেলা। কেউ এখানে কিছু বদলাতে বা মুছতে পারেন না। "কে করেছেন" ফাঁকা থাকলে কাজটি সিস্টেম বা সার্ভার স্ক্রিপ্ট করেছে।
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "audit-logs".
  */
 export interface AuditLog {
@@ -2008,6 +2152,9 @@ export interface AuditLog {
     | 'unpublish'
     | 'withdraw'
     | 'moderation'
+    | 'rules_change'
+    | 'profile_review'
+    | 'permissions_change'
     | 'account_deletion';
   actor?: (number | null) | User;
   targetCollection?: string | null;
@@ -2121,6 +2268,14 @@ export interface PayloadLockedDocument {
         value: number | EventRegistration;
       } | null)
     | ({
+        relationTo: 'event-recaps';
+        value: number | EventRecap;
+      } | null)
+    | ({
+        relationTo: 'youtube-connections';
+        value: number | YoutubeConnection;
+      } | null)
+    | ({
         relationTo: 'circles';
         value: number | Circle;
       } | null)
@@ -2229,6 +2384,10 @@ export interface PayloadLockedDocument {
         value: number | Avatar;
       } | null)
     | ({
+        relationTo: 'user-contacts';
+        value: number | UserContact;
+      } | null)
+    | ({
         relationTo: 'audit-logs';
         value: number | AuditLog;
       } | null)
@@ -2307,6 +2466,7 @@ export interface UsersSelect<T extends boolean = true> {
   interests?: T;
   person?: T;
   avatar?: T;
+  contactsIndex?: T;
   cover?:
     | T
     | {
@@ -2699,6 +2859,8 @@ export interface PeopleSelect<T extends boolean = true> {
   active?: T;
   photo?: T;
   user?: T;
+  pendingChanges?: T;
+  pendingAt?: T;
   bio?: T;
   joinedLabel?: T;
   location?: T;
@@ -2829,6 +2991,7 @@ export interface EventsSelect<T extends boolean = true> {
   audience?: T;
   separateSeating?: T;
   allowGuests?: T;
+  maxGuests?: T;
   description?: T;
   agenda?:
     | T
@@ -2880,6 +3043,50 @@ export interface EventRegistrationsSelect<T extends boolean = true> {
   guests?: T;
   status?: T;
   reminderSentAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-recaps_select".
+ */
+export interface EventRecapsSelect<T extends boolean = true> {
+  event?: T;
+  summary?: T;
+  attendance?: T;
+  content?: T;
+  gallery?: T;
+  videos?:
+    | T
+    | {
+        url?: T;
+        title?: T;
+        youtubeId?: T;
+        id?: T;
+      };
+  title?: T;
+  eventDate?: T;
+  notifiedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-connections_select".
+ */
+export interface YoutubeConnectionsSelect<T extends boolean = true> {
+  user?: T;
+  channelId?: T;
+  channelTitle?: T;
+  channelHandle?: T;
+  channelThumb?: T;
+  uploadsPlaylistId?: T;
+  status?: T;
+  scope?: T;
+  refreshTokenEnc?: T;
+  connectedAt?: T;
+  lastUsedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3059,6 +3266,7 @@ export interface AyahsSelect<T extends boolean = true> {
   ayah?: T;
   juz?: T;
   key?: T;
+  label?: T;
   sortKey?: T;
   arabic?: T;
   arabicPlain?: T;
@@ -3088,6 +3296,7 @@ export interface HadithsSelect<T extends boolean = true> {
   book?: T;
   number?: T;
   numberLabel?: T;
+  label?: T;
   key?: T;
   chapter?: T;
   narrator?: T;
@@ -3403,6 +3612,26 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        w480?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        w960?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
 }
 /**
@@ -3458,6 +3687,22 @@ export interface AvatarsSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "user-contacts_select".
+ */
+export interface UserContactsSelect<T extends boolean = true> {
+  user?: T;
+  kind?: T;
+  value?: T;
+  verified?: T;
+  verifiedAt?: T;
+  codeHash?: T;
+  codeExpiresAt?: T;
+  attempts?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3557,11 +3802,17 @@ export interface SiteSetting {
   createdAt?: string | null;
 }
 /**
+ * হোম পেজের প্রতিটি অংশ এক জায়গায়, পেজে যে ক্রমে আছে সেই ক্রমে। প্রতিটি ট্যাবের উপরের সুইচ দিয়ে অংশটি দেখানো বা লুকানো যায়।
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-page".
  */
 export interface HomePage {
   id: number;
+  /**
+   * বন্ধ করলে হোম পেজে "হিরো" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showHero?: boolean | null;
   heroAyah: {
     arabic: string;
     translation: string;
@@ -3571,11 +3822,23 @@ export interface HomePage {
   titleLine2: string;
   subtitle: string;
   primaryCtaLabel: string;
+  /**
+   * সাইটের পেজ (/about), এই পেজের অংশ (#journey) বা বাইরের লিংক (https://...)। ফাঁকা থাকলে #journey
+   */
+  primaryCtaHref?: string | null;
   secondaryCtaLabel: string;
+  /**
+   * সাইটের পেজ (/about), এই পেজের অংশ (#journey) বা বাইরের লিংক (https://...)। ফাঁকা থাকলে /about
+   */
+  secondaryCtaHref?: string | null;
   support?: {
     arabic?: string | null;
     text?: string | null;
   };
+  /**
+   * বন্ধ করলে হোম পেজে "অঙ্গীকার" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showPledge?: boolean | null;
   pledgeEyebrow?: string | null;
   pledgeTitle: string;
   pledges?:
@@ -3585,6 +3848,11 @@ export interface HomePage {
         id?: string | null;
       }[]
     | null;
+  /**
+   * বন্ধ করলে হোম পেজে "যাত্রার ধাপ" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showJourney?: boolean | null;
+  journeyEyebrow?: string | null;
   journeyTitle: string;
   journeyLead?: string | null;
   journeySteps?:
@@ -3596,6 +3864,13 @@ export interface HomePage {
         id?: string | null;
       }[]
     | null;
+  journeyEndText?: string | null;
+  journeyEndLabel?: string | null;
+  /**
+   * বন্ধ করলে হোম পেজে "পরিবেশ" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showValues?: boolean | null;
+  valuesEyebrow?: string | null;
   valuesTitle: string;
   valuesLead?: string | null;
   values?:
@@ -3606,16 +3881,84 @@ export interface HomePage {
         id?: string | null;
       }[]
     | null;
-  featuredIkhtilaf?: (number | null) | IkhtilafTopic;
+  /**
+   * বন্ধ করলে হোম পেজে "আজকের আয়াত ও হাদিস" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showDaily?: boolean | null;
+  dailyEyebrow?: string | null;
+  dailyTitle: string;
+  /**
+   * চালু: নিচের তালিকা থেকে দেখাবে (তারিখ দেওয়া থাকলে সেদিন সেটি, নইলে পালা করে)। বন্ধ: সাইট নিজে প্রতিদিন একটি ছোট আয়াত ও একই বিষয়ের একটি ছোট সহিহ/হাসান হাদিস বেছে নেবে।
+   */
+  dailyScheduled?: boolean | null;
+  /**
+   * বন্ধ করলে হোম পেজে "ইলম কেন্দ্র" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showIlm?: boolean | null;
+  ilmEyebrow?: string | null;
+  ilmTitle: string;
+  ilmLead?: string | null;
+  /**
+   * 1 থেকে 15
+   */
+  ilmCount?: number | null;
+  /**
+   * বন্ধ করলে হোম পেজে "সর্বশেষ প্রবন্ধ" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showArticles?: boolean | null;
+  articlesEyebrow?: string | null;
+  articlesTitle: string;
+  /**
+   * 1 থেকে 12
+   */
+  articlesCount?: number | null;
+  /**
+   * বন্ধ করলে হোম পেজে "ইখতিলাফ" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showIkhtilaf?: boolean | null;
+  ikhtilafEyebrow?: string | null;
+  ikhtilafTitle: string;
+  ikhtilafText?: string | null;
   ikhtilafPoints?:
     | {
         text: string;
         id?: string | null;
       }[]
     | null;
-  ilmLead?: string | null;
+  /**
+   * প্রকাশিত একটি বিষয় বেছে নিন। বিষয় না থাকলে বা প্রকাশিত না হলে অংশটি দেখাবে না।
+   */
+  featuredIkhtilaf?: (number | null) | IkhtilafTopic;
+  /**
+   * বন্ধ করলে হোম পেজে "আসন্ন মজলিস" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showEvents?: boolean | null;
+  eventsEyebrow?: string | null;
+  eventsTitle: string;
+  /**
+   * আসন্ন মজলিস কম থাকলে বাকি কার্ডে সদ্য শেষ হওয়া মজলিস দেখায় ("শেষ হয়েছে" চিহ্নসহ, রেজিস্ট্রেশন ছাড়া)। একটিও আসন্ন না থাকলে উপরের শিরোনামের বদলে এটি দেখাবে।
+   */
+  eventsPastTitle?: string | null;
+  /**
+   * 1 থেকে 10
+   */
+  eventsCount?: number | null;
+  /**
+   * বন্ধ করলে হোম পেজে "শেষের আহ্বান" অংশটি দেখাবে না। লেখা মুছে যায় না, পরে আবার চালু করা যায়।
+   */
+  showCta?: boolean | null;
   ctaTitle: string;
   ctaText: string;
+  ctaPrimaryLabel?: string | null;
+  /**
+   * সাইটের পেজ (/about), এই পেজের অংশ (#journey) বা বাইরের লিংক (https://...)। ফাঁকা থাকলে /join
+   */
+  ctaPrimaryHref?: string | null;
+  ctaSecondaryLabel?: string | null;
+  /**
+   * সাইটের পেজ (/about), এই পেজের অংশ (#journey) বা বাইরের লিংক (https://...)। ফাঁকা থাকলে /about
+   */
+  ctaSecondaryHref?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3649,6 +3992,10 @@ export interface AboutPage {
     [k: string]: unknown;
   };
   shuraIntro: string;
+  /**
+   * একজন একজন করে বেছে নিন; যে ক্রমে বাছবেন সেই ক্রমে দেখাবে (টেনে ক্রম বদলানো যায়)। শূরায় এর চেয়ে বেশি সদস্য থাকলে নিচে “সব শূরা সদস্য দেখুন” বাটন আসবে, যা আলাদা পাতায় সবাইকে দেখায়। খালি রাখলে সবাই দেখাবে। তালিকায় আসতে হলে ব্যক্তির প্রোফাইলে “শূরায় দায়িত্ব” পূরণ করা থাকতে হবে।
+   */
+  shuraFeatured?: (number | Person)[] | null;
   adabIntro: string;
   adabRules?:
     | {
@@ -3716,7 +4063,7 @@ export interface ModerationSetting {
   createdAt?: string | null;
 }
 /**
- * Google ও Facebook লগইন, SMS আর ইমেইলের সেটিংস। এখানে দেওয়া মান .env-এর মানের চেয়ে অগ্রাধিকার পায় এবং সংরক্ষণের এক মিনিটের মধ্যে সাইটে কাজ শুরু করে। গোপন চাবিগুলো এনক্রিপ্ট করে রাখা হয়।
+ * Google ও Facebook লগইন, YouTube, SMS আর ইমেইলের সেটিংস। এখানে দেওয়া মান .env-এর মানের চেয়ে অগ্রাধিকার পায় এবং সংরক্ষণের এক মিনিটের মধ্যে সাইটে কাজ শুরু করে। গোপন চাবিগুলো এনক্রিপ্ট করে রাখা হয়।
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "integrations".
@@ -3746,6 +4093,26 @@ export interface Integration {
     enabled?: boolean | null;
     /**
      * developers.facebook.com > আপনার অ্যাপ > App settings > Basic থেকে App ID।
+     */
+    clientId?: string | null;
+    /**
+     * সংরক্ষণের পর আর দেখা যায় না। বদলাতে চাইলে নতুনটি লিখুন।
+     */
+    clientSecret?: string | null;
+    clientSecretEnc?: string | null;
+    clientSecretHint?: string | null;
+  };
+  youtube?: {
+    /**
+     * চালু থাকলে ভিডিওর ঘরগুলোতে "YouTube থেকে বেছে নিন" বাটন দেখাবে। বন্ধ থাকলেও লিংক পেস্ট করা যায়।
+     */
+    enabled?: boolean | null;
+    /**
+     * প্রত্যেকে শুধু নিজের যুক্ত করা চ্যানেলের ভিডিও দেখতে ও বেছে নিতে পারেন। Google যাচাই ছাড়া মোট ১০০ জন পর্যন্ত অনুমতি দিতে পারেন; বেশি লাগলে Google-এ অ্যাপ যাচাই করাতে হবে।
+     */
+    audience?: ('staff' | 'members') | null;
+    /**
+     * Google Cloud Console > APIs & Services > Credentials > OAuth client ID (Web application) থেকে।
      */
     clientId?: string | null;
     /**
@@ -3792,6 +4159,46 @@ export interface Integration {
   createdAt?: string | null;
 }
 /**
+ * প্রতিটি মেনুর নিয়ম, যেমন প্রবন্ধ প্রকাশের আগে কতজন রিভিউয়ারের অনুমোদন লাগবে। প্রতিটি মেনুর তালিকার উপরেও “এই মেনুর নিয়ম” থেকে বদলানো যায়।
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collection-rules".
+ */
+export interface CollectionRule {
+  id: number;
+  rules?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * কোন রোল কোন মেনুতে কী করতে পারবেন, আর কার কোন রোল। সুপার অ্যাডমিনের সব অনুমতি থাকে; শূরার অনুমতি শুধু সুপার অ্যাডমিন বদলাতে পারেন।
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "role-permissions".
+ */
+export interface RolePermission {
+  id: number;
+  matrix?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -3832,6 +4239,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
  * via the `definition` "home-page_select".
  */
 export interface HomePageSelect<T extends boolean = true> {
+  showHero?: T;
   heroAyah?:
     | T
     | {
@@ -3843,13 +4251,16 @@ export interface HomePageSelect<T extends boolean = true> {
   titleLine2?: T;
   subtitle?: T;
   primaryCtaLabel?: T;
+  primaryCtaHref?: T;
   secondaryCtaLabel?: T;
+  secondaryCtaHref?: T;
   support?:
     | T
     | {
         arabic?: T;
         text?: T;
       };
+  showPledge?: T;
   pledgeEyebrow?: T;
   pledgeTitle?: T;
   pledges?:
@@ -3859,6 +4270,8 @@ export interface HomePageSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  showJourney?: T;
+  journeyEyebrow?: T;
   journeyTitle?: T;
   journeyLead?: T;
   journeySteps?:
@@ -3870,6 +4283,10 @@ export interface HomePageSelect<T extends boolean = true> {
         href?: T;
         id?: T;
       };
+  journeyEndText?: T;
+  journeyEndLabel?: T;
+  showValues?: T;
+  valuesEyebrow?: T;
   valuesTitle?: T;
   valuesLead?: T;
   values?:
@@ -3880,16 +4297,42 @@ export interface HomePageSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
-  featuredIkhtilaf?: T;
+  showDaily?: T;
+  dailyEyebrow?: T;
+  dailyTitle?: T;
+  dailyScheduled?: T;
+  showIlm?: T;
+  ilmEyebrow?: T;
+  ilmTitle?: T;
+  ilmLead?: T;
+  ilmCount?: T;
+  showArticles?: T;
+  articlesEyebrow?: T;
+  articlesTitle?: T;
+  articlesCount?: T;
+  showIkhtilaf?: T;
+  ikhtilafEyebrow?: T;
+  ikhtilafTitle?: T;
+  ikhtilafText?: T;
   ikhtilafPoints?:
     | T
     | {
         text?: T;
         id?: T;
       };
-  ilmLead?: T;
+  featuredIkhtilaf?: T;
+  showEvents?: T;
+  eventsEyebrow?: T;
+  eventsTitle?: T;
+  eventsPastTitle?: T;
+  eventsCount?: T;
+  showCta?: T;
   ctaTitle?: T;
   ctaText?: T;
+  ctaPrimaryLabel?: T;
+  ctaPrimaryHref?: T;
+  ctaSecondaryLabel?: T;
+  ctaSecondaryHref?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -3906,6 +4349,7 @@ export interface AboutPageSelect<T extends boolean = true> {
   readingTime?: T;
   manifesto?: T;
   shuraIntro?: T;
+  shuraFeatured?: T;
   adabIntro?: T;
   adabRules?:
     | T
@@ -3979,6 +4423,16 @@ export interface IntegrationsSelect<T extends boolean = true> {
         clientSecretEnc?: T;
         clientSecretHint?: T;
       };
+  youtube?:
+    | T
+    | {
+        enabled?: T;
+        audience?: T;
+        clientId?: T;
+        clientSecret?: T;
+        clientSecretEnc?: T;
+        clientSecretHint?: T;
+      };
   sms?:
     | T
     | {
@@ -4004,6 +4458,26 @@ export interface IntegrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collection-rules_select".
+ */
+export interface CollectionRulesSelect<T extends boolean = true> {
+  rules?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "role-permissions_select".
+ */
+export interface RolePermissionsSelect<T extends boolean = true> {
+  matrix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections_widget".
  */
 export interface CollectionsWidget {
@@ -4018,12 +4492,15 @@ export interface CollectionsWidget {
  */
 export interface AyahBlock {
   /**
-   * বাছাই করলে আরবি, অনুবাদ ও সূত্র স্বয়ংক্রিয়ভাবে আসবে। নিচের ঘরগুলো পূরণ করলে সেগুলো অগ্রাধিকার পাবে।
+   * খুঁজতে সূরার নাম (যেমন বাকারা), সূরা:আয়াত (যেমন 2:255) বা অনুবাদের কোনো শব্দ লিখুন। বাছাই করলে আরবি, অনুবাদ ও সূত্র ডাটাবেস থেকেই দেখাবে, নিচে আর কিছু লিখতে হবে না।
    */
   ayah?: (number | null) | Ayah;
   arabic?: string | null;
   translation?: string | null;
   reference?: string | null;
+  /**
+   * লেখার মাঝে ছোট, বাম দিকে সাজানো কার্ড; বড় সাজসজ্জা ছাড়া।
+   */
   compact?: boolean | null;
   id?: string | null;
   blockName?: string | null;
@@ -4034,6 +4511,9 @@ export interface AyahBlock {
  * via the `definition` "HadithBlock".
  */
 export interface HadithBlock {
+  /**
+   * খুঁজতে গ্রন্থ ও নম্বর (যেমন বুখারী 1) বা হাদিসের কোনো শব্দ লিখুন। বাছাই করলে মতন, অনুবাদ, বর্ণনাকারী, সূত্র ও মান ডাটাবেস থেকেই দেখাবে।
+   */
   hadith?: (number | null) | Hadith;
   arabic?: string | null;
   text?: string | null;
@@ -4075,6 +4555,28 @@ export interface YouTubeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'youtube';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock".
+ */
+export interface GalleryBlock {
+  /**
+   * অন্তত ২টি। যে ক্রমে বাছবেন সেই ক্রমে দেখাবে; টেনে ক্রম বদলানো যায়।
+   */
+  images: (number | Media)[];
+  /**
+   * মোবাইলে সারিতে ২টি করে।
+   */
+  columns?: ('2' | '3' | '4') | null;
+  /**
+   * সব ছবি একই মাপে কেটে সাজানো হয়; বড় করে দেখলে পুরো ছবি।
+   */
+  aspect?: ('4/3' | '1/1' | '16/9' | '3/4') | null;
+  caption?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gallery';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

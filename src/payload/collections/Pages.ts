@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { hasRole, STAFF_ROLES } from '@/lib/roles'
 
-import { editorsOnly, statusPublishedOrStaff } from '../access'
+import { menuAccess, menuRead } from '../access/permissions'
 import { slugField } from '../fields'
 import { revalidateCollection } from '../hooks/revalidate'
 import { previewUrl } from '../preview'
@@ -23,10 +23,8 @@ export const Pages: CollectionConfig = {
   },
   versions: { maxPerDoc: 20 },
   access: {
-    read: statusPublishedOrStaff(),
-    create: editorsOnly,
-    update: editorsOnly,
-    delete: editorsOnly,
+    read: menuRead('pages', { publicWhere: { status: { equals: 'published' } } }),
+    ...menuAccess('pages'),
   },
   hooks: { afterChange: [revalidate.afterChange], afterDelete: [revalidate.afterDelete] },
   fields: [

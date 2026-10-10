@@ -9,6 +9,7 @@ export const INTEGRATION_SECRETS = [
   ['facebook', 'clientSecret'],
   ['sms', 'apiKey'],
   ['email', 'resendApiKey'],
+  ['youtube', 'clientSecret'],
 ] as const
 
-export type IntegrationTarget = 'google' | 'facebook' | 'sms' | 'email'
+export type IntegrationTarget = 'google' | 'facebook' | 'sms' | 'email' | 'youtube'

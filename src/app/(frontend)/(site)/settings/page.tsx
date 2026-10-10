@@ -2,7 +2,11 @@ import { IconUser } from '@/components/icons'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
+import { isProfileIncomplete } from '@/lib/profile-complete'
+
 import { TableOfContents } from '@/components/content/article-aids'
+import { ContactsSection } from '@/components/settings/contact-settings'
+import { PublicProfileSection } from '@/components/settings/public-profile-section'
 import {
   CoverSection,
   PrivacySection,
@@ -19,10 +23,12 @@ import {
 } from '@/components/settings/settings-sections'
 import { ButtonLink } from '@/components/ui/button'
 import { PageHero } from '@/components/ui/primitives'
-import { oauthAvailability } from '@/server/integrations'
+import { deliveryAvailability, oauthAvailability } from '@/server/integrations'
 import { buildMetadata } from '@/lib/seo'
 import { readPrivacy } from '@/lib/profile-privacy'
 import { actionContext } from '@/server/action-context'
+import { listContacts } from '@/server/services/contacts'
+import { getMyPublicProfile } from '@/server/services/public-profile'
 import { membersByIds } from '@/server/services/profile'
 
 export const metadata: Metadata = buildMetadata({
@@ -35,6 +41,7 @@ const SECTIONS = [
   { id: 'profile', text: 'ব্যক্তিগত তথ্য', level: 2 as const },
   { id: 'cover', text: 'প্রোফাইলের কভার', level: 2 as const },
   { id: 'privacy', text: 'গোপনীয়তা', level: 2 as const },
+  { id: 'contacts', text: 'ইমেইল ও মোবাইল', level: 2 as const },
   { id: 'logins', text: 'লগইন পদ্ধতি', level: 2 as const },
   { id: 'sessions', text: 'সক্রিয় সেশন', level: 2 as const },
   { id: 'notify', text: 'নোটিফিকেশন', level: 2 as const },
@@ -51,11 +58,14 @@ export default async function SettingsPage() {
   const ctx = await actionContext()
   const { user } = ctx
   if (!user) redirect('/login?next=/settings')
-  if (!user.gender) redirect('/onboarding?next=/settings')
+  if (isProfileIncomplete(user)) redirect('/onboarding?next=/settings')
   const privacy = readPrivacy(user.privacy)
-  const [oauth, viewers] = await Promise.all([
+  const [oauth, delivery, viewers, contacts, publicProfile] = await Promise.all([
     oauthAvailability(),
+    deliveryAvailability(),
     membersByIds(ctx, privacy.allowedViewers),
+    listContacts(ctx),
+    getMyPublicProfile(ctx),
   ])
   const avatar = user.avatar && typeof user.avatar === 'object' ? user.avatar : null
   const [ayahSurah, ayahNumber] = (user.cover?.ayahKey ?? '1:1').split(':').map(Number)
@@ -116,7 +126,18 @@ export default async function SettingsPage() {
               aria-label="সেটিংস বিভাগ"
               style={{ maxWidth: 260 }}
             >
-              <TableOfContents headings={SECTIONS} title="সেটিংস" />
+              <TableOfContents
+                headings={
+                  publicProfile
+                    ? [
+                        SECTIONS[0]!,
+                        { id: 'public-profile', text: 'পাবলিক প্রোফাইল', level: 2 as const },
+                        ...SECTIONS.slice(1),
+                      ]
+                    : SECTIONS
+                }
+                title="সেটিংস"
+              />
               {user.username ? (
                 <ButtonLink
                   href={`/members/${user.username}`}
@@ -134,8 +155,10 @@ export default async function SettingsPage() {
               style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
             >
               <ProfileSection user={view} />
+              {publicProfile ? <PublicProfileSection initial={publicProfile} /> : null}
               <CoverSection initial={cover} />
               <PrivacySection initial={privacyState} />
+              <ContactsSection initial={contacts} email={delivery.email} sms={delivery.sms} />
               <LoginsSection user={view} google={oauth.google} facebook={oauth.facebook} />
               <SessionsSection />
               <NotificationsSection initial={view.notificationPrefs} />

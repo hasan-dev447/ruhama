@@ -31,9 +31,19 @@ export function maskPhone(e164: string): string {
   return `${local.slice(0, 3)}XXXXXX${local.slice(-2)}`
 }
 
-/** Placeholder email Better Auth needs for phone-only accounts. */
+/**
+ * Temporary addresses for accounts that arrived without an email: older phone-only accounts, and
+ * Facebook accounts that share no email. Such a member is asked for a real address on /onboarding
+ * before anything else works.
+ */
 export const PHONE_EMAIL_DOMAIN = 'phone.ruhama.local'
+export const FACEBOOK_EMAIL_DOMAIN = 'facebook.ruhama.local'
 export const phonePlaceholderEmail = (e164: string) =>
   `${e164.replace(/\D/g, '')}@${PHONE_EMAIL_DOMAIN}`
+export const facebookPlaceholderEmail = (facebookId: string) =>
+  `fb-${facebookId.replace(/\W/g, '')}@${FACEBOOK_EMAIL_DOMAIN}`
 export const isPlaceholderEmail = (email: string | null | undefined) =>
-  Boolean(email?.endsWith(`@${PHONE_EMAIL_DOMAIN}`))
+  Boolean(
+    email &&
+    (email.endsWith(`@${PHONE_EMAIL_DOMAIN}`) || email.endsWith(`@${FACEBOOK_EMAIL_DOMAIN}`)),
+  )

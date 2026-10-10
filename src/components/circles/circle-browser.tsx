@@ -3,10 +3,10 @@
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs'
 
 import { ButtonLink } from '@/components/ui/button'
-import { Select } from '@/components/ui/form'
+import { DistrictSelect } from '@/components/ui/district-select'
 import { Chip, Pager, Skeleton } from '@/components/ui/primitives'
 import { usePublicList } from '@/hooks/use-public-list'
-import { DIVISIONS, districtLabel } from '@/lib/districts'
+import { districtLabel } from '@/lib/districts'
 import { bn } from '@/lib/format'
 import { IconCircles } from '@/components/icons'
 import type { CircleCardView } from '@/server/queries/types'
@@ -48,26 +48,13 @@ export function CircleFilters() {
       <label htmlFor="c-district" className="sr-only">
         জেলা নির্বাচন করুন
       </label>
-      <Select
+      <DistrictSelect
         id="c-district"
-        wrapStyle={{ flex: '1 1 260px' }}
-        style={{ minHeight: 52 }}
+        style={{ flex: '1 1 260px' }}
+        allLabel="সব জেলা"
         value={state.district}
-        onChange={(e) =>
-          void setState({ district: e.target.value === 'all' ? null : e.target.value, page: null })
-        }
-      >
-        <option value="all">সব জেলা</option>
-        {DIVISIONS.map((d) => (
-          <optgroup key={d.value} label={d.label}>
-            {d.districts.map((x) => (
-              <option key={x.value} value={x.value}>
-                {x.label}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </Select>
+        onChange={(v) => void setState({ district: v === 'all' ? null : v, page: null })}
+      />
       <div className="chip-row" role="group" aria-label="সার্কেলের ধরন">
         {TYPES.map((t) => (
           <Chip

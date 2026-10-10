@@ -1,10 +1,13 @@
 import type { Access, CollectionConfig, Where } from 'payload'
 
 import { hasRole, MODERATOR_ROLES, STAFF_ROLES } from '@/lib/roles'
+import { atLeast } from '@/lib/permissions'
 import { TAGS } from '@/server/cache/tags'
+import { can, levelOf } from '@/server/permissions'
 import { recountForumCategory, recountPostHelpful, recountThread } from '@/server/services/counters'
 
-import { adminsOnly, anyone, moderatorsOnly, ownOrRoles } from '../access'
+import { adminsOnly, anyone, ownOrRoles } from '../access'
+import { atLevel, menuAccess } from '../access/permissions'
 import { safeRevalidate } from '../hooks/revalidate'
 import { slugField } from '../fields'
 
@@ -15,20 +18,23 @@ const idOf = (v: unknown) =>
 const hidden = ({ user }: { user: unknown }) => !hasRole(user as { role?: unknown }, ...STAFF_ROLES)
 
 /** Members see published, non-deleted content plus their own pending posts; moderators see everything. */
-const forumRead: Access = ({ req }) => {
-  if (hasRole(req.user, ...MODERATOR_ROLES)) return true
-  const visible: Where = {
-    and: [{ status: { equals: 'published' } }, { deletedAt: { exists: false } }],
+const forumRead =
+  (slug: string): Access =>
+  async ({ req }) => {
+    if (await can(req.user, 'forum.moderate')) return true
+    if (atLeast(await levelOf(req.user, slug), 'view')) return true
+    const visible: Where = {
+      and: [{ status: { equals: 'published' } }, { deletedAt: { exists: false } }],
+    }
+    if (req.user)
+      return {
+        or: [
+          visible,
+          { and: [{ author: { equals: req.user.id } }, { deletedAt: { exists: false } }] },
+        ],
+      } as Where
+    return visible
   }
-  if (req.user)
-    return {
-      or: [
-        visible,
-        { and: [{ author: { equals: req.user.id } }, { deletedAt: { exists: false } }] },
-      ],
-    } as Where
-  return visible
-}
 
 export const ForumCategories: CollectionConfig = {
   slug: 'forum-categories',
@@ -40,7 +46,7 @@ export const ForumCategories: CollectionConfig = {
     hidden,
   },
   defaultSort: 'order',
-  access: { read: anyone, create: moderatorsOnly, update: moderatorsOnly, delete: adminsOnly },
+  access: { read: anyone, ...menuAccess('forum-categories') },
   hooks: {
     afterChange: [({ doc }) => (safeRevalidate([TAGS.collection('forum-categories')]), doc)],
   },
@@ -85,11 +91,9 @@ export const ForumThreads: CollectionConfig = {
   },
   defaultSort: '-lastActivityAt',
   access: {
-    read: forumRead,
+    read: forumRead('forum-threads'),
     // members post through the forum service so moderation rules always apply
-    create: moderatorsOnly,
-    update: moderatorsOnly,
-    delete: adminsOnly,
+    ...menuAccess('forum-threads'),
   },
   hooks: {
     afterChange: [
@@ -229,7 +233,7 @@ export const ForumPosts: CollectionConfig = {
     hidden,
   },
   defaultSort: 'createdAt',
-  access: { read: forumRead, create: moderatorsOnly, update: moderatorsOnly, delete: adminsOnly },
+  access: { read: forumRead('forum-posts'), ...menuAccess('forum-posts') },
   hooks: {
     afterChange: [
       async ({ doc, previousDoc, req, context }) => {
@@ -354,7 +358,7 @@ export const Reports: CollectionConfig = {
     hidden,
   },
   defaultSort: '-createdAt',
-  access: { read: moderatorsOnly, create: adminsOnly, update: moderatorsOnly, delete: adminsOnly },
+  access: { read: atLevel('reports', 'view'), ...menuAccess('reports') },
   fields: [
     {
       name: 'targetType',

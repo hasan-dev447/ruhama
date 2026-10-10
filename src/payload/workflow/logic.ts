@@ -1,13 +1,12 @@
 import { createHash } from 'node:crypto'
 
-import { hasRole, isPublisher, REVIEWER_ROLES, type Role } from '@/lib/roles'
+import { DEFAULT_WORKFLOW_RULES, type WorkflowRules } from '@/lib/collection-rules'
+import { hasRole, ROLE_LABELS, type Role } from '@/lib/roles'
 
-import {
-  REQUIRED_APPROVALS,
-  type Approval,
-  type ReviewStatus,
-  type WorkflowAction,
-} from './constants'
+import type { Approval, ReviewStatus, WorkflowAction } from './constants'
+
+/** "সুপার অ্যাডমিন ও শূরা": who a rule allows, for messages. */
+const roleNames = (roles: Role[]) => roles.map((r) => ROLE_LABELS[r]).join(', ')
 
 type Id = number | string
 
@@ -51,11 +50,16 @@ export function computeContentHash(doc: Record<string, unknown>, fields: string[
   return createHash('sha256').update(payload).digest('hex').slice(0, 32)
 }
 
-/** Distinct reviewers who approved this exact content, excluding the author. */
+/**
+ * Distinct reviewers whose latest decision is an approval. By the menu's rules (lib/collection-rules)
+ * the approval must be of this exact content (unless edits keep approvals) and not by the author
+ * (unless self-review is allowed).
+ */
 export function validApprovers(
   approvals: Approval[] | null | undefined,
   contentHash: string,
   authorId: unknown,
+  rules: WorkflowRules = DEFAULT_WORKFLOW_RULES,
 ): string[] {
   const latestByReviewer = new Map<string, Approval>()
   for (const a of approvals ?? []) {
@@ -68,8 +72,14 @@ export function validApprovers(
   const out: string[] = []
   for (const [rid, a] of latestByReviewer) {
     if (a.decision !== 'approved') continue
-    if (a.contentHash !== contentHash) continue
-    if (authorId !== null && authorId !== undefined && sameId(rid, authorId)) continue
+    if (rules.resetApprovalsOnEdit && a.contentHash !== contentHash) continue
+    if (
+      !rules.allowSelfReview &&
+      authorId !== null &&
+      authorId !== undefined &&
+      sameId(rid, authorId)
+    )
+      continue
     out.push(rid)
   }
   return out
@@ -79,8 +89,9 @@ export function hasEnoughApprovals(
   approvals: Approval[] | null | undefined,
   contentHash: string,
   authorId: unknown,
+  rules: WorkflowRules = DEFAULT_WORKFLOW_RULES,
 ) {
-  return validApprovers(approvals, contentHash, authorId).length >= REQUIRED_APPROVALS
+  return validApprovers(approvals, contentHash, authorId, rules).length >= rules.requiredApprovals
 }
 
 type Actor = { id: Id; role?: unknown } | null | undefined
@@ -95,12 +106,19 @@ export function checkTransition(params: {
   authorId: unknown
   approvals: Approval[] | null | undefined
   contentHash: string
+  /** the menu's rules (server/rules.ts); the old fixed values when left out */
+  rules?: WorkflowRules
+  /** "এডিট" or more in this menu (রোল ও অনুমতি page): may submit or withdraw anyone's work */
+  contentStaff?: boolean
 }): TransitionCheck {
   const { action, actor, status, authorId, approvals, contentHash } = params
+  const rules = params.rules ?? DEFAULT_WORKFLOW_RULES
   if (!actor) return { ok: false, message: 'লগইন প্রয়োজন।' }
   const isAuthor = sameId(actor.id, authorId)
-  const isContentStaff = hasRole(actor, 'super_admin', 'shura', 'editor') as boolean
-  const reviewer = hasRole(actor, ...(REVIEWER_ROLES as Role[]))
+  const isContentStaff =
+    params.contentStaff ?? (hasRole(actor, 'super_admin', 'shura', 'editor') as boolean)
+  const reviewer = hasRole(actor, ...rules.reviewerRoles)
+  const publisher = hasRole(actor, ...rules.publisherRoles)
 
   switch (action) {
     case 'submit':
@@ -116,29 +134,40 @@ export function checkTransition(params: {
       return { ok: true }
     case 'approve':
     case 'request_changes':
-      if (!reviewer) return { ok: false, message: 'শুধু রিভিউয়ার এই কাজ করতে পারেন।' }
-      if (isAuthor) return { ok: false, message: 'নিজের লেখা নিজে রিভিউ করা যায় না।' }
+      if (!reviewer)
+        return {
+          ok: false,
+          message: `এই কাজ শুধু ${roleNames(rules.reviewerRoles)} করতে পারেন।`,
+        }
+      if (isAuthor && !rules.allowSelfReview)
+        return { ok: false, message: 'নিজের লেখা নিজে রিভিউ করা যায় না।' }
       if (!['in_review', 'approved'].includes(status))
         return { ok: false, message: 'লেখাটি এখন রিভিউয়ের অবস্থায় নেই।' }
       // an approval belongs to one version of the text: approving it again adds nothing (after an edit it is allowed)
       if (
         action === 'approve' &&
-        validApprovers(approvals, contentHash, authorId).some((r) => sameId(r, actor.id))
+        validApprovers(approvals, contentHash, authorId, rules).some((r) => sameId(r, actor.id))
       )
         return { ok: false, message: 'আপনি এই সংস্করণটি আগেই অনুমোদন করেছেন।' }
       return { ok: true }
     case 'publish':
-      if (!isPublisher(actor))
-        return { ok: false, message: 'চূড়ান্ত প্রকাশের অনুমতি শুধু শূরা ও সুপার অ্যাডমিনের।' }
-      if (!hasEnoughApprovals(approvals, contentHash, authorId))
+      if (!publisher)
         return {
           ok: false,
-          message: `প্রকাশের আগে অন্তত ${REQUIRED_APPROVALS} জন ভিন্ন রিভিউয়ারের অনুমোদন প্রয়োজন।`,
+          message: `চূড়ান্ত প্রকাশের অনুমতি শুধু ${roleNames(rules.publisherRoles)}-এর।`,
+        }
+      if (!hasEnoughApprovals(approvals, contentHash, authorId, rules))
+        return {
+          ok: false,
+          message: `প্রকাশের আগে অন্তত ${rules.requiredApprovals} জন ভিন্ন রিভিউয়ারের অনুমোদন প্রয়োজন।`,
         }
       return { ok: true }
     case 'unpublish':
-      if (!isPublisher(actor))
-        return { ok: false, message: 'প্রকাশ বাতিলের অনুমতি শুধু শূরা ও সুপার অ্যাডমিনের।' }
+      if (!publisher)
+        return {
+          ok: false,
+          message: `প্রকাশ বাতিলের অনুমতি শুধু ${roleNames(rules.publisherRoles)}-এর।`,
+        }
       if (status !== 'published') return { ok: false, message: 'লেখাটি প্রকাশিত নয়।' }
       return { ok: true }
     default:
@@ -152,7 +181,8 @@ export function statusAfterDecision(
   contentHash: string,
   authorId: unknown,
   decision: Approval['decision'],
+  rules: WorkflowRules = DEFAULT_WORKFLOW_RULES,
 ): ReviewStatus {
   if (decision === 'changes_requested') return 'needs_changes'
-  return hasEnoughApprovals(approvals, contentHash, authorId) ? 'approved' : 'in_review'
+  return hasEnoughApprovals(approvals, contentHash, authorId, rules) ? 'approved' : 'in_review'
 }

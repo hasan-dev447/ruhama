@@ -3,7 +3,14 @@ import type { Payload } from 'payload'
 import { TIME_ZONE } from '@/lib/format'
 import { ayahReference, surahPath } from '@/lib/quran-meta'
 
-import { CATEGORY_POPULATE, getIkhtilaf, listArticles, listCategories } from './articles'
+import {
+  CATEGORY_POPULATE,
+  getIkhtilaf,
+  IKH_SELECT,
+  listArticles,
+  listCategories,
+} from './articles'
+import { HADITH_ARABIC_MAX, pickAutoDaily } from './daily-auto'
 import { listUpcomingEvents } from './events'
 import { toIkhtilafCard } from './mappers'
 
@@ -87,42 +94,102 @@ function pick(reminders: Reminder[], today: string): Reminder | null {
   return list[day % list.length] ?? null
 }
 
-/** The daily verse and hadith: a reminder dated today, otherwise rotated by day. */
+const SCRIPTURE_POPULATE = {
+  ayahs: { arabic: true, translation: true, surah: true, ayah: true, key: true },
+  hadiths: {
+    arabic: true,
+    text: true,
+    narrator: true,
+    grade: true,
+    key: true,
+    number: true,
+    numberLabel: true,
+    book: true,
+  },
+  'hadith-collections': { name: true, slug: true },
+} as const
+
+/** Today's automatic pair (daily-auto.ts), in the same shape as a scheduled reminder. */
+async function autoReminders(payload: Payload, today: string) {
+  const auto = await pickAutoDaily(payload, today)
+  const [ayahDoc, hadithDoc] = await Promise.all([
+    auto.ayahId
+      ? payload
+          .findByID({
+            collection: 'ayahs',
+            id: auto.ayahId,
+            depth: 0,
+            select: SCRIPTURE_POPULATE.ayahs,
+          })
+          .catch(() => null)
+      : null,
+    auto.hadith
+      ? payload
+          .findByID({
+            collection: 'hadiths',
+            id: auto.hadith.id,
+            depth: 1,
+            select: SCRIPTURE_POPULATE.hadiths,
+            populate: { 'hadith-collections': SCRIPTURE_POPULATE['hadith-collections'] },
+          })
+          .catch(() => null)
+      : null,
+  ])
+  const a: Reminder | null = ayahDoc ? { id: 0, ayah: ayahDoc as Reminder['ayah'] } : null
+  const hadith = hadithDoc as (Exclude<Reminder['hadith'], number | null | undefined> & {}) | null
+  const h: Reminder | null =
+    hadith && auto.hadith
+      ? {
+          id: 0,
+          // the card shows the Prophet's words; long Arabic is mostly the chain of narrators
+          hadith: {
+            ...hadith,
+            arabic:
+              hadith.arabic && hadith.arabic.length <= HADITH_ARABIC_MAX ? hadith.arabic : null,
+          },
+          custom: { translation: auto.hadith.words },
+        }
+      : null
+  return { a, h }
+}
+
+/**
+ * The daily verse and hadith. On a schedule (the default): a reminder dated today, otherwise the
+ * list rotated by day; a kind with nothing on the list falls back to the automatic pick. With the
+ * schedule off: the automatic pair for the day (a theme, short texts, same for everyone).
+ */
 export async function getDaily(
   payload: Payload,
   today = bdToday(),
+  scheduled = true,
 ): Promise<{ ayah: DailyAyah | null; hadith: DailyHadith | null; date: string }> {
-  const res = await payload.find({
-    collection: 'daily-reminders',
-    where: { active: { equals: true } },
-    depth: 2,
-    limit: 200,
-    pagination: false,
-    sort: 'id',
-    populate: {
-      ayahs: { arabic: true, translation: true, surah: true, ayah: true, key: true },
-      hadiths: {
-        arabic: true,
-        text: true,
-        narrator: true,
-        grade: true,
-        key: true,
-        number: true,
-        numberLabel: true,
-        book: true,
-      },
-      'hadith-collections': { name: true, slug: true },
-    },
-  })
-  const docs = res.docs as unknown as (Reminder & { kind: 'ayah' | 'hadith' })[]
-  const a = pick(
-    docs.filter((d) => d.kind === 'ayah'),
-    today,
-  )
-  const h = pick(
-    docs.filter((d) => d.kind === 'hadith'),
-    today,
-  )
+  let a: Reminder | null = null
+  let h: Reminder | null = null
+  if (scheduled) {
+    const res = await payload.find({
+      collection: 'daily-reminders',
+      where: { active: { equals: true } },
+      depth: 2,
+      limit: 200,
+      pagination: false,
+      sort: 'id',
+      populate: SCRIPTURE_POPULATE,
+    })
+    const docs = res.docs as unknown as (Reminder & { kind: 'ayah' | 'hadith' })[]
+    a = pick(
+      docs.filter((d) => d.kind === 'ayah'),
+      today,
+    )
+    h = pick(
+      docs.filter((d) => d.kind === 'hadith'),
+      today,
+    )
+  }
+  if (!a || !h) {
+    const auto = await autoReminders(payload, today)
+    a ??= auto.a
+    h ??= auto.h
+  }
 
   let ayah: DailyAyah | null = null
   if (a) {
@@ -158,18 +225,35 @@ export async function getDaily(
   return { ayah, hadith, date: today }
 }
 
+type HomeCounts = {
+  featuredIkhtilaf?: number | null
+  ilmCount?: number | null
+  articlesCount?: number | null
+  eventsCount?: number | null
+}
+
+/** A count from the home page settings, kept to a sane range. */
+const count = (value: number | null | undefined, fallback: number, max: number) =>
+  Math.min(max, Math.max(1, Math.round(value ?? fallback)))
+
 export async function getHomeData(payload: Payload) {
-  const [articles, categories, events, home] = await Promise.all([
-    listArticles(payload, { limit: 3 }),
+  const home = (await payload.findGlobal({
+    slug: 'home-page',
+    depth: 0,
+    select: { featuredIkhtilaf: true, ilmCount: true, articlesCount: true, eventsCount: true },
+  })) as HomeCounts
+  const [articles, allCategories, events] = await Promise.all([
+    listArticles(payload, { limit: count(home.articlesCount, 3, 12) }),
     listCategories(payload, 'articles'),
-    listUpcomingEvents(payload, 3),
-    payload.findGlobal({ slug: 'home-page', depth: 0, select: { featuredIkhtilaf: true } }),
+    listUpcomingEvents(payload, count(home.eventsCount, 3, 10)),
   ])
-  const featuredId = (home as { featuredIkhtilaf?: number | null }).featuredIkhtilaf
+  const categories = allCategories.slice(0, count(home.ilmCount, 7, 15))
+  const featuredId = home.featuredIkhtilaf
   let featured = null
   if (featuredId) {
     const doc = await payload
       .findByID({
+        select: { ...IKH_SELECT, _status: true },
         collection: 'ikhtilaf-topics',
         id: featuredId,
         depth: 1,

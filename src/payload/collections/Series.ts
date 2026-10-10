@@ -3,7 +3,8 @@ import type { CollectionConfig } from 'payload'
 import { TAGS } from '@/server/cache/tags'
 import { recountPerson } from '@/server/services/counters'
 
-import { anyone, editorsOnly } from '../access'
+import { anyone } from '../access'
+import { menuAccess } from '../access/permissions'
 import { slugField } from '../fields'
 import { revalidateCollection } from '../hooks/revalidate'
 
@@ -25,7 +26,7 @@ export const Series: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'author', 'articleCount'],
   },
-  access: { read: anyone, create: editorsOnly, update: editorsOnly, delete: editorsOnly },
+  access: { read: anyone, ...menuAccess('series') },
   hooks: {
     afterChange: [
       revalidate.afterChange,

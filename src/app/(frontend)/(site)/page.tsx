@@ -42,331 +42,379 @@ const VALUE_ICONS = {
 const reveal = (i: number) =>
   i % 3 === 1 ? 'reveal reveal-2' : i % 3 === 2 ? 'reveal reveal-3' : 'reveal'
 
+/** A button's link from the admin: empty falls back to the default, outside links open in a new tab. */
+const ctaLink = (href: string | null | undefined, fallback: string) => {
+  const to = href?.trim() || fallback
+  return /^https:\/\//.test(to)
+    ? { href: to, target: '_blank', rel: 'noopener noreferrer' }
+    : { href: to }
+}
+
+/** A section shows unless its switch in the home page settings is turned off. */
+const on = (value: boolean | null | undefined) => value !== false
+
 export default async function HomePage() {
   const today = data.today()
-  const [home, content, daily] = await Promise.all([getHomePage(), data.home(), data.daily(today)])
+  const home = await getHomePage()
+  const [content, daily] = await Promise.all([
+    data.home(),
+    on(home.showDaily) ? data.daily(today, on(home.dailyScheduled)) : null,
+  ])
   const { articles, categories, events, featured } = content
 
   return (
     <main id="main">
+      {on(home.showHero) ? null : (
+        <h1 className="sr-only">
+          {home.titleLine1} {home.titleLine2}
+        </h1>
+      )}
+
       {/* HERO */}
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="rh-pattern" aria-hidden="true" />
-        <div className="hero__glow" aria-hidden="true" />
-        <div className="rh-container">
-          <div className="hero__inner">
-            <p className="ar hero__ayah rh-in" lang="ar" dir="rtl">
-              {home.heroAyah?.arabic}
-            </p>
-            <p className="hero__ayah-tr rh-in d1">
-              “{home.heroAyah?.translation}” <RefBadge>{home.heroAyah?.reference}</RefBadge>
-            </p>
-            <h1 id="hero-title" className="t-display hero__title rh-in d2">
-              {home.titleLine1}
-              <br />
-              <em>{home.titleLine2}</em>
-            </h1>
-            <p className="t-body-lg hero__sub rh-in d3">{home.subtitle}</p>
-            <div className="hero__ctas rh-in d4">
-              <ButtonLink href="#journey" size="lg" arrow>
-                {home.primaryCtaLabel}
-              </ButtonLink>
-              <ButtonLink href="/about" variant="secondary" size="lg">
-                {home.secondaryCtaLabel}
-              </ButtonLink>
-            </div>
-            {home.support?.text ? (
-              <p className="hero__support rh-in d5">
-                {home.support.arabic ? (
-                  <span className="ar-inline" lang="ar" dir="rtl">
-                    {home.support.arabic}
-                  </span>
-                ) : null}
-                <span>{home.support.text}</span>
+      {on(home.showHero) ? (
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="rh-pattern" aria-hidden="true" />
+          <div className="hero__glow" aria-hidden="true" />
+          <div className="rh-container">
+            <div className="hero__inner">
+              <p className="ar hero__ayah rh-in" lang="ar" dir="rtl">
+                {home.heroAyah?.arabic}
               </p>
-            ) : null}
+              <p className="hero__ayah-tr rh-in d1">
+                “{home.heroAyah?.translation}” <RefBadge>{home.heroAyah?.reference}</RefBadge>
+              </p>
+              <h1 id="hero-title" className="t-display hero__title rh-in d2">
+                {home.titleLine1}
+                <br />
+                <em>{home.titleLine2}</em>
+              </h1>
+              <p className="t-body-lg hero__sub rh-in d3">{home.subtitle}</p>
+              <div className="hero__ctas rh-in d4">
+                <ButtonLink {...ctaLink(home.primaryCtaHref, '#journey')} size="lg" arrow>
+                  {home.primaryCtaLabel}
+                </ButtonLink>
+                <ButtonLink
+                  {...ctaLink(home.secondaryCtaHref, '/about')}
+                  variant="secondary"
+                  size="lg"
+                >
+                  {home.secondaryCtaLabel}
+                </ButtonLink>
+              </div>
+              {home.support?.text ? (
+                <p className="hero__support rh-in d5">
+                  {home.support.arabic ? (
+                    <span className="ar-inline" lang="ar" dir="rtl">
+                      {home.support.arabic}
+                    </span>
+                  ) : null}
+                  <span>{home.support.text}</span>
+                </p>
+              ) : null}
+            </div>
           </div>
-        </div>
-        <svg
-          className="hero__thread"
-          viewBox="0 0 1440 160"
-          preserveAspectRatio="xMidYMid meet"
-          aria-hidden="true"
-        >
-          <path
-            className="thread-echo"
-            pathLength={1}
-            d="M0 122C240 52 420 162 720 102S1200 42 1440 112"
-          />
-          <path
-            className="thread-main"
-            pathLength={1}
-            d="M0 110C240 40 420 150 720 90S1200 30 1440 100"
-          />
-          {[
-            [171.6, 85.8, 5],
-            [337.5, 96.3, 5],
-            [514.7, 108.6, 5],
-            [720, 90, 6.5],
-            [925.3, 56.4, 5],
-            [1102.5, 46.3, 5],
-            [1268.4, 60.5, 5],
-          ].map(([cx, cy, r]) => (
-            <circle key={cx} className="bead" cx={cx} cy={cy} r={r} />
-          ))}
-        </svg>
-      </section>
+          <svg
+            className="hero__thread"
+            viewBox="0 0 1440 160"
+            preserveAspectRatio="xMidYMid meet"
+            aria-hidden="true"
+          >
+            <path
+              className="thread-echo"
+              pathLength={1}
+              d="M0 122C240 52 420 162 720 102S1200 42 1440 112"
+            />
+            <path
+              className="thread-main"
+              pathLength={1}
+              d="M0 110C240 40 420 150 720 90S1200 30 1440 100"
+            />
+            {[
+              [171.6, 85.8, 5],
+              [337.5, 96.3, 5],
+              [514.7, 108.6, 5],
+              [720, 90, 6.5],
+              [925.3, 56.4, 5],
+              [1102.5, 46.3, 5],
+              [1268.4, 60.5, 5],
+            ].map(([cx, cy, r]) => (
+              <circle key={cx} className="bead" cx={cx} cy={cy} r={r} />
+            ))}
+          </svg>
+        </section>
+      ) : null}
 
       {/* PLEDGE */}
-      <section aria-labelledby="pledge-title" className="pledge-wrap">
-        <div className="rh-container">
-          <div className="card card-raised pledge reveal">
-            <div className="pledge__head">
-              <span className="eyebrow">{home.pledgeEyebrow}</span>
-              <h2 id="pledge-title" className="t-h4">
-                {home.pledgeTitle}
-              </h2>
+      {on(home.showPledge) ? (
+        <section aria-labelledby="pledge-title" className="pledge-wrap">
+          <div className="rh-container">
+            <div className="card card-raised pledge reveal">
+              <div className="pledge__head">
+                <span className="eyebrow">{home.pledgeEyebrow}</span>
+                <h2 id="pledge-title" className="t-h4">
+                  {home.pledgeTitle}
+                </h2>
+              </div>
+              <ul className="pledge__list">
+                {(home.pledges ?? []).map((pl) => (
+                  <li key={pl.title} className="pledge__item">
+                    <IconSuccess className="ic" aria-hidden="true" />
+                    <div>
+                      <strong>{pl.title}</strong>
+                      <p>{pl.text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="pledge__list">
-              {(home.pledges ?? []).map((pl) => (
-                <li key={pl.title} className="pledge__item">
-                  <IconSuccess className="ic" aria-hidden="true" />
-                  <div>
-                    <strong>{pl.title}</strong>
-                    <p>{pl.text}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       {/* JOURNEY */}
-      <section
-        id="journey"
-        className="section"
-        aria-labelledby="journey-title"
-        style={{ scrollMarginTop: 40 }}
-      >
-        <div className="rh-container">
-          <SectionHead
-            id="journey-title"
-            eyebrow="যাত্রার ধাপ"
-            title={home.journeyTitle}
-            lead={home.journeyLead}
-            className="reveal"
-          />
-          <Journey
-            steps={(home.journeySteps ?? []).map((s) => ({
-              title: s.title,
-              text: s.text,
-              href: s.href,
-            }))}
-          />
-          <div className="journey__end reveal">
-            <p className="t-muted">
-              এই যাত্রায় আপনি কোথায় আছেন, নিজের ড্যাশবোর্ডে চিহ্নিত করে রাখুন।
-            </p>
-            <ButtonLink href="/dashboard" variant="secondary">
-              আমার যাত্রা দেখুন
-            </ButtonLink>
-          </div>
-        </div>
-      </section>
-
-      {/* ENVIRONMENT */}
-      <section className="section section-alt pattern-host" aria-labelledby="env-title">
-        <div className="rh-pattern" aria-hidden="true" />
-        <div className="rh-container">
-          <SectionHead
-            id="env-title"
-            eyebrow="আমাদের সংস্কৃতি"
-            title={home.valuesTitle}
-            lead={home.valuesLead}
-            className="reveal"
-          />
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
-              gap: 20,
-            }}
-          >
-            {(home.values ?? []).map((v, i) => (
-              <ValueCard
-                key={v.title}
-                className={reveal(i)}
-                icon={VALUE_ICONS[v.icon as keyof typeof VALUE_ICONS] ?? VALUE_ICONS.book}
-                title={v.title}
-                text={v.text}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* DAILY AYAH + HADITH */}
-      <section className="section" aria-labelledby="daily-title">
-        <div className="rh-container">
-          <SplitHead
-            className="reveal"
-            action={
-              <div
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}
-              >
-                <p className="t-muted t-small">{formatLongDate(`${daily.date}T06:00:00Z`)}</p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-                  <LinkArrow href="/quran">কুরআন পড়ুন</LinkArrow>
-                  <LinkArrow href="/hadith">হাদিস ভান্ডার</LinkArrow>
-                </div>
-              </div>
-            }
-          >
-            <span className="eyebrow">প্রতিদিনের পাথেয়</span>
-            <h2 id="daily-title" className="t-h2">
-              আজকের আয়াত ও হাদিস
-            </h2>
-          </SplitHead>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(420px, 100%), 1fr))',
-              gap: 24,
-              alignItems: 'stretch',
-            }}
-          >
-            {daily.ayah ? (
-              <AyahCard
-                className="reveal"
-                labelledBy="ayah-label"
-                eyebrow={
-                  <span id="ayah-label" className="eyebrow">
-                    আজকের আয়াত
-                  </span>
-                }
-                arabic={daily.ayah.arabic}
-                translation={daily.ayah.translation}
-                reference={daily.ayah.reference}
-                actions={
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
-                    {daily.ayah.href ? (
-                      <Link
-                        href={daily.ayah.href}
-                        className="link t-small"
-                        style={{ marginRight: 8 }}
-                      >
-                        পুরো সূরা পড়ুন
-                      </Link>
-                    ) : null}
-                    {daily.ayah.ayahId ? (
-                      <BookmarkButton
-                        target={{ collection: 'ayahs', id: daily.ayah.ayahId }}
-                        labels={{
-                          save: 'আয়াতটি সংরক্ষণ করুন',
-                          remove: 'আয়াতটি সংরক্ষণ থেকে সরান',
-                        }}
-                      />
-                    ) : null}
-                    <ShareButton
-                      title={daily.ayah.reference}
-                      path="/"
-                      label="আয়াতটি শেয়ার করুন"
-                    />
-                  </div>
-                }
-              />
-            ) : null}
-            {daily.hadith ? (
-              <HadithCard
-                className="reveal reveal-2"
-                labelledBy="hadith-label"
-                eyebrow={
-                  <span id="hadith-label" className="eyebrow">
-                    আজকের হাদিস
-                  </span>
-                }
-                arabic={daily.hadith.arabic}
-                text={daily.hadith.text}
-                narrator={daily.hadith.narrator}
-                source={daily.hadith.reference}
-                grade={daily.hadith.grade}
-                href={daily.hadith.href ?? undefined}
-              />
-            ) : null}
-          </div>
-        </div>
-      </section>
-
-      {/* ILM CATEGORIES */}
-      <section className="section section-line" aria-labelledby="ilm-title">
-        <div className="rh-container">
-          <SplitHead className="reveal" action={<LinkArrow href="/ilm">সব বিষয় দেখুন</LinkArrow>}>
-            <span className="eyebrow">ইলম কেন্দ্র</span>
-            <h2 id="ilm-title" className="t-h2">
-              বিষয়ভিত্তিক জ্ঞানভান্ডার
-            </h2>
-            {home.ilmLead ? (
-              <p className="lead" style={{ maxWidth: 560 }}>
-                {home.ilmLead}
+      {on(home.showJourney) ? (
+        <section
+          id="journey"
+          className="section"
+          aria-labelledby="journey-title"
+          style={{ scrollMarginTop: 40 }}
+        >
+          <div className="rh-container">
+            <SectionHead
+              id="journey-title"
+              eyebrow={home.journeyEyebrow || 'যাত্রার ধাপ'}
+              title={home.journeyTitle}
+              lead={home.journeyLead}
+              className="reveal"
+            />
+            <Journey
+              steps={(home.journeySteps ?? []).map((s) => ({
+                title: s.title,
+                text: s.text,
+                href: s.href,
+              }))}
+            />
+            <div className="journey__end reveal">
+              <p className="t-muted">
+                {home.journeyEndText ||
+                  'এই যাত্রায় আপনি কোথায় আছেন, নিজের ড্যাশবোর্ডে চিহ্নিত করে রাখুন।'}
               </p>
-            ) : null}
-          </SplitHead>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(250px, 100%), 1fr))',
-              gap: 16,
-            }}
-          >
-            {categories.slice(0, 7).map((c, i) => (
-              <div key={c.id} className={reveal(i)}>
-                <CategoryTile
-                  name={c.name}
-                  icon={c.icon}
-                  href={`/ilm?category=${c.slug}`}
-                  foot={`${bn(c.articleCount)}টি প্রবন্ধ`}
-                />
-              </div>
-            ))}
-            <div className="reveal reveal-2">
-              <CategoryTile
-                all
-                name="মতপার্থক্যের আদব"
-                icon="columns"
-                href="/ikhtilaf"
-                foot="ভিন্ন মত, সমান সম্মানে"
-              />
+              <ButtonLink href="/dashboard" variant="secondary">
+                {home.journeyEndLabel || 'আমার যাত্রা দেখুন'}
+              </ButtonLink>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
+
+      {/* ENVIRONMENT */}
+      {on(home.showValues) ? (
+        <section className="section section-alt pattern-host" aria-labelledby="env-title">
+          <div className="rh-pattern" aria-hidden="true" />
+          <div className="rh-container">
+            <SectionHead
+              id="env-title"
+              eyebrow={home.valuesEyebrow || 'আমাদের সংস্কৃতি'}
+              title={home.valuesTitle}
+              lead={home.valuesLead}
+              className="reveal"
+            />
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
+                gap: 20,
+              }}
+            >
+              {(home.values ?? []).map((v, i) => (
+                <ValueCard
+                  key={v.title}
+                  className={reveal(i)}
+                  icon={VALUE_ICONS[v.icon as keyof typeof VALUE_ICONS] ?? VALUE_ICONS.book}
+                  title={v.title}
+                  text={v.text}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* DAILY AYAH + HADITH */}
+      {daily && (daily.ayah || daily.hadith) ? (
+        <section className="section" aria-labelledby="daily-title">
+          <div className="rh-container">
+            <SplitHead
+              className="reveal"
+              action={
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: 8,
+                  }}
+                >
+                  <p className="t-muted t-small">{formatLongDate(`${daily.date}T06:00:00Z`)}</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+                    <LinkArrow href="/quran">কুরআন পড়ুন</LinkArrow>
+                    <LinkArrow href="/hadith">হাদিস ভান্ডার</LinkArrow>
+                  </div>
+                </div>
+              }
+            >
+              <span className="eyebrow">{home.dailyEyebrow || 'প্রতিদিনের পাথেয়'}</span>
+              <h2 id="daily-title" className="t-h2">
+                {home.dailyTitle || 'আজকের আয়াত ও হাদিস'}
+              </h2>
+            </SplitHead>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(420px, 100%), 1fr))',
+                gap: 24,
+                alignItems: 'stretch',
+              }}
+            >
+              {daily.ayah ? (
+                <AyahCard
+                  className="reveal"
+                  labelledBy="ayah-label"
+                  eyebrow={
+                    <span id="ayah-label" className="eyebrow">
+                      আজকের আয়াত
+                    </span>
+                  }
+                  arabic={daily.ayah.arabic}
+                  translation={daily.ayah.translation}
+                  reference={daily.ayah.reference}
+                  actions={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                      {daily.ayah.href ? (
+                        <Link
+                          href={daily.ayah.href}
+                          className="link t-small"
+                          style={{ marginRight: 8 }}
+                        >
+                          পুরো সূরা পড়ুন
+                        </Link>
+                      ) : null}
+                      {daily.ayah.ayahId ? (
+                        <BookmarkButton
+                          target={{ collection: 'ayahs', id: daily.ayah.ayahId }}
+                          labels={{
+                            save: 'আয়াতটি সংরক্ষণ করুন',
+                            remove: 'আয়াতটি সংরক্ষণ থেকে সরান',
+                          }}
+                        />
+                      ) : null}
+                      <ShareButton
+                        title={daily.ayah.reference}
+                        path="/"
+                        label="আয়াতটি শেয়ার করুন"
+                      />
+                    </div>
+                  }
+                />
+              ) : null}
+              {daily.hadith ? (
+                <HadithCard
+                  className="reveal reveal-2"
+                  labelledBy="hadith-label"
+                  eyebrow={
+                    <span id="hadith-label" className="eyebrow">
+                      আজকের হাদিস
+                    </span>
+                  }
+                  arabic={daily.hadith.arabic}
+                  text={daily.hadith.text}
+                  narrator={daily.hadith.narrator}
+                  source={daily.hadith.reference}
+                  grade={daily.hadith.grade}
+                  href={daily.hadith.href ?? undefined}
+                />
+              ) : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ILM CATEGORIES */}
+      {on(home.showIlm) ? (
+        <section className="section section-line" aria-labelledby="ilm-title">
+          <div className="rh-container">
+            <SplitHead
+              className="reveal"
+              action={<LinkArrow href="/ilm">সব বিষয় দেখুন</LinkArrow>}
+            >
+              <span className="eyebrow">{home.ilmEyebrow || 'ইলম কেন্দ্র'}</span>
+              <h2 id="ilm-title" className="t-h2">
+                {home.ilmTitle || 'বিষয়ভিত্তিক জ্ঞানভান্ডার'}
+              </h2>
+              {home.ilmLead ? (
+                <p className="lead" style={{ maxWidth: 560 }}>
+                  {home.ilmLead}
+                </p>
+              ) : null}
+            </SplitHead>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(250px, 100%), 1fr))',
+                gap: 16,
+              }}
+            >
+              {categories.map((c, i) => (
+                <div key={c.id} className={reveal(i)}>
+                  <CategoryTile
+                    name={c.name}
+                    icon={c.icon}
+                    href={`/ilm?category=${c.slug}`}
+                    foot={`${bn(c.articleCount)}টি প্রবন্ধ`}
+                  />
+                </div>
+              ))}
+              <div className="reveal reveal-2">
+                <CategoryTile
+                  all
+                  name="মতপার্থক্যের আদব"
+                  icon="columns"
+                  href="/ikhtilaf"
+                  foot="ভিন্ন মত, সমান সম্মানে"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       {/* LATEST ARTICLES */}
-      <section className="section section-alt" aria-labelledby="articles-title">
-        <div className="rh-container">
-          <SplitHead className="reveal" action={<LinkArrow href="/ilm">সব প্রবন্ধ</LinkArrow>}>
-            <span className="eyebrow">নতুন লেখা</span>
-            <h2 id="articles-title" className="t-h2">
-              সর্বশেষ প্রবন্ধ
-            </h2>
-          </SplitHead>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(330px, 100%), 1fr))',
-              gap: 24,
-            }}
-          >
-            {articles.map((a, i) => (
-              <ArticleCard key={a.id} article={a} className={reveal(i)} />
-            ))}
+      {on(home.showArticles) && articles.length ? (
+        <section className="section section-alt" aria-labelledby="articles-title">
+          <div className="rh-container">
+            <SplitHead className="reveal" action={<LinkArrow href="/ilm">সব প্রবন্ধ</LinkArrow>}>
+              <span className="eyebrow">{home.articlesEyebrow || 'নতুন লেখা'}</span>
+              <h2 id="articles-title" className="t-h2">
+                {home.articlesTitle || 'সর্বশেষ প্রবন্ধ'}
+              </h2>
+            </SplitHead>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(330px, 100%), 1fr))',
+                gap: 24,
+              }}
+            >
+              {articles.map((a, i) => (
+                <ArticleCard key={a.id} article={a} className={reveal(i)} />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       {/* IKHTILAF FEATURE */}
-      {featured ? (
+      {on(home.showIkhtilaf) && featured ? (
         <section className="section" aria-labelledby="ikh-title">
           <div className="rh-container">
             <div
@@ -378,15 +426,13 @@ export default async function HomePage() {
               }}
             >
               <div className="reveal" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-                <span className="eyebrow">ইখতিলাফ বিভাগ</span>
+                <span className="eyebrow">{home.ikhtilafEyebrow || 'ইখতিলাফ বিভাগ'}</span>
                 <h2 id="ikh-title" className="t-h2">
-                  মতপার্থক্যের আদব
+                  {home.ikhtilafTitle || 'মতপার্থক্যের আদব'}
                 </h2>
-                <p className="t-body-lg t-muted">
-                  যেসব বিষয়ে আলিমদের মধ্যে দলিলভিত্তিক ভিন্নমত রয়েছে, সেখানে প্রতিটি মত তার দলিলসহ
-                  পাশাপাশি তুলে ধরা হয়, সমান মর্যাদায়। উদ্দেশ্য বিতর্ক জেতা নয়, বোঝা ও সম্মান
-                  করা।
-                </p>
+                {home.ikhtilafText ? (
+                  <p className="t-body-lg t-muted">{home.ikhtilafText}</p>
+                ) : null}
                 <ul
                   className="list-reset"
                   style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 4 }}
@@ -418,20 +464,22 @@ export default async function HomePage() {
       ) : null}
 
       {/* UPCOMING MAJLIS */}
-      {events.length ? (
+      {on(home.showEvents) && events.docs.length ? (
         <section className="section section-line" aria-labelledby="events-title">
           <div className="rh-container">
             <SplitHead
               className="reveal"
               action={<LinkArrow href="/events">সব মজলিস দেখুন</LinkArrow>}
             >
-              <span className="eyebrow">একসাথে বসি</span>
+              <span className="eyebrow">{home.eventsEyebrow || 'একসাথে বসি'}</span>
               <h2 id="events-title" className="t-h2">
-                আসন্ন মজলিস
+                {events.upcoming
+                  ? home.eventsTitle || 'আসন্ন মজলিস'
+                  : home.eventsPastTitle || 'সাম্প্রতিক মজলিস'}
               </h2>
             </SplitHead>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {events.map((e, i) => (
+              {events.docs.map((e, i) => (
                 <div key={e.id} className={reveal(i)}>
                   <EventRow event={e} />
                 </div>
@@ -442,43 +490,54 @@ export default async function HomePage() {
       ) : null}
 
       {/* JOIN CTA */}
-      <section className="section-sm" aria-labelledby="cta-title" style={{ paddingBottom: 104 }}>
-        <div className="rh-container">
-          <div className="cta-band reveal">
-            <div className="rh-pattern" aria-hidden="true" />
-            <svg
-              className="cta-band__thread"
-              viewBox="0 0 1200 140"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path d="M0 100C200 40 360 130 600 80S1000 30 1200 90" />
-              <path d="M0 116C220 64 380 146 600 98S1010 52 1200 108" style={{ opacity: 0.35 }} />
-            </svg>
-            <BrandMark style={{ width: 44, height: 44, color: '#D4A95C', strokeWidth: 2 }} />
-            <h2 id="cta-title" className="t-h1">
-              {home.ctaTitle}
-            </h2>
-            <p className="t-body-lg">{home.ctaText}</p>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 12,
-                justifyContent: 'center',
-                marginTop: 10,
-              }}
-            >
-              <ButtonLink href="/join" variant="gold" size="lg" arrow>
-                যুক্ত হোন
-              </ButtonLink>
-              <ButtonLink href="/about" variant="onBand" size="lg">
-                আগে আমাদের জানুন
-              </ButtonLink>
+      {on(home.showCta) ? (
+        <section className="section-sm" aria-labelledby="cta-title" style={{ paddingBottom: 104 }}>
+          <div className="rh-container">
+            <div className="cta-band reveal">
+              <div className="rh-pattern" aria-hidden="true" />
+              <svg
+                className="cta-band__thread"
+                viewBox="0 0 1200 140"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path d="M0 100C200 40 360 130 600 80S1000 30 1200 90" />
+                <path d="M0 116C220 64 380 146 600 98S1010 52 1200 108" style={{ opacity: 0.35 }} />
+              </svg>
+              <BrandMark style={{ width: 44, height: 44, color: '#D4A95C', strokeWidth: 2 }} />
+              <h2 id="cta-title" className="t-h1">
+                {home.ctaTitle}
+              </h2>
+              <p className="t-body-lg">{home.ctaText}</p>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 12,
+                  justifyContent: 'center',
+                  marginTop: 10,
+                }}
+              >
+                <ButtonLink
+                  {...ctaLink(home.ctaPrimaryHref, '/join')}
+                  variant="gold"
+                  size="lg"
+                  arrow
+                >
+                  {home.ctaPrimaryLabel || 'যুক্ত হোন'}
+                </ButtonLink>
+                <ButtonLink
+                  {...ctaLink(home.ctaSecondaryHref, '/about')}
+                  variant="onBand"
+                  size="lg"
+                >
+                  {home.ctaSecondaryLabel || 'আগে আমাদের জানুন'}
+                </ButtonLink>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
     </main>
   )
 }

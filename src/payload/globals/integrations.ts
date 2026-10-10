@@ -1,11 +1,11 @@
 import type { Field, GlobalConfig } from 'payload'
 
-import { ADMIN_ROLES, hasRole } from '@/lib/roles'
 import { testIntegration } from '@/server/integrations-test'
 import { encryptSecret, secretHint } from '@/server/crypto/secrets'
 import { invalidateIntegrations } from '@/server/integrations'
+import { hasLevel } from '@/server/permissions'
 
-import { adminsOnly } from '../access'
+import { atLevel, globalAccess } from '../access/permissions'
 
 import { INTEGRATION_SECRETS, SECRET_CLEAR } from './integrations-shared'
 
@@ -32,13 +32,13 @@ function secret(name: string, label: string, description: string): Field[] {
   ]
 }
 
-const test = (target: 'google' | 'facebook' | 'sms' | 'email'): Field => ({
+const test = (target: 'google' | 'facebook' | 'sms' | 'email' | 'youtube'): Field => ({
   name: 'test',
   type: 'ui',
   admin: { components: { Field: { path: TEST_FIELD, clientProps: { target } } } },
 })
 
-const callback = (provider: 'google' | 'facebook'): Field => ({
+const callback = (provider: 'google' | 'facebook' | 'youtube'): Field => ({
   name: 'callback',
   type: 'ui',
   admin: { components: { Field: { path: CALLBACK_FIELD, clientProps: { provider } } } },
@@ -85,16 +85,16 @@ export const Integrations: GlobalConfig = {
   admin: {
     group: 'সাইট',
     description:
-      'Google ও Facebook লগইন, SMS আর ইমেইলের সেটিংস। এখানে দেওয়া মান .env-এর মানের চেয়ে অগ্রাধিকার পায় এবং সংরক্ষণের এক মিনিটের মধ্যে সাইটে কাজ শুরু করে। গোপন চাবিগুলো এনক্রিপ্ট করে রাখা হয়।',
+      'Google ও Facebook লগইন, YouTube, SMS আর ইমেইলের সেটিংস। এখানে দেওয়া মান .env-এর মানের চেয়ে অগ্রাধিকার পায় এবং সংরক্ষণের এক মিনিটের মধ্যে সাইটে কাজ শুরু করে। গোপন চাবিগুলো এনক্রিপ্ট করে রাখা হয়।',
   },
-  access: { read: adminsOnly, update: adminsOnly },
+  access: globalAccess('integrations', atLevel('integrations', 'edit')),
   endpoints: [
     {
       // POST /api/globals/integrations/test: checks typed values (or the saved ones) without saving
       path: '/test',
       method: 'post',
       handler: async (req) => {
-        if (!hasRole(req.user as never, ...ADMIN_ROLES)) {
+        if (!(await hasLevel(req.user, 'integrations', 'edit'))) {
           return Response.json({ ok: false, message: 'অনুমতি নেই।' }, { status: 403 })
         }
         const body = (await req.json?.().catch(() => null)) as Record<string, unknown> | null
@@ -156,6 +156,85 @@ export const Integrations: GlobalConfig = {
           'Facebook',
           'developers.facebook.com > আপনার অ্যাপ > App settings > Basic থেকে App ID।',
         ),
+        {
+          label: 'YouTube',
+          fields: [
+            {
+              name: 'youtube',
+              type: 'group',
+              label: false,
+              fields: [
+                {
+                  name: 'setupNote',
+                  type: 'ui',
+                  admin: {
+                    components: {
+                      Field: {
+                        path: '@/payload/components/home-section-note#HomeSectionNote',
+                        clientProps: {
+                          text: 'সদস্যরা নিজের YouTube চ্যানেল Google দিয়ে যুক্ত করে মজলিস, ভিডিও বা লেখায় সরাসরি নিজের চ্যানেলের ভিডিও বেছে নিতে পারবেন। সাইটের Google লগইন থেকে আলাদা একটি Google Cloud প্রজেক্ট ব্যবহার করুন: YouTube Data API v3 চালু করে OAuth consent screen "In production" রাখুন, নইলে সংযোগ ৭ দিনে কেটে যায়।',
+                        },
+                      },
+                    },
+                  },
+                },
+                {
+                  name: 'enabled',
+                  label: 'YouTube সংযোগ চালু',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  admin: {
+                    description:
+                      'চালু থাকলে ভিডিওর ঘরগুলোতে "YouTube থেকে বেছে নিন" বাটন দেখাবে। বন্ধ থাকলেও লিংক পেস্ট করা যায়।',
+                  },
+                },
+                {
+                  name: 'audience',
+                  label: 'কারা চ্যানেল যুক্ত করতে পারবেন',
+                  type: 'select',
+                  defaultValue: 'staff',
+                  options: [
+                    {
+                      label: 'শুধু অ্যাডমিন প্যানেলের টিম (এডিটর, মডারেটর ইত্যাদি)',
+                      value: 'staff',
+                    },
+                    { label: 'সব সদস্য', value: 'members' },
+                  ],
+                  admin: {
+                    isClearable: false,
+                    description:
+                      'প্রত্যেকে শুধু নিজের যুক্ত করা চ্যানেলের ভিডিও দেখতে ও বেছে নিতে পারেন। Google যাচাই ছাড়া মোট ১০০ জন পর্যন্ত অনুমতি দিতে পারেন; বেশি লাগলে Google-এ অ্যাপ যাচাই করাতে হবে।',
+                  },
+                },
+                callback('youtube'),
+                {
+                  name: 'clientId',
+                  label: 'Client ID',
+                  type: 'text',
+                  admin: {
+                    description:
+                      'Google Cloud Console > APIs & Services > Credentials > OAuth client ID (Web application) থেকে।',
+                  },
+                },
+                ...secret(
+                  'clientSecret',
+                  'Client secret',
+                  'সংরক্ষণের পর আর দেখা যায় না। বদলাতে চাইলে নতুনটি লিখুন।',
+                ),
+                test('youtube'),
+                {
+                  name: 'channels',
+                  type: 'ui',
+                  admin: {
+                    components: {
+                      Field: '@/payload/components/youtube/connected-channels#ConnectedChannels',
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
         {
           label: 'SMS',
           fields: [

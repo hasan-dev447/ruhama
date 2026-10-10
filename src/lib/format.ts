@@ -110,6 +110,10 @@ export function formatMonth(input: Date | string | number): string {
   return BN_MONTHS[parts(input).month - 1] ?? ''
 }
 
+export function formatYear(input: Date | string | number): string {
+  return bn(parts(input).year)
+}
+
 export function formatWeekday(input: Date | string | number): string {
   return BN_WEEKDAYS[weekdayIndex(input)] ?? ''
 }

@@ -4,7 +4,7 @@ import { hasRole, STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
 import { recountCategory, recountPerson, recountPlaylist } from '@/server/services/counters'
 
-import { contentTeam, editorsOnly, statusPublishedOrStaff } from '../access'
+import { menuAccess, menuRead } from '../access/permissions'
 import { dalilField, levelField, publishedAtField, searchTextField, slugField } from '../fields'
 import { revalidateCollection } from '../hooks/revalidate'
 import { previewUrl } from '../preview'
@@ -21,6 +21,9 @@ export const VIDEO_TINTS = [
   { label: 'আম্বার', value: 'umber' },
   { label: 'স্লেট', value: 'slate' },
 ]
+
+/** Admin field with the "pick from your YouTube channel" button (components/youtube). */
+export const YOUTUBE_FIELD = '@/payload/components/youtube/youtube-field#YouTubeField'
 
 /** Accepts a full YouTube URL or a bare 11-character id and stores the id. */
 export function parseYouTubeId(input: string): string | null {
@@ -60,10 +63,8 @@ export const Videos: CollectionConfig = {
   defaultSort: '-publishedAt',
   versions: { maxPerDoc: 20 },
   access: {
-    read: statusPublishedOrStaff(),
-    create: contentTeam,
-    update: contentTeam,
-    delete: editorsOnly,
+    read: menuRead('videos', { publicWhere: { status: { equals: 'published' } } }),
+    ...menuAccess('videos'),
   },
   hooks: {
     beforeChange: [
@@ -112,6 +113,11 @@ export const Videos: CollectionConfig = {
       index: true,
       validate: (v: unknown) =>
         typeof v === 'string' && parseYouTubeId(v) ? true : 'সঠিক ইউটিউব লিংক দিন',
+      admin: {
+        components: {
+          Field: { path: YOUTUBE_FIELD, clientProps: { store: 'id', titleField: 'title' } },
+        },
+      },
     },
     {
       type: 'row',
@@ -237,7 +243,7 @@ export const Playlists: CollectionConfig = {
     hidden: ({ user }) => !hasRole(user, ...STAFF_ROLES),
   },
   defaultSort: 'order',
-  access: { read: () => true, create: contentTeam, update: contentTeam, delete: editorsOnly },
+  access: { read: () => true, ...menuAccess('playlists') },
   hooks: {
     afterChange: [revalidateCollection('playlists').afterChange],
     afterDelete: [revalidateCollection('playlists').afterDelete],

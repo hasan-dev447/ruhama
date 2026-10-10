@@ -1,11 +1,11 @@
 import { IconClock, IconLocation, IconVideo } from '@/components/icons'
 import Link from 'next/link'
 
-import { eventPlace, eventWhen } from '@/components/content/cards'
+import { EndedBadge, eventPlace, eventWhen } from '@/components/content/cards'
 import { ModeBadge } from '@/components/ui/badge'
 import { ButtonLink } from '@/components/ui/button'
 import { DateTile, Progress } from '@/components/ui/primitives'
-import { bn, formatDay, formatMonth } from '@/lib/format'
+import { bn, formatDay, formatMonth, formatYear } from '@/lib/format'
 import type { EventCardView } from '@/server/queries/types'
 
 export function seatText(capacity: number, taken: number) {
@@ -23,11 +23,15 @@ export function EventCard({ event }: { event: EventCardView }) {
   const full = event.seatsTaken >= event.capacity
   return (
     <article
-      className="card card-hover"
+      className={event.ended ? 'card card-hover event-card--ended' : 'card card-hover'}
       style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}
     >
       <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-        <DateTile day={formatDay(event.startsAt)} month={formatMonth(event.startsAt)} />
+        <DateTile
+          day={formatDay(event.startsAt)}
+          month={formatMonth(event.startsAt)}
+          weekday={event.ended ? formatYear(event.startsAt) : undefined}
+        />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
           <ModeBadge mode={event.mode} style={{ alignSelf: 'flex-start' }} />
           <h2 className="t-h4" style={{ fontSize: 19 }}>
@@ -51,28 +55,44 @@ export function EventCard({ event }: { event: EventCardView }) {
           <span>{eventPlace(event)}</span>
         </div>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 'auto' }}>
-        <div
-          className="t-muted"
-          style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}
-        >
-          <span>{seatText(event.capacity, event.seatsTaken)}</span>
+      {event.ended ? (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'auto' }}>
+          <EndedBadge recap={event.hasRecap} />
         </div>
-        <Progress value={fill} gold label="আসন পূর্ণ" />
-      </div>
-      <div style={{ display: 'flex', gap: 10 }}>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 'auto' }}>
+          <div
+            className="t-muted"
+            style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}
+          >
+            <span>{seatText(event.capacity, event.seatsTaken)}</span>
+          </div>
+          <Progress value={fill} gold label="আসন পূর্ণ" />
+        </div>
+      )}
+      {event.ended ? (
         <ButtonLink
-          href={`${href}#register`}
+          href={event.hasRecap ? `${href}#recap` : href}
           size="sm"
-          style={{ flex: 1 }}
-          variant={full ? 'secondary' : 'primary'}
+          variant={event.hasRecap ? 'primary' : 'secondary'}
         >
-          {full ? 'আসন পূর্ণ' : 'রেজিস্টার করুন'}
+          {event.hasRecap ? 'কী হয়েছিল দেখুন' : 'বিস্তারিত'}
         </ButtonLink>
-        <ButtonLink href={href} variant="ghost" size="sm">
-          বিস্তারিত
-        </ButtonLink>
-      </div>
+      ) : (
+        <div style={{ display: 'flex', gap: 10 }}>
+          <ButtonLink
+            href={`${href}#register`}
+            size="sm"
+            style={{ flex: 1 }}
+            variant={full ? 'secondary' : 'primary'}
+          >
+            {full ? 'আসন পূর্ণ' : 'রেজিস্টার করুন'}
+          </ButtonLink>
+          <ButtonLink href={href} variant="ghost" size="sm">
+            বিস্তারিত
+          </ButtonLink>
+        </div>
+      )}
     </article>
   )
 }

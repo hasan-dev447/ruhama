@@ -10,8 +10,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { TableOfContents } from '@/components/content/article-aids'
-import { PersonAvatar, personHref } from '@/components/content/cards'
 import { RichText } from '@/components/content/rich-text'
+import { featuredShura, ShuraGrid } from '@/components/content/shura-grid'
 import { BrandMark } from '@/components/icons/brand-mark'
 import { JsonLd } from '@/components/seo/json-ld'
 import { ButtonLink } from '@/components/ui/button'
@@ -54,6 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AboutPage() {
   const [about, shura] = await Promise.all([getAboutPage(), data.shura()])
+  const shuraShown = featuredShura(shura, about.shuraFeatured)
   const headings = [
     ...extractHeadings(about.manifesto as LexicalState, anchorFor).filter((h) => h.level === 2),
     { id: 'shura', text: 'শূরা', level: 2 as const },
@@ -135,39 +136,14 @@ export default async function AboutPage() {
                 <p className="t-muted" style={{ marginTop: 10, maxWidth: '70ch' }}>
                   {about.shuraIntro}
                 </p>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(min(220px, 100%), 1fr))',
-                    gap: 14,
-                    marginTop: 28,
-                  }}
-                >
-                  {shura.map((m) => (
-                    <Link
-                      key={m.id}
-                      href={personHref({ slug: m.slug ?? '', kinds: (m.kinds ?? []) as string[] })}
-                      className="card card-hover"
-                      style={{
-                        padding: 20,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 14,
-                        textDecoration: 'none',
-                        color: 'var(--rh-ink)',
-                      }}
-                    >
-                      <PersonAvatar
-                        person={{ name: m.name, tone: m.avatarTone === 'gold' ? 'gold' : 'teal' }}
-                        size="lg"
-                      />
-                      <div>
-                        <strong style={{ display: 'block', lineHeight: 1.5 }}>{m.name}</strong>
-                        <span className="t-small t-muted">{m.shuraRole}</span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                <ShuraGrid members={shuraShown} />
+                {shura.length > shuraShown.length ? (
+                  <div style={{ marginTop: 20 }}>
+                    <ButtonLink href="/about/shura" variant="secondary" arrow>
+                      সব শূরা সদস্য দেখুন ({bn(shura.length)} জন)
+                    </ButtonLink>
+                  </div>
+                ) : null}
               </section>
 
               <section

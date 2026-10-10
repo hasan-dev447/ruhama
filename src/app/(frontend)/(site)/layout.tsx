@@ -1,6 +1,7 @@
 import { SiteFooter } from '@/components/layout/site-footer'
 import { SiteHeader } from '@/components/layout/site-header'
 import { NavigationProgress } from '@/components/layout/navigation-progress'
+import { EmailReminder } from '@/components/layout/email-reminder'
 import { ProfileGate } from '@/components/layout/profile-gate'
 import { JsonLd } from '@/components/seo/json-ld'
 import { organizationLd, websiteLd } from '@/lib/seo'
@@ -12,6 +13,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     <>
       <NavigationProgress />
       <ProfileGate />
+      <EmailReminder />
       <SiteHeader />
       <div className="vt-page">{children}</div>
       <SiteFooter settings={settings} />

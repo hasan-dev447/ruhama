@@ -39,6 +39,22 @@ export type HadithView = {
   book: { slug: string; name: string; shortName: string }
 }
 
+const SURAH_SELECT = {
+  number: true,
+  nameArabic: true,
+  nameBangla: true,
+  nameLatin: true,
+  revelation: true,
+  ayahCount: true,
+} as const
+const BOOK_SELECT = {
+  slug: true,
+  name: true,
+  shortName: true,
+  compiler: true,
+  hadithCount: true,
+} as const
+
 const toSurah = (s: Record<string, unknown>): SurahView => ({
   number: Number(s.number),
   nameArabic: String(s.nameArabic ?? ''),
@@ -50,6 +66,7 @@ const toSurah = (s: Record<string, unknown>): SurahView => ({
 
 export async function listSurahs(payload: Payload): Promise<SurahView[]> {
   const res = await payload.find({
+    select: SURAH_SELECT,
     collection: 'surahs',
     depth: 0,
     sort: 'number',
@@ -62,6 +79,7 @@ export async function listSurahs(payload: Payload): Promise<SurahView[]> {
 /** A whole surah, ayahs in order (the longest has 286). */
 export async function getSurah(payload: Payload, number: number) {
   const s = await payload.find({
+    select: SURAH_SELECT,
     collection: 'surahs',
     where: { number: { equals: number } },
     depth: 0,
@@ -93,6 +111,7 @@ export async function getSurah(payload: Payload, number: number) {
 
 export async function listHadithBooks(payload: Payload): Promise<HadithBookView[]> {
   const res = await payload.find({
+    select: BOOK_SELECT,
     collection: 'hadith-collections',
     depth: 0,
     sort: 'order',
@@ -116,6 +135,7 @@ export async function getHadithBook(
   slug: string,
 ): Promise<HadithBookView | null> {
   const res = await payload.find({
+    select: BOOK_SELECT,
     collection: 'hadith-collections',
     where: { slug: { equals: slug } },
     depth: 0,

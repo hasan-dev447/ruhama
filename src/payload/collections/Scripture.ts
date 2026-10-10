@@ -4,7 +4,8 @@ import { stripArabic } from '@/lib/arabic'
 import { hasRole, STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
 
-import { adminsOnly, anyone, editorsOnly } from '../access'
+import { anyone } from '../access'
+import { atLevel, menuAccess } from '../access/permissions'
 import { GRADE_OPTIONS } from '../fields'
 import { safeRevalidate } from '../hooks/revalidate'
 
@@ -20,7 +21,7 @@ export const Surahs: CollectionConfig = {
     hidden,
   },
   defaultSort: 'number',
-  access: { read: anyone, create: adminsOnly, update: editorsOnly, delete: adminsOnly },
+  access: { read: anyone, ...menuAccess('surahs') },
   fields: [
     { name: 'number', type: 'number', required: true, unique: true, index: true, min: 1, max: 114 },
     { name: 'nameArabic', type: 'text', required: true },
@@ -44,13 +45,14 @@ export const Ayahs: CollectionConfig = {
   labels: { singular: 'আয়াত', plural: 'আয়াত' },
   admin: {
     group: 'কুরআন ও হাদিস',
-    useAsTitle: 'key',
+    // "2:255 · আল-বাকারা · অনুবাদের শুরু…", so pickers show more than "2:255" and can be searched
+    useAsTitle: 'label',
     defaultColumns: ['key', 'translation'],
-    listSearchableFields: ['key', 'translation'],
+    listSearchableFields: ['label', 'key', 'translation'],
     hidden,
   },
   defaultSort: 'sortKey',
-  access: { read: anyone, create: adminsOnly, update: editorsOnly, delete: adminsOnly },
+  access: { read: anyone, ...menuAccess('ayahs') },
   hooks: {
     beforeChange: [
       ({ data, originalDoc }) => {
@@ -82,6 +84,18 @@ export const Ayahs: CollectionConfig = {
       ],
     },
     { name: 'key', type: 'text', unique: true, index: true, admin: { readOnly: true } },
+    {
+      // filled by a database trigger (migration ..._scripture_labels), also for imported rows
+      name: 'label',
+      label: 'তালিকার নাম',
+      type: 'text',
+      index: true,
+      admin: {
+        readOnly: true,
+        description:
+          'ডাটাবেস নিজে তৈরি করে (সূত্র, নাম ও লেখার শুরু), যাতে বাছাইয়ের তালিকায় চেনা যায় ও খোঁজা যায়।',
+      },
+    },
     { name: 'sortKey', type: 'number', index: true, admin: { hidden: true } },
     { name: 'arabic', label: 'আরবি', type: 'textarea', required: true },
     { name: 'arabicPlain', type: 'textarea', admin: { hidden: true } },
@@ -99,7 +113,7 @@ export const HadithCollections: CollectionConfig = {
     hidden,
   },
   defaultSort: 'order',
-  access: { read: anyone, create: adminsOnly, update: editorsOnly, delete: adminsOnly },
+  access: { read: anyone, ...menuAccess('hadith-collections') },
   fields: [
     { name: 'slug', type: 'text', required: true, unique: true, index: true },
     { name: 'name', label: 'নাম', type: 'text', required: true },
@@ -115,13 +129,14 @@ export const Hadiths: CollectionConfig = {
   labels: { singular: 'হাদিস', plural: 'হাদিস' },
   admin: {
     group: 'কুরআন ও হাদিস',
-    useAsTitle: 'key',
+    // "Bukhari 1 · লেখার শুরু…" (database trigger), for pickers
+    useAsTitle: 'label',
     defaultColumns: ['key', 'grade', 'text'],
-    listSearchableFields: ['key', 'text'],
+    listSearchableFields: ['label', 'key', 'text'],
     hidden,
   },
   defaultSort: 'number',
-  access: { read: anyone, create: adminsOnly, update: editorsOnly, delete: adminsOnly },
+  access: { read: anyone, ...menuAccess('hadiths') },
   hooks: {
     beforeChange: [
       ({ data, originalDoc }) => {
@@ -153,6 +168,17 @@ export const Hadiths: CollectionConfig = {
         },
         { name: 'numberLabel', label: 'নম্বর (লেবেল)', type: 'text', admin: { width: '25%' } },
       ],
+    },
+    {
+      name: 'label',
+      label: 'তালিকার নাম',
+      type: 'text',
+      index: true,
+      admin: {
+        readOnly: true,
+        description:
+          'ডাটাবেস নিজে তৈরি করে (সূত্র, নাম ও লেখার শুরু), যাতে বাছাইয়ের তালিকায় চেনা যায় ও খোঁজা যায়।',
+      },
     },
     {
       name: 'key',
@@ -194,9 +220,16 @@ export const DailyReminders: CollectionConfig = {
     defaultColumns: ['kind', 'ayah', 'hadith', 'date', 'active'],
     description:
       'হোম পেজের “আজকের আয়াত ও হাদিস”। নির্দিষ্ট তারিখ দিলে সেদিন দেখাবে, নইলে তালিকা থেকে পালাক্রমে।',
-    hidden,
+    // managed from the home page settings (হোম পেজ > আজকের আয়াত ও হাদিস), not as a menu of its own
+    hidden: true,
   },
-  access: { read: anyone, create: editorsOnly, update: editorsOnly, delete: editorsOnly },
+  access: {
+    // managed inside the home page (its "প্রতিদিনের আয়াত ও হাদিস" tab)
+    read: anyone,
+    create: atLevel('home-page', 'edit'),
+    update: atLevel('home-page', 'edit'),
+    delete: atLevel('home-page', 'edit'),
+  },
   hooks: {
     afterChange: [
       ({ doc, context }) => (

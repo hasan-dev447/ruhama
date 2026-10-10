@@ -68,7 +68,20 @@ export async function listVideos(payload: Payload, params: VideoListParams = {})
 }
 
 export async function listPlaylists(payload: Payload): Promise<PlaylistView[]> {
-  const res = await payload.find({ collection: 'playlists', depth: 0, sort: 'order', limit: 30 })
+  const res = await payload.find({
+    select: {
+      slug: true,
+      title: true,
+      speakerLabel: true,
+      level: true,
+      tint: true,
+      videoCount: true,
+    },
+    collection: 'playlists',
+    depth: 0,
+    sort: 'order',
+    limit: 30,
+  })
   const ids = res.docs.map((d) => d.id)
   const first = new Map<number, { slug: string; episode: number }>()
   if (ids.length) {

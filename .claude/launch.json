@@ -13,6 +13,7 @@
       "runtimeArgs": [
         "cross-env",
         "BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:3100",
+        "OUTBOX_DIR=",
         "next",
         "start",
         "-p",

@@ -1,12 +1,11 @@
 import { z } from 'zod'
 
-import { MODERATOR_ROLES } from '@/lib/roles'
-
 import type { ServiceContext } from './context'
 import { requireUser } from './context'
 import { errors } from './errors'
 import { notify, usersWithRoles } from './notifications'
 import { consumeRateLimit } from './rate-limit'
+import { rolesAt } from '@/server/permissions'
 
 const idOf = (v: unknown) =>
   v && typeof v === 'object' && 'id' in v ? (v as { id: number }).id : (v as number)
@@ -69,7 +68,7 @@ export async function requestToJoinCircle(
 
   const recipients = circle.coordinator
     ? [idOf(circle.coordinator)]
-    : await usersWithRoles(ctx.payload, [...MODERATOR_ROLES])
+    : await usersWithRoles(ctx.payload, await rolesAt('circle-memberships', 'edit'))
   await notify(ctx.payload, {
     recipients,
     kind: 'system',

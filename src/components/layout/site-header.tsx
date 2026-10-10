@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Dialog as DialogPrimitive } from 'radix-ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import { NotifIcon } from '@/components/notifications/notif-icon'
 import { UserAvatar } from '@/components/ui/user-avatar'
@@ -30,7 +31,7 @@ import {
 import { signOut, useSession, type ClientSession } from '@/lib/auth/client'
 import { bn, formatRelative } from '@/lib/format'
 import { journeyLabel } from '@/lib/journey'
-import { isModerator as isModeratorUser, isStaff as isStaffUser } from '@/lib/roles'
+import { useAbilities } from '@/components/auth/use-abilities'
 import { MAIN_NAV, activeNavKey } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
@@ -50,10 +51,23 @@ function useCompactHeader() {
   return compact
 }
 
+/**
+ * Signs out and returns to the home page. A failed request
+ * (offline, server not responding, or a browser extension that blocks it) shows a message instead
+ * of breaking the page; the member is still signed in and can try again.
+ */
 function useLogout() {
   const router = useRouter()
   return useCallback(async () => {
-    await signOut()
+    try {
+      const { error } = await signOut()
+      if (error) throw new Error(error.message)
+    } catch {
+      toast.error('লগআউট করা যায়নি', {
+        description: 'ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।',
+      })
+      return
+    }
     router.push('/')
     router.refresh()
   }, [router])
@@ -274,8 +288,7 @@ function UserMenu({
   const menuRef = useRef<HTMLDivElement>(null)
   useDismiss(open, onClose, triggerRef)
   const logout = useLogout()
-  const isStaff = isStaffUser(user)
-  const isModerator = isModeratorUser(user)
+  const { admin: isStaff, moderate: isModerator } = useAbilities(user)
 
   useEffect(() => {
     if (open) menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus()

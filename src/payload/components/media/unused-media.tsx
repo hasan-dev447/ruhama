@@ -47,9 +47,7 @@ export function UnusedMedia() {
   return (
     <div className="rh-unused">
       <IconSparkle size={16} aria-hidden="true" />
-      <span>
-        {ids.length.toLocaleString('bn-BD')}টি ফাইল কোথাও ব্যবহৃত হচ্ছে না (ড্রাফটেও নয়)।
-      </span>
+      <span>{ids.length}টি ফাইল কোথাও ব্যবহৃত হচ্ছে না (ড্রাফটেও নয়)।</span>
       <a href={`${pathname}?${query}`} className="rh-int-btn rh-int-btn--ghost">
         দেখুন
       </a>

@@ -1,14 +1,11 @@
 'use client'
 
 import { useAuth, useDocumentInfo, useFormFields } from '@payloadcms/ui'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import { DEFAULT_WORKFLOW_RULES, type WorkflowRules } from '@/lib/collection-rules'
 import { hasRole } from '@/lib/roles'
-import {
-  REQUIRED_APPROVALS,
-  REVIEW_STATUS_LABELS,
-  type ReviewStatus,
-} from '@/payload/workflow/constants'
+import { REVIEW_STATUS_LABELS, type ReviewStatus } from '@/payload/workflow/constants'
 
 type Action = 'submit' | 'approve' | 'request_changes' | 'publish' | 'unpublish' | 'withdraw'
 
@@ -34,22 +31,51 @@ export function ReviewPanel() {
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState<Action | null>(null)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
+  // this menu's rules (its "নিয়ম" panel); the server applies the same ones
+  const [rules, setRules] = useState<WorkflowRules>(DEFAULT_WORKFLOW_RULES)
+  // the user's level in this menu (রোল ও অনুমতি page): "এডিট" or more may submit anyone's work
+  const [myLevel, setMyLevel] = useState<string>('none')
+  useEffect(() => {
+    if (!collectionSlug) return
+    let alive = true
+    fetch(`/api/v1/rules/${collectionSlug}`, { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { values?: WorkflowRules; myLevel?: string } | null) => {
+        if (!alive || !d?.values) return
+        setRules(d.values)
+        setMyLevel(d.myLevel ?? 'none')
+      })
+      .catch(() => null)
+    return () => {
+      alive = false
+    }
+  }, [collectionSlug])
 
   if (!id) {
     return <p style={{ fontSize: 13, opacity: 0.8 }}>সংরক্ষণের পর রিভিউ কার্যক্রম দেখা যাবে।</p>
   }
 
   const isAuthor = createdBy !== undefined && String(createdBy) === String(user?.id)
-  const reviewer = hasRole(user, 'super_admin', 'shura', 'reviewer')
-  const publisher = hasRole(user, 'super_admin', 'shura')
-  const content = hasRole(user, 'super_admin', 'shura', 'editor') || isAuthor
+  const reviewer = hasRole(user, ...rules.reviewerRoles)
+  const publisher = hasRole(user, ...rules.publisherRoles)
+  // with no approvals required a publisher may publish straight away; otherwise once approved
+  const publishable =
+    rules.requiredApprovals === 0
+      ? status !== 'published'
+      : status === 'approved' || status === 'in_review'
+  const content = myLevel === 'edit' || myLevel === 'full' || isAuthor
 
   const visible = BUTTONS.filter(({ action }) => {
     if (action === 'submit') return content && (status === 'draft' || status === 'needs_changes')
     if (action === 'withdraw') return content && status === 'in_review'
     if (action === 'approve' || action === 'request_changes')
-      return reviewer && !isAuthor && (status === 'in_review' || status === 'approved')
-    if (action === 'publish') return publisher && status === 'approved'
+      return (
+        reviewer &&
+        (!isAuthor || rules.allowSelfReview) &&
+        rules.requiredApprovals > 0 &&
+        (status === 'in_review' || status === 'approved')
+      )
+    if (action === 'publish') return publisher && publishable
     if (action === 'unpublish') return publisher && status === 'published'
     return false
   })
@@ -108,8 +134,13 @@ export function ReviewPanel() {
         <span style={{ fontWeight: 600, color: '#B88A3E' }}>{REVIEW_STATUS_LABELS[status]}</span>
       </div>
       <div style={{ fontSize: 12, opacity: 0.8, lineHeight: 1.5 }}>
-        প্রকাশের আগে অন্তত {REQUIRED_APPROVALS} জন ভিন্ন রিভিউয়ারের অনুমোদন লাগবে। মোট রিভিউ
-        রেকর্ড: {approvalsCount}। লেখা বদলালে আগের অনুমোদন আর গণ্য হয় না।
+        {rules.requiredApprovals > 0
+          ? `প্রকাশের আগে অন্তত ${rules.requiredApprovals} জন ভিন্ন রিভিউয়ারের অনুমোদন লাগবে।`
+          : 'এই মেনুতে রিভিউ ছাড়াই প্রকাশ করা যায়।'}{' '}
+        মোট রিভিউ রেকর্ড: {approvalsCount}।
+        {rules.resetApprovalsOnEdit && rules.requiredApprovals > 0
+          ? ' লেখা বদলালে আগের অনুমোদন আর গণ্য হয় না।'
+          : ''}
       </div>
       {visible.some((b) => b.action === 'approve' || b.action === 'request_changes') && (
         <textarea

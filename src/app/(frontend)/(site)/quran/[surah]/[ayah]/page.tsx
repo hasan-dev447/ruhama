@@ -11,6 +11,11 @@ export const revalidate = 86400
 
 type Props = { params: Promise<{ surah: string; ayah: string }> }
 
+// 6,236 addresses: none built ahead, each one is made on its first visit and then served from cache
+export function generateStaticParams() {
+  return []
+}
+
 /**
  * One ayah's address, e.g. `/quran/al-baqarah/255`: the shareable link for a verse. It shows the
  * surah from the block holding that ayah, with the ayah in view, and its own title and description

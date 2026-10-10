@@ -1,12 +1,14 @@
 import { expo } from '@better-auth/expo'
-import { APIError, createAuthMiddleware } from 'better-auth/api'
+import { APIError, createAuthMiddleware, getSessionFromCtx } from 'better-auth/api'
+import { setSessionCookie } from 'better-auth/cookies'
 import { nextCookies } from 'better-auth/next-js'
 import { admin, bearer, captcha, customSession, magicLink, phoneNumber } from 'better-auth/plugins'
 import { adminAc, userAc } from 'better-auth/plugins/admin/access'
 import type { BetterAuthPlugin } from 'better-auth'
+import type { FacebookOptions } from 'better-auth/social-providers'
 import type { BetterAuthOptions, PayloadAuthOptions } from 'payload-auth/better-auth'
 
-import { normalizeBdPhone, phonePlaceholderEmail } from '@/lib/phone'
+import { facebookPlaceholderEmail, isPlaceholderEmail, normalizeBdPhone } from '@/lib/phone'
 import { ROLES } from '@/lib/roles'
 
 import { emailTemplates } from '../email/templates'
@@ -32,7 +34,14 @@ const oauthCredentials = <T extends object>(provider: 'google' | 'facebook', ext
     clientSecret: { enumerable: true, get: () => cachedIntegrations()[provider].clientSecret },
   }) as T & { clientId: string; clientSecret: string }
 const google = oauthCredentials('google', { prompt: 'select_account' as const })
-const facebook = oauthCredentials('facebook', {})
+const facebook = oauthCredentials('facebook', {
+  // a Facebook account opened with a phone number may share no email: sign-in still goes ahead with
+  // a temporary address, and /onboarding asks for the real one before anything else
+  mapProfileToUser: (profile) =>
+    profile.email
+      ? {}
+      : { email: facebookPlaceholderEmail('id' in profile ? profile.id : profile.sub) },
+} satisfies Partial<FacebookOptions>)
 
 const OAUTH_PROVIDERS = new Set(['google', 'facebook'])
 
@@ -193,6 +202,7 @@ export async function emailVerificationRequired(): Promise<boolean> {
   try {
     const payload = await payloadInstance()
     const settings = (await payload.findGlobal({
+      select: { auth: true },
       slug: 'site-settings',
       depth: 0,
       overrideAccess: true,
@@ -220,10 +230,155 @@ const enforceVerification = createAuthMiddleware(async (ctx) => {
   })
 })
 
+/** Owner of an email or number (primary, or a confirmed extra one in user-contacts). */
+async function contactOwner(kind: 'email' | 'phone', value: string) {
+  const [{ getPayloadClient }, { findContactOwner }] = await Promise.all([
+    import('../payload'),
+    import('../services/contacts'),
+  ])
+  return findContactOwner(await getPayloadClient(), kind, value)
+}
+
+/**
+ * Any confirmed email on an account signs in to it: a password sign-in, a login link or a password
+ * reset typed with an extra email is handled as the account's primary email (links go there).
+ */
+const signInWithAnyEmail = createAuthMiddleware(async (ctx) => {
+  const body = (ctx.body ?? {}) as { email?: unknown }
+  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
+  if (!email) return
+  const owner = await contactOwner('email', email)
+  if (!owner || owner.primary) return
+  const user = await ctx.context.internalAdapter.findUserById(String(owner.userId))
+  if (user?.email) return { context: { body: { ...body, email: user.email } } }
+})
+
+/** An email already on any account (even as an extra one) can not open a second account. */
+const noSignUpWithTakenEmail = createAuthMiddleware(async (ctx) => {
+  const email = String((ctx.body as { email?: unknown })?.email ?? '')
+    .trim()
+    .toLowerCase()
+  if (!email) return
+  const owner = await contactOwner('email', email)
+  if (owner && !owner.primary) {
+    throw new APIError('BAD_REQUEST', {
+      message: 'এই ইমেইলটি একটি অ্যাকাউন্টে যুক্ত আছে। সেই অ্যাকাউন্টে লগইন করুন।',
+      code: 'USER_ALREADY_EXISTS',
+    })
+  }
+})
+
+/**
+ * Accounts are opened with an email only (password, Google or Facebook). A phone number is an extra
+ * way in for an existing account, so a code is sent only to a number that a member has confirmed,
+ * as the primary number or an extra one; signed-in members confirming a number are not affected.
+ */
+const phoneLoginOnlyForKnownNumbers = createAuthMiddleware(async (ctx) => {
+  if (await getSessionFromCtx(ctx).catch(() => null)) return
+  const phone = normalizeBdPhone(String((ctx.body as { phoneNumber?: unknown })?.phoneNumber ?? ''))
+  let known = false
+  if (phone) {
+    const owner = await contactOwner('phone', phone)
+    if (owner && !owner.primary) known = true
+    else if (owner) {
+      const user = await ctx.context.adapter.findOne<{ phoneNumberVerified?: boolean | null }>({
+        model: 'user',
+        where: [{ field: 'phoneNumber', value: phone }],
+      })
+      known = Boolean(user?.phoneNumberVerified)
+    }
+  }
+  if (!known) {
+    throw new APIError('BAD_REQUEST', {
+      message:
+        'এই নম্বরে যাচাই করা কোনো অ্যাকাউন্ট নেই। ইমেইল দিয়ে লগইন করুন, তারপর সেটিংস থেকে নম্বরটি যাচাই করলে পরের বার কোড দিয়ে ঢুকতে পারবেন।',
+      code: 'PHONE_NOT_LINKED',
+    })
+  }
+})
+
+/**
+ * Code sign-in with an extra (non-primary) number. Better Auth looks the account up by its primary
+ * number only, so this checks the code the same way it does (one row per number, limited attempts,
+ * single use) and signs the owner in.
+ */
+const phoneSignInWithExtraNumber = createAuthMiddleware(async (ctx) => {
+  const body = (ctx.body ?? {}) as { phoneNumber?: unknown; code?: unknown }
+  const phone = normalizeBdPhone(String(body.phoneNumber ?? ''))
+  if (!phone || (await getSessionFromCtx(ctx).catch(() => null))) return
+  const owner = await contactOwner('phone', phone)
+  if (!owner || owner.primary) return
+
+  const adapter = ctx.context.internalAdapter
+  const fail = (message: string) => new APIError('BAD_REQUEST', { message, code: 'INVALID_OTP' })
+  const existing = await adapter.findVerificationValue(phone)
+  if (!existing) throw fail('আগে কোড নিন।')
+  if (existing.expiresAt < new Date()) {
+    await adapter.deleteVerificationByIdentifier(phone)
+    throw fail('কোডের মেয়াদ শেষ। নতুন কোড নিন।')
+  }
+  const consumed = await adapter.consumeVerificationValue(phone)
+  if (!consumed) throw fail('কোডটি মেলেনি।')
+  const [expected, rawAttempts] = consumed.value.split(':')
+  const attempts = Number(rawAttempts ?? 0) || 0
+  if (attempts >= 5) throw fail('অনেকবার ভুল হয়েছে। নতুন কোড নিন।')
+  if (expected !== String(body.code ?? '')) {
+    await adapter.createVerificationValue({
+      value: `${expected}:${attempts + 1}`,
+      identifier: phone,
+      expiresAt: consumed.expiresAt,
+    })
+    throw fail('কোডটি মেলেনি।')
+  }
+  const user = await adapter.findUserById(String(owner.userId))
+  if (!user) throw fail('অ্যাকাউন্টটি পাওয়া যায়নি।')
+  const session = await adapter.createSession(user.id)
+  await setSessionCookie(ctx, { session, user })
+  // only what the client needs, never the whole stored row
+  return ctx.json({
+    status: true,
+    token: session.token,
+    user: { id: user.id, name: user.name, email: user.email, image: user.image ?? null },
+  })
+})
+
+/** A number joins an account only through an SMS code, never by editing the profile. */
+const noDirectPhoneChange = createAuthMiddleware(async (ctx) => {
+  if (ctx.body && typeof ctx.body === 'object' && 'phoneNumber' in ctx.body) {
+    throw new APIError('BAD_REQUEST', {
+      message: 'মোবাইল নম্বর সেটিংসের "সংযুক্ত করুন" থেকে কোড দিয়ে যাচাই করে যোগ করুন।',
+      code: 'PHONE_NEEDS_OTP',
+    })
+  }
+})
+
 const ruhamaGuards = {
   id: 'ruhama-guards',
   hooks: {
     before: [
+      {
+        matcher: (ctx: { path?: string }) => ctx.path === '/phone-number/send-otp',
+        handler: phoneLoginOnlyForKnownNumbers,
+      },
+      {
+        matcher: (ctx: { path?: string }) => ctx.path === '/phone-number/verify',
+        handler: phoneSignInWithExtraNumber,
+      },
+      {
+        matcher: (ctx: { path?: string }) =>
+          ctx.path === '/sign-in/email' ||
+          ctx.path === '/sign-in/magic-link' ||
+          ctx.path === '/request-password-reset',
+        handler: signInWithAnyEmail,
+      },
+      {
+        matcher: (ctx: { path?: string }) => ctx.path === '/sign-up/email',
+        handler: noSignUpWithTakenEmail,
+      },
+      {
+        matcher: (ctx: { path?: string }) => ctx.path === '/update-user',
+        handler: noDirectPhoneChange,
+      },
       {
         matcher: (ctx: { path?: string }) => isOAuthPath(ctx.path),
         handler: warmIntegrations,
@@ -285,7 +440,7 @@ export const betterAuthOptions = {
     autoSignInAfterVerification: true,
     expiresIn: 60 * 60 * 24,
     async sendVerificationEmail({ user, url }, request) {
-      if (user.email.endsWith('.phone.ruhama.local')) return
+      if (isPlaceholderEmail(user.email)) return
       // with verification switched off, sign-up sends nothing (a member asking to verify later still can)
       if (
         request &&
@@ -331,7 +486,7 @@ export const betterAuthOptions = {
       username: { type: 'string', required: false, input: false },
       journeyStage: { type: 'string', required: false, input: false, defaultValue: 'kalema' },
       avatarColor: { type: 'string', required: false, input: false, defaultValue: 'gold' },
-      // ভাই / বোন: sent with email sign-up; Google, Facebook, magic-link and phone sign-ups choose it
+      // ভাই / বোন: sent with email sign-up; Google, Facebook and magic-link sign-ups choose it
       // on /onboarding before anything else (the users collection keeps it from changing later)
       gender: { type: 'string', required: false, input: true },
       deletionRequestedAt: { type: 'date', required: false, input: false, returned: false },
@@ -359,12 +514,39 @@ export const betterAuthOptions = {
   databaseHooks: {
     user: {
       create: {
-        before: async (user) => ({
-          data: {
+        before: async (user) => {
+          const data: Record<string, unknown> = {
             ...user,
             username: makeUsername(user.email, user.name),
-          },
-        }),
+          }
+          // an email already on an account as an extra one never opens a second account (Google,
+          // Facebook or a login link with that address)
+          const emailOwner = await contactOwner('email', String(user.email).toLowerCase())
+          if (emailOwner && !emailOwner.primary)
+            throw new APIError('BAD_REQUEST', {
+              message: 'এই ইমেইলটি একটি অ্যাকাউন্টে যুক্ত আছে। সেই অ্যাকাউন্টে লগইন করুন।',
+              code: 'USER_ALREADY_EXISTS',
+            })
+          // the optional mobile number on the registration form: a valid Bangladeshi number, not
+          // already on another account; it stays unverified until confirmed by SMS in settings
+          const raw = (user as { phoneNumber?: unknown }).phoneNumber
+          if (raw) {
+            const phone = normalizeBdPhone(String(raw))
+            if (!phone)
+              throw new APIError('BAD_REQUEST', {
+                message: 'সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন ০১৭১২৩৪৫৬৭৮)।',
+                code: 'INVALID_PHONE',
+              })
+            if (await contactOwner('phone', phone))
+              throw new APIError('BAD_REQUEST', {
+                message: 'এই মোবাইল নম্বরটি অন্য একটি অ্যাকাউন্টে যুক্ত আছে।',
+                code: 'PHONE_TAKEN',
+              })
+            data.phoneNumber = phone
+            data.phoneNumberVerified = false
+          }
+          return { data: data as typeof user }
+        },
       },
     },
     session: {
@@ -416,10 +598,6 @@ export const betterAuthOptions = {
           throw new APIError('INTERNAL_SERVER_ERROR', {
             message: 'এসএমএস পাঠানো যায়নি। কিছুক্ষণ পর চেষ্টা করুন।',
           })
-      },
-      signUpOnVerification: {
-        getTempEmail: (phone) => phonePlaceholderEmail(phone),
-        getTempName: (phone) => phone.replace(/^\+88/, ''),
       },
     }),
     ...(captchaSecret

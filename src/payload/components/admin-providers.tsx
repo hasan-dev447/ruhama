@@ -1,6 +1,10 @@
 'use client'
 
-import { hindSiliguri, notoSerifBengali } from '@/lib/fonts'
+import { notoSansBengali } from '@/lib/fonts'
+
+import { ListDrawerHost } from './list-drawer'
+import { NavScrollKeeper } from './nav-scroll-keeper'
+import { SaveBars } from './save-bars'
 
 /**
  * Wraps the whole admin. Points Payload's font variable at the self-hosted Bangla fonts (next/font),
@@ -9,8 +13,11 @@ import { hindSiliguri, notoSerifBengali } from '@/lib/fonts'
 export function AdminProviders({ children }: { children?: React.ReactNode }) {
   return (
     <>
-      <style>{`:root{--font-body:${hindSiliguri.style.fontFamily};--rh-admin-heading:${notoSerifBengali.style.fontFamily};}`}</style>
+      <style>{`:root{--font-body:${notoSansBengali.style.fontFamily};--rh-admin-heading:${notoSansBengali.style.fontFamily};}`}</style>
       {children}
+      <ListDrawerHost />
+      <SaveBars />
+      <NavScrollKeeper />
     </>
   )
 }

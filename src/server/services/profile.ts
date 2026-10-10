@@ -3,35 +3,79 @@ import { z } from 'zod'
 
 import { canHavePhoto, isGender } from '@/lib/gender'
 import { normalizeBdPhone } from '@/lib/phone'
+import { emailGrace, missingProfile } from '@/lib/profile-complete'
 import { MAX_ALLOWED_VIEWERS, VISIBILITY } from '@/lib/profile-privacy'
 import { SURAHS } from '@/lib/quran-meta'
 
 import type { ServiceContext } from './context'
 import { requireUser } from './context'
 import { errors } from './errors'
+import { deliveryAvailability } from '../integrations'
+import { findContactOwner, normalizeContact, startAddContact } from './contacts'
 import { consumeRateLimit } from './rate-limit'
+import { userRules } from '../rules'
+import { bn } from '@/lib/format'
 
 /* ---------- ভাই / বোন ---------- */
 
 /** The one-time choice every member makes before anything else. */
-export async function completeProfile(ctx: ServiceContext, input: { gender: unknown }) {
+/**
+ * /onboarding: ভাই / বোন (once, never changed) and, for an account without a real email, an
+ * optional email. The email is not put on the account here: it gets a code (services/contacts) and
+ * joins only when confirmed, so nobody can hold an address that is not theirs. When no email service
+ * is set up yet a code cannot be sent, so the address is saved unconfirmed as before.
+ */
+export async function completeProfile(
+  ctx: ServiceContext,
+  input: { gender?: unknown; email?: unknown },
+): Promise<{ emailPending: string | null; emailChanged: string | null }> {
   const user = requireUser(ctx, { allowIncomplete: true })
-  if (user.gender) throw errors.conflict('পরিচয় আগেই বেছে নেওয়া হয়েছে, আর বদলানো যায় না।')
-  if (!isGender(input.gender)) throw errors.invalid('ভাই অথবা বোন বেছে নিন।')
+  const missing = missingProfile(user)
+  const grace = emailGrace(user)
+  if (!missing.gender && !grace.needed) throw errors.conflict('প্রোফাইল আগেই সম্পূর্ণ হয়েছে।')
+
+  if (missing.gender) {
+    if (!isGender(input.gender)) throw errors.invalid('ভাই অথবা বোন বেছে নিন।')
+    await ctx.payload.update({
+      collection: 'users',
+      id: user.id,
+      data: { gender: input.gender },
+      overrideAccess: true,
+      depth: 0,
+    })
+  }
+
+  const rawEmail = typeof input.email === 'string' ? input.email.trim() : ''
+  if (!grace.needed || !rawEmail) {
+    // the email is optional while there is time left; once it is up it is the only thing asked
+    if (grace.expired) throw errors.invalid('একটি ইমেইল ঠিকানা দিন।')
+    return { emailPending: null, emailChanged: null }
+  }
+
+  if ((await deliveryAvailability()).email) {
+    const { value } = await startAddContact(ctx, { kind: 'email', value: rawEmail })
+    return { emailPending: value, emailChanged: null }
+  }
+  // no email service yet: no code can be sent, keep the old unconfirmed save
+  const email = normalizeContact('email', rawEmail)
+  const owner = await findContactOwner(ctx.payload, 'email', email)
+  if (owner && owner.userId !== user.id)
+    throw errors.conflict(
+      'এই ইমেইলে আগেই একটি অ্যাকাউন্ট আছে। সেই অ্যাকাউন্টে লগইন করুন, তারপর সেটিংস থেকে Facebook যুক্ত করুন।',
+    )
   await ctx.payload.update({
     collection: 'users',
     id: user.id,
-    data: { gender: input.gender },
+    data: { email, emailVerified: false },
     overrideAccess: true,
     depth: 0,
   })
-  return { gender: input.gender }
+  return { emailPending: null, emailChanged: email }
 }
 
 /* ---------- profile photo (brothers only) ---------- */
 
 const PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
-const PHOTO_MAX_BYTES = 3 * 1024 * 1024
 
 export type PhotoFile = { data: Buffer; mimetype: string; name: string; size: number }
 
@@ -41,7 +85,9 @@ export async function setProfilePhoto(ctx: ServiceContext, file: PhotoFile) {
   if (!canHavePhoto(user.gender))
     throw errors.forbidden('বোনদের জন্য প্রোফাইল ছবি রাখার সুযোগ নেই।')
   if (!PHOTO_TYPES.has(file.mimetype)) throw errors.invalid('JPG, PNG বা WebP ছবি দিন।')
-  if (file.size > PHOTO_MAX_BYTES) throw errors.invalid('ছবিটি ৩ MB-এর মধ্যে হতে হবে।')
+  const { profilePhotoMaxMB } = await userRules()
+  if (file.size > profilePhotoMaxMB * 1024 * 1024)
+    throw errors.invalid(`ছবিটি ${bn(profilePhotoMaxMB)} MB-এর মধ্যে হতে হবে।`)
 
   const limit = await consumeRateLimit(ctx.payload, `avatar:${user.id}`, 10, 3600)
   if (!limit.allowed) throw errors.rateLimited()
@@ -250,11 +296,17 @@ export async function searchMembers(ctx: ServiceContext, q: string): Promise<Mem
 
   const phone = normalizeBdPhone(query)
   const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(query)
-  const match: Where = isEmail
-    ? { email: { equals: query.toLowerCase() } }
-    : phone
-      ? { phoneNumber: { equals: phone } }
-      : { name: { like: query } }
+  // an exact email or number also finds the account it is an extra one on
+  const owner =
+    isEmail || phone
+      ? await findContactOwner(
+          ctx.payload,
+          isEmail ? 'email' : 'phone',
+          isEmail ? query.toLowerCase() : phone!,
+        )
+      : null
+  const match: Where =
+    isEmail || phone ? { id: { equals: owner?.userId ?? 0 } } : { name: { like: query } }
   const res = await ctx.payload.find({
     collection: 'users',
     where: {

@@ -3,17 +3,27 @@ import 'server-only'
 import { TAGS } from './cache/tags'
 import { getPayloadClient } from './payload'
 import {
+  CARD_SELECT,
+  CATEGORY_POPULATE,
   countPublishedArticles,
   getArticle,
   getIkhtilaf,
   listArticles,
   listCategories,
   listIkhtilaf,
+  PERSON_POPULATE,
   relatedArticles,
   type ArticleListParams,
 } from './queries/articles'
 import { cached } from './queries/cached'
-import { eventDistricts, getCircle, getEvent, listCircles, listEvents } from './queries/events'
+import {
+  eventDistricts,
+  getCircle,
+  getEvent,
+  getEventRecap,
+  listCircles,
+  listEvents,
+} from './queries/events'
 import { bdToday, getDaily, getHomeData } from './queries/home'
 import { getCourse, getLesson, getQuestion, listCourses, listQuestions } from './queries/learning'
 import {
@@ -62,10 +72,15 @@ export const data = {
     ],
     revalidate: 86400,
   }),
-  daily: cached(['daily'], async (day: string) => getDaily(await p(), day), {
-    tags: [TAGS.daily],
-    revalidate: 86400,
-  }),
+  // the day and the schedule switch are both in the cache key
+  daily: cached(
+    ['daily'],
+    async (day: string, scheduled?: boolean) => getDaily(await p(), day, scheduled ?? true),
+    {
+      tags: [TAGS.daily],
+      revalidate: 86400,
+    },
+  ),
   today: () => bdToday(),
 
   articles: cached(
@@ -88,8 +103,10 @@ export const data = {
       const manual = manualIds.length
         ? (
             await payload.find({
+              select: CARD_SELECT,
               collection: 'articles',
               where: { and: [{ id: { in: manualIds } }, { _status: { equals: 'published' } }] },
+              populate: { categories: CATEGORY_POPULATE, people: PERSON_POPULATE },
               depth: 1,
               limit: manualIds.length,
             })
@@ -151,14 +168,26 @@ export const data = {
     async (params: Parameters<typeof listEvents>[1]) => listEvents(await p(), params),
     { tags: [c('events')], revalidate: 21600 },
   ),
-  eventDistricts: cached(['event-districts'], async () => eventDistricts(await p()), {
-    tags: [c('events')],
-    revalidate: 86400,
-  }),
+  eventDistricts: cached(
+    ['event-districts'],
+    async (when: 'upcoming' | 'past' = 'upcoming') => eventDistricts(await p(), when),
+    {
+      tags: [c('events')],
+      revalidate: 86400,
+    },
+  ),
   event: cached(['event'], async (slug: string) => getEvent(await p(), slug), {
     tags: (slug) => [d('events', slug), c('events')],
     revalidate: 21600,
   }),
+  eventRecap: cached(
+    ['event-recap'],
+    async (eventId: number) => getEventRecap(await p(), eventId),
+    {
+      tags: (eventId) => [d('events', eventId), c('event-recaps')],
+      revalidate: 86400,
+    },
+  ),
 
   circles: cached(
     ['circles'],

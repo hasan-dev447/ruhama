@@ -1,7 +1,6 @@
 import type { z } from 'zod'
 
 import { flagReasons, type ModerationRules } from '@/lib/moderation'
-import { hasRole, MODERATOR_ROLES, STAFF_ROLES } from '@/lib/roles'
 import {
   moderateSchema,
   newPostSchema,
@@ -17,10 +16,24 @@ import { recountForumCategory, recountThread } from './counters'
 import { errors } from './errors'
 import { notify, usersWithRoles } from './notifications'
 import { consumeRateLimit } from './rate-limit'
+import { can, canEnterAdmin, rolesWhoCan } from '@/server/permissions'
 
 const idOf = (v: unknown) =>
   v && typeof v === 'object' && 'id' in v ? (v as { id: number }).id : (v as number)
 export { moderateSchema, newPostSchema, newThreadSchema, reportSchema }
+
+/** What the reply, helpful and moderation actions read from a thread or a reply (never the body). */
+const THREAD_SELECT = {
+  slug: true,
+  title: true,
+  author: true,
+  category: true,
+  status: true,
+  deletedAt: true,
+  locked: true,
+  helpfulPost: true,
+} as const
+const POST_SELECT = { thread: true, author: true, status: true, deletedAt: true } as const
 
 const threadHref = (t: { id: number; slug?: string | null }) =>
   `/forum/${t.id}${t.slug ? `/${t.slug}` : ''}`
@@ -77,7 +90,7 @@ async function gate(ctx: ServiceContext, user: User, text: string) {
   const reasons = flagReasons(text, r, {
     approvedPosts: stats.approvedPosts ?? 0,
     trusted: Boolean(stats.trusted),
-    staff: hasRole(user, ...STAFF_ROLES),
+    staff: await canEnterAdmin(user),
   })
   return { status: reasons.length ? ('pending' as const) : ('published' as const), reasons }
 }
@@ -104,7 +117,7 @@ async function bumpApproved(ctx: ServiceContext, userId: number | null | undefin
 }
 
 async function tellModerators(ctx: ServiceContext, text: string) {
-  const mods = await usersWithRoles(ctx.payload, [...MODERATOR_ROLES])
+  const mods = await usersWithRoles(ctx.payload, await rolesWhoCan('forum.moderate'))
   await notify(ctx.payload, {
     recipients: mods,
     kind: 'review',
@@ -118,6 +131,7 @@ export async function createThread(ctx: ServiceContext, input: z.input<typeof ne
   const user = requireUser(ctx)
   const data = newThreadSchema.parse(input)
   const category = await ctx.payload.findByID({
+    select: { name: true },
     collection: 'forum-categories',
     id: data.categoryId,
     depth: 0,
@@ -157,6 +171,7 @@ export async function createThread(ctx: ServiceContext, input: z.input<typeof ne
 
 async function visibleThread(ctx: ServiceContext, threadId: number) {
   const t = await ctx.payload.findByID({
+    select: THREAD_SELECT,
     collection: 'forum-threads',
     id: threadId,
     depth: 0,
@@ -176,6 +191,7 @@ export async function createPost(ctx: ServiceContext, input: z.input<typeof newP
   let parentAuthor: number | null = null
   if (data.parentId) {
     const parent = await ctx.payload.findByID({
+      select: { thread: true, author: true },
       collection: 'forum-posts',
       id: data.parentId,
       depth: 0,
@@ -241,6 +257,7 @@ async function onPostPublished(
 export async function toggleHelpful(ctx: ServiceContext, postId: number) {
   const user = requireUser(ctx)
   const post = await ctx.payload.findByID({
+    select: POST_SELECT,
     collection: 'forum-posts',
     id: postId,
     depth: 0,
@@ -283,6 +300,7 @@ export async function toggleHelpful(ctx: ServiceContext, postId: number) {
 export async function markHelpfulAnswer(ctx: ServiceContext, postId: number) {
   const user = requireUser(ctx)
   const post = await ctx.payload.findByID({
+    select: POST_SELECT,
     collection: 'forum-posts',
     id: postId,
     depth: 0,
@@ -293,7 +311,7 @@ export async function markHelpfulAnswer(ctx: ServiceContext, postId: number) {
     throw errors.notFound('উত্তরটি পাওয়া যায়নি।')
   const thread = await visibleThread(ctx, idOf(post.thread))
   const isOwner = thread.author && idOf(thread.author) === user.id
-  if (!isOwner && !hasRole(user, ...MODERATOR_ROLES))
+  if (!isOwner && !(await can(user, 'forum.moderate')))
     throw errors.forbidden('শুধু আলোচনা শুরুকারী সহায়ক উত্তর বেছে নিতে পারেন।')
   const clearing = idOf(thread.helpfulPost) === postId
   if (thread.helpfulPost)
@@ -412,7 +430,7 @@ export async function softDelete(ctx: ServiceContext, targetType: 'thread' | 'po
   })
   if (!target || target.deletedAt) throw errors.notFound('বিষয়টি পাওয়া যায়নি।')
   const own = target.author && idOf(target.author) === user.id
-  if (!own && !hasRole(user, ...MODERATOR_ROLES)) throw errors.forbidden()
+  if (!own && !(await can(user, 'forum.moderate'))) throw errors.forbidden()
   await ctx.payload.update({
     collection,
     id,
@@ -429,7 +447,7 @@ export async function softDelete(ctx: ServiceContext, targetType: 'thread' | 'po
 /** Moderator decisions; open reports on the target are resolved with the same decision. */
 export async function moderate(ctx: ServiceContext, input: z.input<typeof moderateSchema>) {
   const user = requireUser(ctx)
-  if (!hasRole(user, ...MODERATOR_ROLES))
+  if (!(await can(user, 'forum.moderate')))
     throw errors.forbidden('শুধু মডারেটররা এই কাজ করতে পারেন।')
   const data = moderateSchema.parse(input)
   const collection = data.targetType === 'thread' ? 'forum-threads' : 'forum-posts'
@@ -500,6 +518,7 @@ export async function moderate(ctx: ServiceContext, input: z.input<typeof modera
   if (status === 'published' && !wasPublished && target.status === 'pending') {
     if (data.targetType === 'post') {
       const thread = await ctx.payload.findByID({
+        select: THREAD_SELECT,
         collection: 'forum-threads',
         id: threadId,
         depth: 0,

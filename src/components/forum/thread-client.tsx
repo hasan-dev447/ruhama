@@ -30,7 +30,7 @@ import { fallbackInterval, useBroadcast } from '@/hooks/use-realtime'
 import { apiFetch } from '@/lib/api-client'
 import { authClient } from '@/lib/auth/client'
 import { bn, formatRelative, initials } from '@/lib/format'
-import { isModerator as hasModeratorRole } from '@/lib/roles'
+import { useAbilities } from '@/components/auth/use-abilities'
 import { cn } from '@/lib/utils'
 
 type ViewerState = { helpful: number[]; pending: { id: number; body: string; createdAt: string }[] }
@@ -53,7 +53,7 @@ function useViewer() {
         unknown
       >)
     | undefined
-  const isModerator = hasModeratorRole(user)
+  const { moderate: isModerator } = useAbilities(user)
   return { user, isModerator, userId: user ? Number(user.id) : null }
 }
 

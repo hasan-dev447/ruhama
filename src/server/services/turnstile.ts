@@ -1,10 +1,13 @@
 /** Cloudflare's documented always-pass test secret, used only outside production. */
 export const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA'
 
+/**
+ * The secret matching the site key in lib/turnstile-site-key.ts: the real one in a production build
+ * (null without it, so checks fail closed), Cloudflare's test secret under `npm run dev`.
+ */
 export function turnstileSecret(): string | null {
-  const secret = process.env.TURNSTILE_SECRET_KEY
-  if (secret) return secret
-  return process.env.NODE_ENV === 'production' ? null : TURNSTILE_TEST_SECRET
+  if (process.env.NODE_ENV !== 'production') return TURNSTILE_TEST_SECRET
+  return process.env.TURNSTILE_SECRET_KEY || null
 }
 
 /** Verify a Turnstile token server-side. */

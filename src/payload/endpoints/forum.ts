@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-import { hasRole, MODERATOR_ROLES } from '@/lib/roles'
 import {
   getThread,
   listForumCategories,
@@ -25,6 +24,7 @@ import {
 } from '@/server/services/forum'
 
 import { param, query, readBody, v1 } from './helpers'
+import { can } from '@/server/permissions'
 
 const id = z.coerce.number().int().positive()
 const PUBLIC = 'public, s-maxage=30, stale-while-revalidate=300'
@@ -101,7 +101,7 @@ export const forumEndpoints = [
     moderate(ctx, await readBody(req, moderateSchema)),
   ),
   v1('get', '/forum/moderation', async (_req, ctx) => {
-    if (!hasRole(ctx.user, ...MODERATOR_ROLES)) throw errors.forbidden()
+    if (!(await can(ctx.user, 'forum.moderate'))) throw errors.forbidden()
     return moderationQueue(ctx.payload)
   }),
 ]

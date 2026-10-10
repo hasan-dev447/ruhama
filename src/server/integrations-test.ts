@@ -15,7 +15,7 @@ export type TestResult = { ok: boolean; message: string }
 
 type Body = { target?: unknown; values?: unknown; to?: unknown }
 
-const TARGETS = new Set<IntegrationTarget>(['google', 'facebook', 'sms', 'email'])
+const TARGETS = new Set<IntegrationTarget>(['google', 'facebook', 'sms', 'email', 'youtube'])
 const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '')
 
 /** Typed values over saved ones; a typed SECRET_CLEAR means "test as if empty". */
@@ -30,10 +30,10 @@ function merge<T extends Record<string, unknown>>(saved: T, typed: Record<string
   return out as T
 }
 
-async function testGoogle({
-  clientId,
-  clientSecret,
-}: IntegrationSettings['google']): Promise<TestResult> {
+async function testGoogle(
+  { clientId, clientSecret }: IntegrationSettings['google'],
+  redirectPath = '/api/auth/callback/google',
+): Promise<TestResult> {
   if (!clientId || !clientSecret)
     return { ok: false, message: 'Client ID ও Client secret দুটোই লাগবে।' }
   // a made-up authorization code: Google checks the client first, so "invalid_grant" means the pair is right
@@ -44,7 +44,7 @@ async function testGoogle({
       code: 'ruhama-connection-test',
       client_id: clientId,
       client_secret: clientSecret,
-      redirect_uri: `${siteUrl()}/api/auth/callback/google`,
+      redirect_uri: `${siteUrl()}${redirectPath}`,
       grant_type: 'authorization_code',
     }),
     signal: AbortSignal.timeout(10_000),
@@ -138,6 +138,11 @@ export async function testIntegration(body: Body, admin: { email: string }): Pro
       }
       case 'email':
         return await testEmail(merge(saved.email, typed), admin.email)
+      case 'youtube':
+        return await testGoogle(
+          merge(saved.youtube, typed),
+          '/api/v1/integrations/youtube/callback',
+        )
     }
   } catch (err) {
     const reason =

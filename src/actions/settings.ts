@@ -6,6 +6,16 @@ import type { z } from 'zod'
 import { actionContext, actionError } from '@/server/action-context'
 import { TAGS } from '@/server/cache/tags'
 import {
+  confirmContact,
+  listContacts,
+  makePrimaryContact,
+  removeContact,
+  startAddContact,
+  type ContactKind,
+  type ContactList,
+} from '@/server/services/contacts'
+
+import {
   completeProfile,
   removeProfilePhoto,
   searchMembers,
@@ -25,6 +35,11 @@ import {
 } from '@/server/services/settings'
 
 import type { ActionResult } from './types'
+import {
+  cancelMyPendingProfile,
+  saveMyPublicProfile,
+  type PublicProfileInput,
+} from '@/server/services/public-profile'
 
 /** The public profile is cached; refresh it as soon as the owner changes it. */
 function refreshProfile(username: string | null | undefined) {
@@ -58,14 +73,18 @@ export async function updatePrivacyAction(input: PrivacyInput): Promise<ActionRe
   }
 }
 
-/** ভাই / বোন, chosen once on /onboarding. */
-export async function completeProfileAction(gender: string): Promise<ActionResult> {
+/** /onboarding: ভাই / বোন (once) and a real email when the account has none. */
+export async function completeProfileAction(input: {
+  gender?: string
+  email?: string
+}): Promise<ActionResult<{ emailPending: string | null }>> {
   try {
     const ctx = await actionContext()
-    await completeProfile(ctx, { gender })
+    // an email given here gets a code first (services/contacts) and joins once it is confirmed
+    const { emailPending } = await completeProfile(ctx, input)
     revalidatePath('/', 'layout')
     refreshProfile(ctx.user?.username)
-    return { ok: true }
+    return { ok: true, data: { emailPending } }
   } catch (err) {
     return actionError(err)
   }
@@ -138,6 +157,69 @@ export async function requestAccountDeletionAction(confirm: string): Promise<Act
     if (confirm.trim() !== 'মুছে ফেলুন')
       return { ok: false, error: 'নিশ্চিত করতে ঘরে “মুছে ফেলুন” লিখুন।' }
     await requestAccountDeletion(await actionContext())
+    return { ok: true }
+  } catch (err) {
+    return actionError(err)
+  }
+}
+
+/* ---------- emails and mobile numbers ---------- */
+
+type ContactInput = { kind: ContactKind; value: string }
+
+async function contactStep(
+  run: (ctx: Awaited<ReturnType<typeof actionContext>>) => Promise<unknown>,
+): Promise<ActionResult<ContactList>> {
+  try {
+    const ctx = await actionContext()
+    await run(ctx)
+    // the account may have changed (new primary), so list it from fresh data
+    const fresh = await actionContext()
+    refreshProfile(ctx.user?.username)
+    return { ok: true, data: await listContacts(fresh) }
+  } catch (err) {
+    return actionError(err)
+  }
+}
+
+/** Send a code to a new email or number (or send it again). */
+export async function addContactAction(input: ContactInput) {
+  return contactStep((ctx) => startAddContact(ctx, input))
+}
+
+export async function confirmContactAction(input: ContactInput & { code: string }) {
+  return contactStep((ctx) => confirmContact(ctx, input))
+}
+
+export async function makePrimaryContactAction(input: ContactInput) {
+  return contactStep((ctx) => makePrimaryContact(ctx, input))
+}
+
+export async function removeContactAction(input: ContactInput) {
+  return contactStep((ctx) => removeContact(ctx, input))
+}
+
+/* ---------- public profile (আলিম, লেখক ও বক্তা) ---------- */
+
+/** Save the member's own public profile; it may wait for approval (people menu's rule). */
+export async function savePublicProfileAction(
+  input: PublicProfileInput,
+): Promise<ActionResult<{ pending: boolean }>> {
+  try {
+    const ctx = await actionContext()
+    const data = await saveMyPublicProfile(ctx, input)
+    revalidatePath('/settings')
+    return { ok: true, data }
+  } catch (err) {
+    return actionError(err)
+  }
+}
+
+/** Withdraw changes that are still waiting for approval. */
+export async function cancelPublicProfileAction(): Promise<ActionResult> {
+  try {
+    await cancelMyPendingProfile(await actionContext())
+    revalidatePath('/settings')
     return { ok: true }
   } catch (err) {
     return actionError(err)

@@ -1,8 +1,12 @@
 import type { CollectionConfig } from 'payload'
 
+import { STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
 
-import { anyone, editorsOnly } from '../access'
+import { anyone, fieldRoles } from '../access'
+import { menuAccess } from '../access/permissions'
+
+const staffField = fieldRoles(...STAFF_ROLES)
 import { searchTextField, slugField } from '../fields'
 import { revalidateCollection } from '../hooks/revalidate'
 
@@ -25,11 +29,15 @@ export const People: CollectionConfig = {
   admin: {
     group: 'মানুষ',
     useAsTitle: 'name',
-    defaultColumns: ['name', 'kinds', 'title', 'verified', 'active'],
+    defaultColumns: ['name', 'kinds', 'title', 'verified', 'active', 'pendingAt'],
     listSearchableFields: ['name', 'title'],
+    // "পাবলিক পাতা দেখুন" beside Save, opens the person's page on the site in a new tab
+    components: {
+      edit: { beforeDocumentControls: ['@/payload/components/public-page-link#PublicPageLink'] },
+    },
   },
   defaultSort: 'name',
-  access: { read: anyone, create: editorsOnly, update: editorsOnly, delete: editorsOnly },
+  access: { read: anyone, ...menuAccess('people') },
   hooks: {
     beforeChange: [
       ({ data }) => {
@@ -127,12 +135,40 @@ export const People: CollectionConfig = {
       },
     },
     {
+      // changes the member made to their own profile, waiting for approval (people menu's rule)
+      name: 'pendingPanel',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: { Field: '@/payload/components/pending-profile#PendingProfilePanel' },
+      },
+    },
+    {
       name: 'user',
       label: 'অ্যাকাউন্ট',
       type: 'relationship',
       relationTo: 'users',
       index: true,
-      admin: { position: 'sidebar' },
+      admin: {
+        position: 'sidebar',
+        description:
+          'এই প্রোফাইলের মানুষটি নিজে যে অ্যাকাউন্টে লগইন করেন। শুধু তাঁর নিজের অ্যাকাউন্ট বাছাই করুন; অ্যাকাউন্ট না থাকলে খালি রাখুন। রোল দিলে এটি নিজে থেকেও যুক্ত হয়।',
+      },
+    },
+    {
+      name: 'pendingChanges',
+      type: 'json',
+      // never public: only the team that approves sees what is waiting
+      access: { read: staffField },
+      admin: { hidden: true },
+    },
+    {
+      name: 'pendingAt',
+      label: 'অনুমোদন বাকি (জমার সময়)',
+      type: 'date',
+      index: true,
+      access: { read: staffField },
+      admin: { readOnly: true, condition: () => false },
     },
     { name: 'bio', label: 'পরিচিতি', type: 'textarea' },
     {

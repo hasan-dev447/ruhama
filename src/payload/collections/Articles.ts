@@ -1,10 +1,10 @@
-import type { Access, CollectionConfig, Where } from 'payload'
+import type { CollectionConfig, Where } from 'payload'
 
 import { lexicalToPlainText, readingMinutes, type LexicalState } from '@/lib/lexical'
-import { CONTENT_ROLES, hasRole, STAFF_ROLES } from '@/lib/roles'
 import { TAGS } from '@/server/cache/tags'
 import { recountCategory, recountPerson } from '@/server/services/counters'
 
+import { atLevel, menuAccess, menuRead } from '../access/permissions'
 import {
   dalilField,
   levelField,
@@ -27,44 +27,30 @@ const idOf = (v: unknown) =>
     ? (v as { id: number }).id
     : (v as number | null | undefined)
 
-/** Authors see published work plus their own drafts; other staff see everything. */
-export const contentRead: Access = ({ req }) => {
-  if (hasRole(req.user, 'super_admin', 'shura', 'editor', 'reviewer', 'moderator')) return true
-  if (hasRole(req.user, 'author')) {
-    return {
-      or: [{ _status: { equals: 'published' } }, { createdBy: { equals: req.user!.id } }],
-    } as Where
-  }
-  return { _status: { equals: 'published' } }
-}
+/** "নিজের" in the workflow menus: one's own drafts, or work sent back for changes. */
+export const ownDraftEdit = (userId: number | string): Where => ({
+  and: [{ createdBy: { equals: userId } }, { reviewStatus: { in: ['draft', 'needs_changes'] } }],
+})
+export const ownDraftDelete = (userId: number | string): Where => ({
+  and: [
+    { createdBy: { equals: userId } },
+    { reviewStatus: { equals: 'draft' } },
+    { _status: { equals: 'draft' } },
+  ],
+})
 
-/** Authors edit only their own drafts (or drafts sent back for changes). */
-export const contentUpdate: Access = ({ req }) => {
-  if (hasRole(req.user, 'super_admin', 'shura', 'editor')) return true
-  if (hasRole(req.user, 'author')) {
-    return {
-      and: [
-        { createdBy: { equals: req.user!.id } },
-        { reviewStatus: { in: ['draft', 'needs_changes'] } },
-      ],
-    } as Where
-  }
-  return false
-}
-
-export const contentDelete: Access = ({ req }) => {
-  if (hasRole(req.user, 'super_admin', 'shura', 'editor')) return true
-  if (hasRole(req.user, 'author')) {
-    return {
-      and: [
-        { createdBy: { equals: req.user!.id } },
-        { reviewStatus: { equals: 'draft' } },
-        { _status: { equals: 'draft' } },
-      ],
-    } as Where
-  }
-  return false
-}
+/**
+ * Access of a workflow menu by the রোল ও অনুমতি page: "দেখা" or more reads every draft, "নিজের"
+ * reads published work plus one's own, everyone else only what is published.
+ */
+export const workflowAccess = (slug: string) => ({
+  read: menuRead(slug, {
+    publicWhere: { _status: { equals: 'published' } },
+    ownWhere: (id) => ({ createdBy: { equals: id } }),
+  }),
+  readVersions: atLevel(slug, 'view'),
+  ...menuAccess(slug, { ownUpdate: ownDraftEdit, ownDelete: ownDraftDelete }),
+})
 
 const revalidate = revalidateCollection('articles', {
   extraTags: (doc) => [
@@ -83,19 +69,12 @@ export const Articles: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'author', 'reviewStatus', '_status', 'updatedAt'],
     listSearchableFields: ['title', 'slug'],
-    hidden: ({ user }) => !hasRole(user, ...STAFF_ROLES),
     livePreview: { url: livePreviewUrl('articles') },
     preview: previewUrl('articles'),
   },
   defaultSort: '-publishedAt',
   versions: { drafts: { autosave: { interval: 1500 }, validate: false }, maxPerDoc: 50 },
-  access: {
-    read: contentRead,
-    readVersions: ({ req }) => hasRole(req.user, ...STAFF_ROLES),
-    create: ({ req }) => hasRole(req.user, ...CONTENT_ROLES),
-    update: contentUpdate,
-    delete: contentDelete,
-  },
+  access: workflowAccess('articles'),
   hooks: {
     beforeChange: [
       workflowBeforeChange(HASH_FIELDS),

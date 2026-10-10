@@ -4,10 +4,9 @@ import { IconCalendarOff } from '@/components/icons'
 import { parseAsInteger, parseAsStringLiteral, parseAsString, useQueryStates } from 'nuqs'
 
 import { ButtonLink } from '@/components/ui/button'
-import { Select } from '@/components/ui/form'
+import { DistrictSelect } from '@/components/ui/district-select'
 import { Chip, EmptyState, Pager, Skeleton } from '@/components/ui/primitives'
 import { usePublicList } from '@/hooks/use-public-list'
-import { districtLabel } from '@/lib/districts'
 import { bn } from '@/lib/format'
 import type { EventCardView } from '@/server/queries/types'
 
@@ -21,7 +20,13 @@ const TYPES = [
   { value: 'in_person', label: 'সরাসরি' },
 ] as const
 
+const WHEN = [
+  { value: 'upcoming', label: 'আসন্ন' },
+  { value: 'past', label: 'শেষ হয়েছে' },
+] as const
+
 const parsers = {
+  when: parseAsStringLiteral(['upcoming', 'past'] as const).withDefault('upcoming'),
   mode: parseAsStringLiteral(['all', 'online', 'in_person'] as const).withDefault('all'),
   district: parseAsString.withDefault('all'),
   page: parseAsInteger.withDefault(1),
@@ -44,7 +49,13 @@ export function EventGridSkeleton() {
   )
 }
 
-export function EventBrowser({ initial, districts }: { initial: Page; districts: string[] }) {
+export function EventBrowser({
+  initial,
+  districts,
+}: {
+  initial: Page
+  districts: { upcoming: string[]; past: string[] }
+}) {
   const [state, setState] = useQueryStates(parsers, {
     history: 'replace',
     shallow: true,
@@ -52,13 +63,40 @@ export function EventBrowser({ initial, districts }: { initial: Page; districts:
   })
   const { data, isFetching, isPending } = usePublicList<Page>(
     '/events',
-    { mode: state.mode, district: state.district, page: state.page > 1 ? state.page : null },
+    {
+      when: state.when === 'past' ? 'past' : null,
+      mode: state.mode,
+      district: state.district,
+      page: state.page > 1 ? state.page : null,
+    },
     initial,
   )
+  const past = state.when === 'past'
   const filtered = state.mode !== 'all' || state.district !== 'all'
+  const districtList = past ? districts.past : districts.upcoming
 
   return (
     <>
+      <div className="event-tabs" role="tablist" aria-label="মজলিস">
+        {WHEN.map((w) => (
+          <button
+            key={w.value}
+            type="button"
+            role="tab"
+            aria-selected={state.when === w.value}
+            className={state.when === w.value ? 'event-tabs__tab is-active' : 'event-tabs__tab'}
+            onClick={() =>
+              void setState({
+                when: w.value === 'upcoming' ? null : w.value,
+                district: null,
+                page: null,
+              })
+            }
+          >
+            {w.label}
+          </button>
+        ))}
+      </div>
       <div
         className="card"
         style={{
@@ -86,29 +124,19 @@ export function EventBrowser({ initial, districts }: { initial: Page; districts:
         <label htmlFor="ev-district" className="sr-only">
           জেলা
         </label>
-        <Select
+        <DistrictSelect
           id="ev-district"
-          wrapStyle={{ flex: '0 1 220px', marginLeft: 'auto' }}
+          style={{ flex: '0 1 240px', marginLeft: 'auto' }}
+          allLabel="সব জেলা"
+          only={districtList}
           value={state.district}
-          onChange={(e) =>
-            void setState({
-              district: e.target.value === 'all' ? null : e.target.value,
-              page: null,
-            })
-          }
-        >
-          <option value="all">সব জেলা</option>
-          {districts.map((d) => (
-            <option key={d} value={d}>
-              {districtLabel(d)}
-            </option>
-          ))}
-        </Select>
+          onChange={(v) => void setState({ district: v === 'all' ? null : v, page: null })}
+        />
       </div>
 
       <p className="t-small t-muted" role="status" style={{ marginBottom: 16 }}>
         {data
-          ? `${bn(data.totalDocs)}টি আসন্ন মজলিস${filtered ? ' (ফিল্টার চালু)' : ''}`
+          ? `${bn(data.totalDocs)}টি ${past ? 'শেষ হওয়া' : 'আসন্ন'} মজলিস${filtered ? ' (ফিল্টার চালু)' : ''}`
           : 'খোঁজা হচ্ছে…'}
       </p>
       {isPending && !data ? (
@@ -130,7 +158,7 @@ export function EventBrowser({ initial, districts }: { initial: Page; districts:
             <Pager
               page={data.page}
               totalPages={data.totalPages}
-              hrefFor={(p) => `/events?page=${p}`}
+              hrefFor={(p) => `/events?${past ? 'when=past&' : ''}page=${p}`}
               onPage={(p) => void setState({ page: p > 1 ? p : null })}
             />
           </div>
@@ -140,11 +168,17 @@ export function EventBrowser({ initial, districts }: { initial: Page; districts:
           <EmptyState
             icon={<IconCalendarOff className="ic ic-xl" aria-hidden="true" />}
             title={
-              state.district !== 'all'
-                ? 'এই জেলায় আপাতত কোনো মজলিস নেই'
-                : 'আপাতত কোনো আসন্ন মজলিস নেই'
+              past
+                ? 'এখনো কোনো শেষ হওয়া মজলিস নেই'
+                : state.district !== 'all'
+                  ? 'এই জেলায় আপাতত কোনো মজলিস নেই'
+                  : 'আপাতত কোনো আসন্ন মজলিস নেই'
             }
-            text="আপনার এলাকায় মজলিস আয়োজনে সহযোগিতা করতে চাইলে যুক্ত হোন।"
+            text={
+              past
+                ? 'মজলিস শেষ হলে এখানে দেখাবে, ছবি ও ভিডিওসহ।'
+                : 'আপনার এলাকায় মজলিস আয়োজনে সহযোগিতা করতে চাইলে যুক্ত হোন।'
+            }
           >
             <ButtonLink href="/join?interest=events" variant="secondary" size="sm">
               আয়োজনে যুক্ত হোন

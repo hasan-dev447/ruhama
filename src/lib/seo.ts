@@ -154,6 +154,8 @@ export const eventLd = (e: {
   capacity: number
   remaining: number
   performers?: string[]
+  /** over: no seats or ticket offer to advertise */
+  ended?: boolean
 }): JsonLd => ({
   '@context': 'https://schema.org',
   '@type': 'Event',
@@ -179,14 +181,19 @@ export const eventLd = (e: {
   organizer: { '@id': absoluteUrl('/#organization') },
   isAccessibleForFree: true,
   maximumAttendeeCapacity: e.capacity,
-  remainingAttendeeCapacity: Math.max(0, e.remaining),
-  offers: {
-    '@type': 'Offer',
-    price: 0,
-    priceCurrency: 'BDT',
-    availability: e.remaining > 0 ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
-    url: absoluteUrl(e.path),
-  },
+  ...(e.ended
+    ? {}
+    : {
+        remainingAttendeeCapacity: Math.max(0, e.remaining),
+        offers: {
+          '@type': 'Offer',
+          price: 0,
+          priceCurrency: 'BDT',
+          availability:
+            e.remaining > 0 ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+          url: absoluteUrl(e.path),
+        },
+      }),
   performer: e.performers?.map((name) => ({ '@type': 'Person', name })),
   url: absoluteUrl(e.path),
 })

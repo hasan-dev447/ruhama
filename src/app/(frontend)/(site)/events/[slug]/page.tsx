@@ -6,26 +6,27 @@ import { notFound } from 'next/navigation'
 import { ShareButton } from '@/components/actions/share-button'
 import { PersonAvatar, personHref } from '@/components/content/cards'
 import { RichText } from '@/components/content/rich-text'
+import { EventOverCard } from '@/components/events/event-over-card'
+import { EventRecap } from '@/components/events/event-recap'
 import { RegistrationCard } from '@/components/events/registration-card'
 import { PreviewBar } from '@/components/preview/preview-bar'
 import { JsonLd } from '@/components/seo/json-ld'
 import { Badge, ModeBadge } from '@/components/ui/badge'
 import { Breadcrumbs, DateTile } from '@/components/ui/primitives'
 import { districtLabel } from '@/lib/districts'
+import { eventEnded, registrationClosedEarly } from '@/lib/events'
 import { formatDay, formatLongDate, formatMonth, formatTime, formatWeekday } from '@/lib/format'
 import { breadcrumbLd, buildMetadata, eventLd } from '@/lib/seo'
 import { data } from '@/server/data'
 import { getPayloadClient } from '@/server/payload'
 import { previewUser } from '@/server/preview'
 import { toCategory, toPerson } from '@/server/queries/articles'
-import { getEvent } from '@/server/queries/events'
+import { getEvent, getEventRecap } from '@/server/queries/events'
+import { eventRules } from '@/server/rules'
 
 export const revalidate = 21600
 
 type Props = { params: Promise<{ slug: string }> }
-
-const hasEnded = (e: { startsAt: string; endsAt?: string | null }) =>
-  new Date(e.endsAt ?? e.startsAt).getTime() < Date.now()
 
 export async function generateStaticParams() {
   try {
@@ -38,12 +39,15 @@ export async function generateStaticParams() {
 
 async function load(slug: string) {
   const user = await previewUser()
-  if (user)
-    return {
-      doc: await getEvent(await getPayloadClient(), slug, { draft: true, user }),
-      preview: true,
-    }
-  return { doc: await data.event(slug), preview: false }
+  if (user) {
+    const payload = await getPayloadClient()
+    const doc = await getEvent(payload, slug, { draft: true, user })
+    const recap = doc ? await getEventRecap(payload, doc.id, { draft: true, user }) : null
+    return { doc, recap, preview: true }
+  }
+  const doc = await data.event(slug)
+  const recap = doc && eventEnded(doc) ? await data.eventRecap(doc.id) : null
+  return { doc, recap, preview: false }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -56,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function EventPage({ params }: Props) {
   const { slug } = await params
-  const { doc, preview } = await load(slug)
+  const { doc, recap, preview } = await load(slug)
   if (!doc) notFound()
 
   const category = toCategory(doc.category)
@@ -65,7 +69,9 @@ export default async function EventPage({ params }: Props) {
     .filter((s) => s.person !== null)
   const notes = (doc.speakerNotes ?? []).map((n) => n.note ?? '')
   const agenda = doc.agenda ?? []
-  const ended = hasEnded(doc)
+  const ended = eventEnded(doc)
+  const rules = await eventRules()
+  const closedEarly = registrationClosedEarly(doc.startsAt, rules.closeRegistrationHoursBefore)
   const online = doc.mode === 'online'
   const path = `/events/${doc.slug}`
   const timeText =
@@ -143,7 +149,7 @@ export default async function EventPage({ params }: Props) {
                   <div>
                     <IconCalendar className="ic" aria-hidden="true" />
                     <div>
-                      <strong>তারিখ ও সময়</strong>
+                      <strong>{ended ? 'অনুষ্ঠিত হয়েছে' : 'তারিখ ও সময়'}</strong>
                       <span className="t-muted">
                         {formatLongDate(doc.startsAt)}
                         <br />
@@ -161,11 +167,15 @@ export default async function EventPage({ params }: Props) {
                       <strong>স্থান</strong>
                       <span className="t-muted">
                         {online ? (
-                          <>
-                            অনলাইন লাইভ সেশন
-                            <br />
-                            যোগ দেওয়ার লিংক রেজিস্ট্রেশনের পর ইমেইলে
-                          </>
+                          ended ? (
+                            'অনলাইন লাইভ সেশন'
+                          ) : (
+                            <>
+                              অনলাইন লাইভ সেশন
+                              <br />
+                              যোগ দেওয়ার লিংক রেজিস্ট্রেশনের পর ইমেইলে
+                            </>
+                          )
                         ) : (
                           <>
                             {[doc.venueName, doc.venueAddress].filter(Boolean).join(', ')}
@@ -204,6 +214,8 @@ export default async function EventPage({ params }: Props) {
                   </div>
                 </div>
 
+                {recap ? <EventRecap recap={recap} title={doc.title} /> : null}
+
                 {doc.description ? (
                   <div>
                     <h2 className="t-h3">মজলিস সম্পর্কে</h2>
@@ -215,7 +227,7 @@ export default async function EventPage({ params }: Props) {
                   </div>
                 ) : null}
 
-                {agenda.length ? (
+                {agenda.length && !ended ? (
                   <div>
                     <h2 className="t-h3">সূচি</h2>
                     <ol
@@ -298,25 +310,36 @@ export default async function EventPage({ params }: Props) {
               <aside
                 id="register"
                 className="layout-side__aside layout-side__aside--right sticky-col"
-                aria-labelledby="reg-title"
+                aria-labelledby={ended ? 'over-title' : 'reg-title'}
                 style={{ scrollMarginTop: 96 }}
               >
                 <div className="card card-raised card-pad">
-                  <RegistrationCard
-                    event={{
-                      id: doc.id,
-                      slug: doc.slug ?? slug,
-                      title: doc.title,
-                      startsAt: doc.startsAt,
-                      capacity: doc.capacity,
-                      seatsTaken: doc.seatsTaken ?? 0,
-                      open: Boolean(doc.registrationOpen),
-                      ended,
-                      separateSeating: Boolean(doc.separateSeating),
-                      allowGuests: Boolean(doc.allowGuests),
-                      mode: doc.mode,
-                    }}
-                  />
+                  {ended ? (
+                    <EventOverCard
+                      startsAt={doc.startsAt}
+                      endsAt={doc.endsAt}
+                      timeText={timeText}
+                      hasRecap={Boolean(recap)}
+                      attendance={recap?.attendance ?? null}
+                    />
+                  ) : (
+                    <RegistrationCard
+                      event={{
+                        id: doc.id,
+                        slug: doc.slug ?? slug,
+                        title: doc.title,
+                        startsAt: doc.startsAt,
+                        capacity: doc.capacity,
+                        seatsTaken: doc.seatsTaken ?? 0,
+                        open: Boolean(doc.registrationOpen) && !closedEarly,
+                        ended,
+                        separateSeating: Boolean(doc.separateSeating),
+                        allowGuests: Boolean(doc.allowGuests),
+                        maxGuests: doc.maxGuests || rules.defaultMaxGuests || null,
+                        mode: doc.mode,
+                      }}
+                    />
+                  )}
                 </div>
               </aside>
             </div>
@@ -336,6 +359,7 @@ export default async function EventPage({ params }: Props) {
             address: [doc.venueAddress, districtLabel(doc.district)].filter(Boolean).join(', '),
             capacity: doc.capacity,
             remaining: doc.capacity - (doc.seatsTaken ?? 0),
+            ended,
             performers: speakers.map((s) => s.person!.name),
           }),
           breadcrumbLd([
